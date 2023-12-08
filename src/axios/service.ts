@@ -27,7 +27,6 @@ axiosInstance.interceptors.response.use(
     const url = res.config.url || ''
     abortControllerMap.delete(url)
     // 这里不能做任何处理，否则后面的 interceptors 拿不到完整的上下文了
-    console.log('🚀 ~ file: service.ts:31 ~ res:', res)
     return res
   },
   (error: AxiosError | any) => {
@@ -44,15 +43,12 @@ const service = {
   request: (config: RequestConfig) => {
     return new Promise((resolve, reject) => {
       if (config.interceptors?.requestInterceptors) {
-        console.log('🚀 ~ file: service.ts:47 ~ returnnewPromise ~ config:', config)
         config = config.interceptors.requestInterceptors(config as any)
-        console.log('🚀 ~ file: service.ts:49 ~ returnnewPromise ~ config:', config)
       }
 
       axiosInstance
         .request(config)
         .then((res) => {
-          console.log('🚀 ~ file: service.ts:53 ~ .then ~ res:', res)
           resolve(res)
         })
         .catch((err: any) => {

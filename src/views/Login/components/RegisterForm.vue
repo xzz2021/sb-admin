@@ -3,13 +3,15 @@ import { Form, FormSchema } from '@/components/Form'
 import { reactive, ref } from 'vue'
 import { useI18n } from '@/hooks/web/useI18n'
 import { useForm } from '@/hooks/web/useForm'
-import { ElButton, ElInput, FormRules } from 'element-plus'
+import { ElButton, ElInput, ElMessage, FormRules } from 'element-plus'
 import { useValidator } from '@/hooks/web/useValidator'
+import { UserRegisterType } from '@/api/login/types'
+import { registerApi } from '@/api/login'
 
 const emit = defineEmits(['to-login'])
 
 const { formRegister, formMethods } = useForm()
-const { getElFormExpose } = formMethods
+const { getFormData, getElFormExpose } = formMethods
 
 const { t } = useI18n()
 
@@ -139,11 +141,23 @@ const loading = ref(false)
 
 const loginRegister = async () => {
   const formRef = await getElFormExpose()
-  formRef?.validate(async (valid) => {
+  formRef?.validate(async (valid: boolean) => {
     if (valid) {
+      const formData = await getFormData<UserRegisterType>()
+      let { password, check_password } = formData
+      if (password != check_password) return ElMessage.error(t('common.isEqual'))
       try {
         loading.value = true
-        toLogin()
+        if (formData.code != '999') return ElMessage.error('验证码错误，请稍后再试！')
+        // ElMessage.success('注册成功！')
+        // return
+        const res = await registerApi(formData)
+        if (res) {
+          ElMessage.success('注册成功！')
+          toLogin()
+        } else {
+          ElMessage.error('网络异常，请稍后再试！')
+        }
       } finally {
         loading.value = false
       }

@@ -50,7 +50,7 @@ const schema = reactive<FormSchema[]>([
   {
     field: 'username',
     label: t('login.username'),
-    value: 'xzz111',
+    value: '',
     component: 'Input',
     colProps: {
       span: 24
@@ -62,7 +62,7 @@ const schema = reactive<FormSchema[]>([
   {
     field: 'password',
     label: t('login.password'),
-    value: '111111',
+    value: '',
     component: 'InputPassword',
     colProps: {
       span: 24
@@ -203,6 +203,10 @@ watch(
   }
 )
 
+// onMounted(() => {
+//   formMethods.setValues((username) => (username = userStore.getRememberUser()))
+// })
+
 // 登录
 // userinfo 包含 password permissions role roleId username
 const signIn = async () => {
@@ -232,6 +236,11 @@ const signIn = async () => {
           }
         }
       } finally {
+        if (remember.value) {
+          userStore.setRememberUser(formData.username)
+        } else {
+          userStore.setRememberUser('')
+        }
         loading.value = false
       }
     }
