@@ -5,10 +5,13 @@ interface RoleParams {
   roleName: string
 }
 
-export const loginApi = (data: UserType): Promise<IResponse<UserType>> => {
+export const loginApi2 = (data: UserType): Promise<IResponse<UserType>> => {
   return request.post({ url: '/mock/user/login', data })
 }
 
+export const loginApi = (data: UserType): Promise<IResponse<UserType>> => {
+  return request.post({ url: 'api/userinfo/login', data })
+}
 export const loginOutApi = (): Promise<IResponse> => {
   return request.get({ url: '/mock/user/loginOut' })
 }

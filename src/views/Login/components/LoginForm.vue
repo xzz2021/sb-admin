@@ -50,7 +50,7 @@ const schema = reactive<FormSchema[]>([
   {
     field: 'username',
     label: t('login.username'),
-    value: 'admin',
+    value: 'xzz111',
     component: 'Input',
     colProps: {
       span: 24
@@ -62,7 +62,7 @@ const schema = reactive<FormSchema[]>([
   {
     field: 'password',
     label: t('login.password'),
-    value: 'admin',
+    value: '111111',
     component: 'InputPassword',
     colProps: {
       span: 24
@@ -204,15 +204,18 @@ watch(
 )
 
 // 登录
+// userinfo 包含 password permissions role roleId username
 const signIn = async () => {
   const formRef = await getElFormExpose()
   await formRef?.validate(async (isValid) => {
     if (isValid) {
       loading.value = true
       const formData = await getFormData<UserType>()
+      console.log('🚀 ~ file: LoginForm.vue:213 ~ awaitformRef?.validate ~ formData:', formData)
 
       try {
         const res = await loginApi(formData)
+        console.log('🚀 ~ file: LoginForm.vue:217 ~ awaitformRef?.validate ~ res:', res)
 
         if (res) {
           userStore.setUserInfo(res.data)
