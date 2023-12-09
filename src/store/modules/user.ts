@@ -11,7 +11,7 @@ interface UserState {
   userInfo?: UserType
   tokenKey: string
   token: string
-  rememberUser?: string
+  rememberUser: string
   roleRouters?: string[] | AppCustomRouteRecordRaw[]
 }
 
@@ -29,7 +29,7 @@ export const useUserStore = defineStore('user', {
     getTokenKey(): string {
       return this.tokenKey
     },
-    getRememberUser(): string | undefined {
+    getRememberUser(): string {
       return this.rememberUser
     },
     getToken(): string {

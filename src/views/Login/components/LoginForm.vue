@@ -13,6 +13,7 @@ import { UserType } from '@/api/login/types'
 import { useValidator } from '@/hooks/web/useValidator'
 import { Icon } from '@/components/Icon'
 import { useUserStore } from '@/store/modules/user'
+import { onMounted } from 'vue'
 
 const { required } = useValidator()
 
@@ -180,7 +181,7 @@ const schema = reactive<FormSchema[]>([
 
 const iconSize = 30
 
-const remember = ref(false)
+const remember = ref(true)
 
 const { formRegister, formMethods } = useForm()
 const { getFormData, getElFormExpose } = formMethods
@@ -203,9 +204,10 @@ watch(
   }
 )
 
-// onMounted(() => {
-//   formMethods.setValues((username) => (username = userStore.getRememberUser()))
-// })
+onMounted(async () => {
+  // 挂载时自动填充记住的用户名
+  formMethods.setValues({ username: userStore.getRememberUser })
+})
 
 // 登录
 // userinfo 包含 password permissions role roleId username
@@ -236,6 +238,7 @@ const signIn = async () => {
           }
         }
       } finally {
+        // 是否存储 记住用户名
         if (remember.value) {
           userStore.setRememberUser(formData.username)
         } else {

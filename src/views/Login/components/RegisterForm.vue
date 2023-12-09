@@ -126,10 +126,23 @@ const schema = reactive<FormSchema[]>([
   }
 ])
 
+// 校验两次密码是否一致规则
+const checkPwd = async (_rule: any, value: any, callback: any) => {
+  // 获取用户名表单数据
+  const formData = await getFormData<UserRegisterType>()
+  if (value === '') {
+    callback(new Error('Please input the password again'))
+  } else if (value !== formData.password) {
+    callback(new Error(t('common.isEqual')))
+  } else {
+    callback()
+  }
+}
+
 const rules: FormRules = {
   username: [required()],
   password: [required()],
-  check_password: [required()],
+  check_password: [{ asyncValidator: checkPwd, trigger: 'blur' }],
   code: [required()]
 }
 
@@ -144,8 +157,8 @@ const loginRegister = async () => {
   formRef?.validate(async (valid: boolean) => {
     if (valid) {
       const formData = await getFormData<UserRegisterType>()
-      let { password, check_password } = formData
-      if (password != check_password) return ElMessage.error(t('common.isEqual'))
+      // let { password, check_password } = formData
+      // if (password != check_password) return ElMessage.error(t('common.isEqual'))
       try {
         loading.value = true
         if (formData.code != '999') return ElMessage.error('验证码错误，请稍后再试！')
