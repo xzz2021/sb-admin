@@ -4,6 +4,7 @@ import { defaultRequestInterceptors, defaultResponseInterceptors } from './confi
 import { AxiosInstance, InternalAxiosRequestConfig, RequestConfig, AxiosResponse } from './types'
 import { ElMessage } from 'element-plus'
 import { REQUEST_TIMEOUT } from '@/constants'
+import { useUserStoreWithOut } from '@/store/modules/user'
 
 export const PATH_URL = import.meta.env.VITE_API_BASE_PATH
 
@@ -31,7 +32,19 @@ axiosInstance.interceptors.response.use(
   },
   (error: AxiosError | any) => {
     console.log('err: ' + error) // for debug
-    ElMessage.error(error?.response?.data.message || '后端错误内容没有提示')
+    ElMessage.error(error?.response?.data?.message || '后端错误内容没有提示')
+
+    //  后端返回401 说明Unauthorized, 所以主动退出登录
+    if (error?.response?.data?.statusCode == 401) {
+      /*
+      {
+        "message": "Unauthorized",
+        "statusCode": 401
+      }
+      */
+      const userStore = useUserStoreWithOut()
+      userStore.logout()
+    }
     return Promise.reject(error.response?.data)
   }
 )

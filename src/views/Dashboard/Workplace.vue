@@ -19,6 +19,13 @@ import {
 import type { WorkplaceTotal, Project, Dynamic, Team } from '@/api/dashboard/workplace/types'
 import { set } from 'lodash-es'
 
+// import { onMounted } from 'vue'
+// import { tttApi } from '@/api/login'
+
+// onMounted(async () => {
+//   const res = await tttApi()
+//   console.log('🚀 ~ file: Workplace.vue:25 ~ onMounted ~ res:', res)
+// })
 const loading = ref(true)
 
 // 获取统计数

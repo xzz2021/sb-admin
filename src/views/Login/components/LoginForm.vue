@@ -221,6 +221,9 @@ watch(
 onMounted(async () => {
   // 挂载时自动填充记住的用户名
   formMethods.setValues({ username: userStore.getRememberUser })
+  // 本地持久化切换时需要手动设定
+  // appStore.setDynamicRouter(!true)
+  // appStore.setServerDynamicRouter(!true)
 })
 
 // 登录
@@ -236,12 +239,13 @@ const signIn = async () => {
       try {
         const res = await loginApi(formData)
         console.log('🚀 ~ file: LoginForm.vue:217 ~ awaitformRef?.validate ~ res:', res)
-
+        // const { userInfo, tokenKey } = res.data
         if (res) {
-          userStore.setUserInfo(res.data)
+          userStore.setUserInfo(res.data.userInfo)
+          userStore.setTokenKey(res.data.tokenKey)
           // 是否使用动态路由
           if (appStore.getDynamicRouter) {
-            getRole()
+            getRole(res.data.userInfo.role || 'guest')
           } else {
             await permissionStore.generateRoutes('static').catch(() => {})
             permissionStore.getAddRouters.forEach((route) => {
@@ -265,16 +269,15 @@ const signIn = async () => {
 }
 
 // 获取角色信息
-const getRole = async () => {
-  const formData = await getFormData<UserType>()
-  const params = {
-    roleName: formData.username
-  }
+const getRole = async (userRole: string) => {
+  console.log('🚀 ~ file: LoginForm.vue:272 ~ getRole ~ userRole:', userRole)
+  const params = { roleName: userRole }
   const res =
     appStore.getDynamicRouter && appStore.getServerDynamicRouter
       ? await getAdminRoleApi(params)
       : await getTestRoleApi(params)
   if (res) {
+    console.log('🚀 ~ file: LoginForm.vue:278 ~ getRole ~ res:', res)
     const routers = res.data || []
     userStore.setRoleRouters(routers)
     appStore.getDynamicRouter && appStore.getServerDynamicRouter
@@ -285,6 +288,7 @@ const getRole = async () => {
       addRoute(route as RouteRecordRaw) // 动态添加可访问路由表
     })
     permissionStore.setIsAddRouters(true)
+    // 获取完角色路由表, 自动跳转
     push({ path: redirect.value || permissionStore.addRouters[0].path })
   }
 }

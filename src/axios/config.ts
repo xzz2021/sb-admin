@@ -1,7 +1,7 @@
 import { AxiosResponse, AxiosRequestHeaders, InternalAxiosRequestConfig } from './types'
 import { ElMessage } from 'element-plus'
 import qs from 'qs'
-import { SUCCESS_CODE } from '@/constants'
+// import { SUCCESS_CODE } from '@/constants'
 import { useUserStoreWithOut } from '@/store/modules/user'
 
 const defaultRequestInterceptors = (config: InternalAxiosRequestConfig) => {
@@ -24,11 +24,16 @@ const defaultRequestInterceptors = (config: InternalAxiosRequestConfig) => {
     config.params = {}
     config.url = url
   }
+
+  // 响应头添加token认证
+  const userStore = useUserStoreWithOut()
+  config.headers.Authorization = 'Bearer ' + userStore.getTokenKey
+  // console.log('🚀 ~ file: config.ts:28 ~ defaultRequestInterceptors ~ config.headers:', config.headers)
   return config
 }
 
 const defaultResponseInterceptors = (response: AxiosResponse) => {
-  console.log('🚀 ~ file: config.ts:31 ~ defaultResponseInterceptors ~ response:', response)
+  // console.log('🚀 ~ file: config.ts:31 ~ defaultResponseInterceptors ~ response:', response)
   if (response?.config?.responseType === 'blob') {
     // 如果是文件流，直接过
     return response
