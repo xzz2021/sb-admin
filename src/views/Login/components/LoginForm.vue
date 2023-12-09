@@ -2,7 +2,7 @@
 import { reactive, ref, watch } from 'vue'
 import { Form, FormSchema } from '@/components/Form'
 import { useI18n } from '@/hooks/web/useI18n'
-import { ElButton, ElCheckbox, ElLink } from 'element-plus'
+import { ElButton, ElCheckbox, ElInput, ElLink } from 'element-plus'
 import { useForm } from '@/hooks/web/useForm'
 import { loginApi, getTestRoleApi, getAdminRoleApi } from '@/api/login'
 import { useAppStore } from '@/store/modules/app'
@@ -63,16 +63,30 @@ const schema = reactive<FormSchema[]>([
   {
     field: 'password',
     label: t('login.password'),
-    value: '',
-    component: 'InputPassword',
     colProps: {
       span: 24
     },
-    componentProps: {
-      style: {
-        width: '100%'
-      },
-      placeholder: t('login.passwordPlaceholder')
+    // 使用插槽 jsx 自定义formitem
+    formItemProps: {
+      slots: {
+        default: (formData) => {
+          return (
+            <div class="w-[100%] flex">
+              <ElInput
+                showPassword={true}
+                v-model={formData.password}
+                placeholder={t('login.passwordPlaceholder')}
+                // 按下enter键触发登录
+                onKeydown={(_e: any) => {
+                  if (_e.key === 'Enter') {
+                    signIn()
+                  }
+                }}
+              />
+            </div>
+          )
+        }
+      }
     }
   },
   {
