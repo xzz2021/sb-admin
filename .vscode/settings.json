@@ -2,13 +2,14 @@
     
     
       "i18n-ally.localesPaths": ["src/locales"],
-      "i18n-ally.enabledParsers": [ "json"], //这个最好加上，如果是其他格式，如ts，不加上就无效了
+      "i18n-ally.enabledParsers": [ "json", "ts"], //这个最好加上，如果是其他格式，如ts，不加上就无效了
       "i18n-ally.keystyle": "nested", // 翻译路径格式,
       "i18n-ally.sourceLanguage": "en", // 翻译源语言
       "i18n-ally.displayLanguage": "zh-CN", //显示语言， 这里也可以设置显示英文为en,
+      // "i18n-ally.enabledFrameworks": ["vue", "react"],
         // "i18n-ally.extract.keygenStrategy": "random", // 翻译字段命名采用随机字符 枚举['slug','random','empty']
       // "i18n-ally.extract.keygenStyle": "camelCase", // 翻译字段命名样式采用驼峰
-    
+
           //配置eslint
   "eslint.validate": [
     "javascript",  // 用eslint的规则检测js文件

@@ -1,5 +1,15 @@
 export default {
   common: {
+    addFail: '添加失败',
+    addSuccess: '添加成功',
+    editFail: '编辑失败',
+    editSuccess: '编辑成功',
+    deleteFail: '删除失败',
+    deleteSuccess: '删除成功',
+    resetFail: '重置失败',
+    resetSuccess: '重置成功',
+    saveFail: '保存失败',
+    saveSuccess: '保存成功',
     inputText: '请输入',
     selectText: '请选择',
     startTimeText: '开始时间',

@@ -595,6 +595,8 @@ export interface FormSchema {
    */
   label?: string
 
+  span?: number // 占多少分
+
   /**
    * col组件属性
    */

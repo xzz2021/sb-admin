@@ -6,7 +6,7 @@ const departmentList: any = []
 
 const citys = ['厦门总公司', '北京分公司', '上海分公司', '福州分公司', '深圳分公司', '杭州分公司']
 
-for (let i = 0; i < 5; i++) {
+for (let i = 0; i < 1; i++) {
   departmentList.push({
     // 部门名称
     departmentName: citys[i],

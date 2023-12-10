@@ -245,7 +245,7 @@ const signIn = async () => {
           userStore.setTokenKey(res.data.tokenKey)
           // 是否使用动态路由
           if (appStore.getDynamicRouter) {
-            getRole(res.data.userInfo.role || 'guest')
+            getRole(res.data.userInfo.role || '游客')
           } else {
             await permissionStore.generateRoutes('static').catch(() => {})
             permissionStore.getAddRouters.forEach((route) => {

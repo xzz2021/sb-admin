@@ -42,6 +42,7 @@ declare global {
     method?: AxiosMethod
     headers?: AxiosRequestHeaders
     responseType?: AxiosResponseType
+    id?: number | string
   }
 
   declare interface IResponse<T = any> {

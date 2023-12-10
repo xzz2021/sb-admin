@@ -1,5 +1,15 @@
 export default {
   common: {
+    addFail: 'add fail',
+    addSuccess: 'add success',
+    editFail: 'edit fail',
+    editSuccess: 'edit success',
+    deleteFail: 'delete fail',
+    deleteSuccess: 'delete success',
+    resetFail: 'reset fail',
+    resetSuccess: 'reset success',
+    saveFail: 'save fail',
+    saveSuccess: 'save success',
     inputText: 'Please input',
     selectText: 'Please select',
     startTimeText: 'Start time',
