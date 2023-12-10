@@ -4,7 +4,7 @@ import { deleteRoleApi, getRoleListApi } from '@/api/role'
 import { useTable } from '@/hooks/web/useTable'
 import { useI18n } from '@/hooks/web/useI18n'
 import { Table, TableColumn } from '@/components/Table'
-import { ElButton, ElTag } from 'element-plus'
+import { ElButton, ElMessage, ElTag } from 'element-plus'
 import { Search } from '@/components/Search'
 import { FormSchema } from '@/components/Form'
 import { ContentWrap } from '@/components/ContentWrap'
@@ -19,7 +19,7 @@ const { tableRegister, tableState, tableMethods } = useTable({
     const res = await getRoleListApi()
     return {
       list: res.data || [],
-      total: res.data.length
+      total: res.data.lenth
     }
   }
 })
@@ -137,12 +137,39 @@ const save = async () => {
 
 const deleteRow = async (row: any) => {
   const res = await deleteRoleApi(row.roleId)
-  console.log('🚀 ~ file: Role.vue:140 ~ deleteRow ~ res:', res)
+  try {
+    if (res['affected'] == 1) {
+      ElMessage({
+        type: 'success',
+        message: t('common.delSuccess')
+      })
+      // 删除成功  更新表格
+      dataList.value.splice(
+        dataList.value.findIndex((item) => item.roleId === row.roleId),
+        1
+      )
+    } else {
+      ElMessage({
+        type: 'error',
+        message: t('common.deleteFail')
+      })
+    }
+  } catch (e) {
+    ElMessage({
+      type: 'error',
+      message: '接口异常' + e
+    })
+  }
 }
 
 //  关闭面板
 const closeDialog = () => {
   dialogVisible.value = false
+}
+
+// 切换保存按钮状态
+const toggleSaveBtn = (value: string) => {
+  saveLoading.value = value == 'true' ? true : false
 }
 </script>
 
@@ -172,6 +199,7 @@ const closeDialog = () => {
       :current-row="currentRow"
       @updata-list-by-son="getList"
       @close-dialog-by-son="closeDialog"
+      @toggle-save-btn-by-son="toggleSaveBtn"
     />
     <Detail v-else :current-row="currentRow" />
 

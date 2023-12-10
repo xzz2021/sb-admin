@@ -150,14 +150,21 @@ const getMenuList = async () => {
 }
 getMenuList()
 
+interface Emits {
+  (e: 'updataListBySon'): void
+  (e: 'closeDialogBySon'): void
+  (e: 'toggleSaveBtnBySon', payload: string): void
+}
 //  触发父组件  更新角色列表功能   也可以采用前端 假push, 节省网络请求
-const emit = defineEmits(['updataListBySon', 'closeDialogBySon'])
+// const emit = defineEmits(['updataListBySon', 'closeDialogBySon', 'toggleSaveBtnBySon'])
+let emit = defineEmits<Emits>()
 const submit = async () => {
   const elForm = await getElFormExpose()
   const valid = await elForm?.validate().catch((err) => {
     console.log(err)
   })
   if (valid) {
+    emit('toggleSaveBtnBySon', 'true')
     const formData = await getFormData()
     // const checkedKeys = unref(treeRef)?.getCheckedKeys() || []
     // const data = filter(unref(treeData), (item: any) => {
@@ -165,12 +172,10 @@ const submit = async () => {
     // })
     // formData.menu = data || []
     formData.menu = '[]'
-    console.log('🚀 ~ file: Write.vue:168 ~ submit ~ formData:', formData)
     // return
     // console.log(formData)
     try {
       const res = await addRoleApi(formData)
-      console.log('🚀 ~ file: LoginForm.vue:217 ~ awaitformRef?.validate ~ res:', res)
       if (res) {
         ElMessage({
           message: t('common.addSuccess'),
@@ -188,6 +193,8 @@ const submit = async () => {
         message: t('common.addFail'),
         type: 'success'
       })
+    } finally {
+      emit('toggleSaveBtnBySon', 'false')
     }
   }
 }

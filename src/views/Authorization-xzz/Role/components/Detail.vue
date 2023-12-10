@@ -35,7 +35,6 @@ const getMenuList = async () => {
   const res = await getMenuListApi()
   if (res) {
     treeData.value = res.data.list
-    console.log('🚀 ~ file: Detail.vue:38 ~ getMenuList ~ treeData:', treeData)
     await nextTick()
   }
 }
