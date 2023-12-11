@@ -33,14 +33,13 @@ const defaultRequestInterceptors = (config: InternalAxiosRequestConfig) => {
 }
 
 const defaultResponseInterceptors = (response: AxiosResponse) => {
-  console.log('🚀 ~ file: config.ts:36 ~ defaultResponseInterceptors ~ response:', response)
-  // console.log('🚀 ~ file: config.ts:31 ~ defaultResponseInterceptors ~ response:', response)
   if (response?.config?.responseType === 'blob') {
     // 如果是文件流，直接过
     return response
     // } else if (response.data.code === SUCCESS_CODE) {
-  } else if (response.data.data) {
-    return response.data.data
+  } else if (response.data) {
+    return response.data
+    return response.data.data || response.data
   } else {
     ElMessage.error(response?.data?.message)
     if (response?.data?.code === 401) {

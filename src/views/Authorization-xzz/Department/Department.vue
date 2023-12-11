@@ -3,13 +3,14 @@ import { ContentWrap } from '@/components/ContentWrap'
 import { Search } from '@/components/Search'
 import { Dialog } from '@/components/Dialog'
 import { useI18n } from '@/hooks/web/useI18n'
-import { ElButton, ElTag } from 'element-plus'
+import { ElButton, ElMessage, ElTag } from 'element-plus'
 import { Table } from '@/components/Table'
 import {
   getDepartmentApi,
   getDepartmentTableApi,
   saveDepartmentApi,
-  deleteDepartmentApi
+  deleteDepartmentApi,
+  batchDeleteDepartmentApi
 } from '@/api/department'
 import type { DepartmentItem } from '@/api/department/types'
 import { useTable } from '@/hooks/web/useTable'
@@ -20,26 +21,64 @@ import { CrudSchema, useCrudSchemas } from '@/hooks/web/useCrudSchemas'
 
 const ids = ref<string[]>([])
 
+// 递归生成部门嵌套数组数据
+const getNestedArray: (arr: any[], pid: string) => any[] = (arr, pid = '1000') => {
+  // 创建一个空数组来保存嵌套的父子关系
+  var nestedArr: any[] = []
+  arr.map((item) => (item.value = item.id))
+  // console.log('🚀 ~ file: Department.vue:29 ~ arr:', arr)
+  // let id = arr['id']
+  // console.log('🚀 ~ file: Department.vue:28 ~ id:', id)
+  // arr['value'] = arr['id']
+  // 遍历数组中的每个元素
+  for (var i = 0; i < arr.length; i++) {
+    // 如果当前元素的pid等于给定的pid，则它是父节点
+    if (arr[i].pid === pid) {
+      // 使用递归调用辅助函数来查找子节点，并将它们添加到父节点的children属性中
+      arr[i].children = getNestedArray(arr, arr[i].id)
+      // 将当前父节点添加到嵌套数组中
+      nestedArr.push(arr[i])
+    }
+  }
+  // 返回嵌套的父子关系数组
+  return nestedArr
+}
+
 const { tableRegister, tableState, tableMethods } = useTable({
   fetchDataApi: async () => {
+    //此处用于表格展示数据
     const { currentPage, pageSize } = tableState
     const res = await getDepartmentTableApi({
       pageIndex: unref(currentPage),
       pageSize: unref(pageSize),
       ...unref(searchParams)
     })
+    // console.log('🚀 ~ file: Department.vue:31 ~ fetchDataApi: ~ res:', res)
+    // return {
+    //   list: res.data.list,
+    //   total: res.data.total
+    // }
+
+    let newList = getNestedArray(res.data, '1000')
+    // console.log('🚀 ~ file: Department.vue:137 ~ optionApi: ~ newList:', newList)
+
     return {
-      list: res.data.list,
-      total: res.data.total
+      list: newList,
+      total: newList.length
     }
   },
   fetchDelApi: async () => {
     const res = await deleteDepartmentApi(unref(ids))
     return !!res
+    // return null
   }
 })
+
+const { getElTableExpose } = tableMethods
+
 const { loading, dataList, total, currentPage, pageSize } = tableState
-const { getList, getElTableExpose, delList } = tableMethods
+// const { getList, getElTableExpose, delList } = tableMethods
+const { getList } = tableMethods
 
 const searchParams = ref({})
 const setSearchParams = (params: any) => {
@@ -80,7 +119,42 @@ const crudSchemas = reactive<CrudSchema[]>([
     }
   },
   {
-    field: 'id',
+    // 用于新增部门的上级部门 录入表单
+    field: 'pid',
+    // label: t('tableDemo.index'),
+    label: '上级部门',
+    table: {
+      hidden: true,
+      slots: {
+        default: (data: any) => {
+          return <>{data.row.id}</>
+        }
+      }
+    },
+    form: {
+      // hidden: true,
+      component: 'TreeSelect',
+      componentProps: {
+        renderAfterExpand: true,
+        // nodeKey: 'id',
+        // showCheckbox: true,
+        checkStrictly: true,
+        checkOnClickNode: true,
+        props: {
+          label: 'departmentName'
+        }
+      },
+      optionApi: async () => {
+        //此处用于表单输入数据获取
+        const res = await getDepartmentApi()
+        // return list
+        const newList = getNestedArray(res.data, '1000')
+        return newList
+      }
+    }
+  },
+  {
+    field: 'departmentName',
     label: t('userDemo.departmentName'),
     table: {
       slots: {
@@ -89,18 +163,50 @@ const crudSchemas = reactive<CrudSchema[]>([
         }
       }
     },
+    // form: {
+    //   component: 'TreeSelect',
+    //   componentProps: {
+    //     nodeKey: 'id',
+    //     props: {
+    //       label: 'departmentName'
+    //     }
+    //   },
+    //   optionApi: async () => {
+    //     const res = await getDepartmentApi()
+    //     return res.data.list
+    //   }
+    // },
     form: {
+      hidden: true,
       component: 'TreeSelect',
       componentProps: {
-        nodeKey: 'id',
+        renderAfterExpand: true,
+        // nodeKey: 'id',
+        // showCheckbox: true,
+        checkStrictly: true,
+        checkOnClickNode: true,
         props: {
           label: 'departmentName'
         }
       },
       optionApi: async () => {
+        //此处用于表单输入数据获取
         const res = await getDepartmentApi()
-        return res.data.list
+        const list: any[] = res.data
+        // return list
+        let newList = getNestedArray(list, '1000')
+        return newList
       }
+      /*
+        {
+    field: 'field76',
+    component: 'TreeSelect',
+    label: `${t('formDemo.default')}`,
+    componentProps: {
+      renderAfterExpand: false,
+      data: treeSelectData
+    }
+  },*/
     },
     detail: {
       slots: {
@@ -108,6 +214,19 @@ const crudSchemas = reactive<CrudSchema[]>([
           return <>{data.departmentName}</>
         }
       }
+    }
+  },
+  {
+    field: 'departmentName',
+    // label: t('userDemo.remark'),
+    label: '部门名称',
+    search: {
+      hidden: true
+    },
+    table: { hidden: true },
+    component: 'Input',
+    detail: {
+      hidden: true
     }
   },
   {
@@ -246,15 +365,58 @@ const AddAction = () => {
 
 const delLoading = ref(false)
 
-const delData = async (row: DepartmentItem | null) => {
-  const elTableExpose = await getElTableExpose()
-  ids.value = row
-    ? [row.id]
-    : elTableExpose?.getSelectionRows().map((v: DepartmentItem) => v.id) || []
-  delLoading.value = true
-  await delList(unref(ids).length).finally(() => {
-    delLoading.value = false
-  })
+const batchDel = async (arr: any[]) => {
+  const res = await batchDeleteDepartmentApi(arr)
+  try {
+    if (res['affected'] && res['affected'] != 0) {
+      ElMessage({
+        type: 'success',
+        message: t('common.delSuccess')
+      })
+      // 删除成功  更新表格
+      getList()
+    } else {
+      ElMessage({
+        type: 'error',
+        message: t('common.deleteFail')
+      })
+    }
+  } catch (e) {
+    ElMessage({
+      type: 'error',
+      message: '接口异常' + e
+    })
+  }
+}
+
+//  删除部门功能
+const delData = async (row: DepartmentItem | any) => {
+  if (row == null) {
+    //  新增 旁边的   删除按钮 功能
+    const elTableRef = await getElTableExpose()
+    const selections: any[] = elTableRef?.getSelectionRows()
+    // console.log('🚀 ~ file: Department.vue:397 ~ delData ~ selections:', selections)
+    if (selections.length == 0) return ElMessage({ type: 'error', message: '当前未选中任何项目!' })
+    //  获取所有项目的id 组成数组
+    const deleteItemsArr: string[] = selections.map((item) => item['id'])
+    // 生成所有id组成的string[] 发给后端批量删除
+    batchDel(deleteItemsArr)
+  } else if (row?.children.length > 0) {
+    // 选中父部门  及其 所有 子部门
+    console.log('当前项存在子项目,会一起删除')
+    ElMessage({ type: 'error', message: '当前项存在多个子项目,请单个删除' })
+  } else {
+    // 单个删除
+    batchDel([row.departmentId])
+  }
+  // const elTableExpose = await getElTableExpose()
+  // ids.value = row
+  //   ? [row.id]
+  //   : elTableExpose?.getSelectionRows().map((v: DepartmentItem) => v.id) || []
+  // delLoading.value = true
+  // await delList(unref(ids).length).finally(() => {
+  //   delLoading.value = false
+  // })
 }
 
 const action = (row: DepartmentItem, type: string) => {
@@ -284,6 +446,16 @@ const save = async () => {
       getList()
     }
   }
+}
+
+//  关闭面板
+const closeDialog = () => {
+  dialogVisible.value = false
+}
+
+// 切换保存按钮状态
+const toggleSaveBtn = (value: string) => {
+  saveLoading.value = value == 'true' ? true : false
 }
 </script>
 
@@ -317,6 +489,9 @@ const save = async () => {
       ref="writeRef"
       :form-schema="allSchemas.formSchema"
       :current-row="currentRow"
+      @updata-list-by-son="getList"
+      @close-dialog-by-son="closeDialog"
+      @toggle-save-btn-by-son="toggleSaveBtn"
     />
 
     <Detail

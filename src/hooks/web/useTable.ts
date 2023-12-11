@@ -11,7 +11,7 @@ interface UseTableConfig {
    */
   immediate?: boolean
   fetchDataApi: () => Promise<{
-    // data: any
+    // data?: any
     list?: any[]
     total?: number
   }>
@@ -81,6 +81,8 @@ export const useTable = (config: UseTableConfig) => {
       loading.value = true
       try {
         const res = await config?.fetchDataApi()
+        console.log('🚀 ~ file: useTable.ts:84 ~ getList: ~ res:', res)
+
         if (res) {
           dataList.value = res.list || []
           total.value = res.total || 0

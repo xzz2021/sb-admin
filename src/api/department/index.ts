@@ -1,7 +1,15 @@
 import request from '@/axios'
 import { DepartmentListResponse, DepartmentUserParams, DepartmentUserResponse } from './types'
 
+export const getDepartmentApi000 = () => {
+  return request.get<DepartmentListResponse>({ url: '/mock/department/list' })
+}
+
 export const getDepartmentApi = () => {
+  return request.get<any[]>({ url: '/api/department/getDepartmentTable' })
+}
+
+export const getDepartmentApi222 = () => {
   return request.get<DepartmentListResponse>({ url: '/mock/department/list' })
 }
 
@@ -21,12 +29,24 @@ export const saveDepartmentApi = (data: any) => {
   return request.post({ url: '/mock/department/save', data })
 }
 
-export const deleteDepartmentApi = (ids: string[] | number[]) => {
+export const deleteDepartmentApi00 = (ids: string[] | number[]) => {
   return request.post({ url: '/mock/department/delete', data: { ids } })
 }
 
-export const getDepartmentTableApi = (params: any) => {
+export const deleteDepartmentApi = (id: string) => {
+  return request.delete({ url: '/api/department/', id })
+}
+
+export const batchDeleteDepartmentApi = (data: string[]) => {
+  return request.post({ url: '/api/department/batchDelete', data })
+}
+
+export const getDepartmentTableApi0 = (params: any) => {
   return request.get({ url: '/mock/department/table/list', params })
+}
+
+export const getDepartmentTableApi = (params: any) => {
+  return request.get({ url: '/api/department/getDepartmentTable', params })
 }
 
 export const getDepartmentTableApi2 = (params: any) => {

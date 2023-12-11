@@ -17,9 +17,10 @@ const { t } = useI18n()
 const { tableRegister, tableState, tableMethods } = useTable({
   fetchDataApi: async () => {
     const res = await getRoleListApi()
+    console.log('🚀 ~ file: Role.vue:20 ~ fetchDataApi: ~ res:', res)
     return {
       list: res.data || [],
-      total: res.data.lenth
+      total: res.data.length || 0
     }
   }
 })

@@ -8,6 +8,14 @@ export const getRoleListApi = () => {
   return request.get({ url: '/api/role/getRoletable' })
 }
 
+export const addDepartmentApi = (data: any) => {
+  return request.post({ url: '/api/department/add', data })
+}
+
+export const deleteDepartmentApi = (id: number) => {
+  return request.delete({ url: '/api/department/', id })
+}
+
 interface addRoleType {
   role: string
   status: string
@@ -17,5 +25,5 @@ export const addRoleApi = (data: any) => {
 }
 
 export const deleteRoleApi = (id: number) => {
-  return request.delete({ url: `/api/role/`, id })
+  return request.delete({ url: '/api/role/', id })
 }

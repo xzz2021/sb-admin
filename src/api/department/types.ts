@@ -8,6 +8,10 @@ export interface DepartmentListResponse {
   list: DepartmentItem[]
 }
 
+// export interface xzzDepartmentListResponse {
+//   data: any[]
+// }
+
 export interface DepartmentUserParams {
   pageSize: number
   pageIndex: number
