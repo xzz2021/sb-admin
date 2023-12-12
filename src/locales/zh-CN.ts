@@ -1,7 +1,7 @@
 export default {
   common: {
-    addFail: '添加失败',
-    addSuccess: '添加成功',
+    addFail: '提交失败',
+    addSuccess: '提交成功',
     editFail: '编辑失败',
     editSuccess: '编辑成功',
     deleteFail: '删除失败',

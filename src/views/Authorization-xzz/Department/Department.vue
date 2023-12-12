@@ -9,7 +9,7 @@ import {
   getDepartmentApi,
   getDepartmentTableApi,
   saveDepartmentApi,
-  deleteDepartmentApi,
+  // deleteDepartmentApi,
   batchDeleteDepartmentApi
 } from '@/api/department'
 import type { DepartmentItem } from '@/api/department/types'
@@ -19,7 +19,7 @@ import Write from './components/Write.vue'
 import Detail from './components/Detail.vue'
 import { CrudSchema, useCrudSchemas } from '@/hooks/web/useCrudSchemas'
 
-const ids = ref<string[]>([])
+// const ids = ref<string[]>([])
 
 // 递归生成部门嵌套数组数据
 const getNestedArray: (arr: any[], pid: string) => any[] = (arr, pid = '1000') => {
@@ -66,12 +66,12 @@ const { tableRegister, tableState, tableMethods } = useTable({
       list: newList,
       total: newList.length
     }
-  },
-  fetchDelApi: async () => {
-    const res = await deleteDepartmentApi(unref(ids))
-    return !!res
-    // return null
   }
+  // fetchDelApi: async () => {
+  //   const res = await deleteDepartmentApi(unref(ids))
+  //   return !!res
+  //   // return null
+  // }
 })
 
 const { getElTableExpose } = tableMethods
@@ -119,6 +119,10 @@ const crudSchemas = reactive<CrudSchema[]>([
     }
   },
   {
+    detail: {
+      hidden: true
+    },
+    // formItemProps: { disabled: true },
     // 用于新增部门的上级部门 录入表单
     field: 'pid',
     // label: t('tableDemo.index'),
@@ -134,7 +138,15 @@ const crudSchemas = reactive<CrudSchema[]>([
     form: {
       // hidden: true,
       component: 'TreeSelect',
+      formItemProps: {
+        // required: true,
+        slots: {}
+      },
       componentProps: {
+        // onChange: (e) => {
+        //   console.log('🚀 ~ file: Department.vue:147 ~ e:', e)
+        // },
+
         renderAfterExpand: true,
         // nodeKey: 'id',
         // showCheckbox: true,
@@ -154,6 +166,9 @@ const crudSchemas = reactive<CrudSchema[]>([
     }
   },
   {
+    search: {
+      hidden: true
+    },
     field: 'departmentName',
     label: t('userDemo.departmentName'),
     table: {
@@ -367,8 +382,9 @@ const delLoading = ref(false)
 
 const batchDel = async (arr: any[]) => {
   const res = await batchDeleteDepartmentApi(arr)
+  console.log('🚀 ~ file: Department.vue:376 ~ batchDel ~ res:', res)
   try {
-    if (res['affected'] && res['affected'] != 0) {
+    if (res.data && res.data.affected != 0) {
       ElMessage({
         type: 'success',
         message: t('common.delSuccess')
@@ -419,7 +435,17 @@ const delData = async (row: DepartmentItem | any) => {
   // })
 }
 
-const action = (row: DepartmentItem, type: string) => {
+// const action = async (row: DepartmentItem, type: string) => {
+// const wait = async (seconds) => new Promise((resolve) => setTimeout(resolve, seconds * 1000))
+
+const action = async (row: any, type: string) => {
+  // if (row.pid == '1000') {
+  //   // console.log('🚀 ~ file: Department.vue:442 ~ action ~ writeRef?:', writeRef.value)
+  //   await wait(3)
+  //   console.log('🚀 ~ file: Department.vue:445 ~ action ~ writeRef:', writeRef)
+  //   return
+  //   return writeRef?.value?.checkPid()
+  // }
   dialogTitle.value = t(type === 'edit' ? 'exampleDemo.edit' : 'exampleDemo.detail')
   actionType.value = type
   currentRow.value = row

@@ -23,13 +23,16 @@ const props = defineProps({
   }
 })
 
+//  定义表单校验必填项
 const rules = reactive({
   id: [required()],
-  status: [required()]
+  pid: [required()],
+  status: [required()],
+  departmentName: [required()]
 })
 
 const { formRegister, formMethods } = useForm()
-const { setValues, getFormData, getElFormExpose } = formMethods
+const { setValues, getFormData, getElFormExpose, getFormItemExpose } = formMethods
 
 interface Emits {
   (e: 'updataListBySon'): void
@@ -38,6 +41,12 @@ interface Emits {
 }
 //  触发父组件  更新角色列表功能
 let emit = defineEmits<Emits>()
+
+const checkPid = async () => {
+  console.log('🚀 ~ file: Write.vue:49 ~ checkPid ~ checkPid:')
+  const getPidForm = await getFormItemExpose('pid')
+  console.log('🚀 ~ file: Write.vue:47 ~ checkPid ~ getPidForm:', getPidForm)
+}
 
 const submit = async () => {
   const elForm = await getElFormExpose()
@@ -85,7 +94,8 @@ watch(
 )
 
 defineExpose({
-  submit
+  submit,
+  checkPid
 })
 </script>
 
