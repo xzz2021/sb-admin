@@ -6,10 +6,11 @@ import { useValidator } from '@/hooks/web/useValidator'
 import { useI18n } from '@/hooks/web/useI18n'
 import { ElTree, ElCheckboxGroup, ElCheckbox, ElMessage } from 'element-plus'
 import { getMenuListApi } from '@/api/menu'
-// import { filter, eachTree } from '@/utils/tree'
-import { eachTree } from '@/utils/tree'
+import { filter, eachTree } from '@/utils/tree'
+// import { eachTree } from '@/utils/tree'
 import { findIndex } from '@/utils'
 import { addRoleApi } from '@/api/role'
+import { useUserStore } from '@/store/modules/user'
 
 const { t } = useI18n()
 
@@ -158,20 +159,28 @@ interface Emits {
 //  触发父组件  更新角色列表功能   也可以采用前端 假push, 节省网络请求
 // const emit = defineEmits(['updataListBySon', 'closeDialogBySon', 'toggleSaveBtnBySon'])
 let emit = defineEmits<Emits>()
+
 const submit = async () => {
   const elForm = await getElFormExpose()
   const valid = await elForm?.validate().catch((err) => {
     console.log(err)
   })
   if (valid) {
+    //  获取当前用户
+    // const userStore = useUserStore()
+    // const aaa = userStore.getUserInfo
+
     emit('toggleSaveBtnBySon', 'true')
     const formData = await getFormData()
-    // const checkedKeys = unref(treeRef)?.getCheckedKeys() || []
-    // const data = filter(unref(treeData), (item: any) => {
-    //   return checkedKeys.includes(item.id)
-    // })
-    // formData.menu = data || []
-    formData.menu = '[]'
+
+    const checkedKeys = unref(treeRef)?.getCheckedKeys() || []
+    const data = filter(unref(treeData), (item: any) => {
+      return checkedKeys.includes(item.id)
+    })
+    formData.menu = data || []
+    // console.log('🚀 ~ file: Write.vue:175 ~ submit ~ formData:', formData)
+    // return
+    // formData.menu = '[]'
     // return
     // console.log(formData)
     try {
@@ -191,7 +200,7 @@ const submit = async () => {
     } catch (err) {
       ElMessage({
         message: t('common.addFail'),
-        type: 'success'
+        type: 'error'
       })
     } finally {
       emit('toggleSaveBtnBySon', 'false')

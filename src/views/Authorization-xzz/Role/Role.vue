@@ -138,8 +138,9 @@ const save = async () => {
 
 const deleteRow = async (row: any) => {
   const res = await deleteRoleApi(row.roleId)
+  console.log('🚀 ~ file: Role.vue:141 ~ deleteRow ~ res:', res)
   try {
-    if (res['affected'] == 1) {
+    if (res?.data?.affected == 1) {
       ElMessage({
         type: 'success',
         message: t('common.delSuccess')

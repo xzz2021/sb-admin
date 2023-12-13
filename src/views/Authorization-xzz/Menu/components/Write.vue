@@ -4,8 +4,8 @@ import { useForm } from '@/hooks/web/useForm'
 import { PropType, reactive, watch, ref, unref } from 'vue'
 import { useValidator } from '@/hooks/web/useValidator'
 import { useI18n } from '@/hooks/web/useI18n'
-import { getMenuListApi } from '@/api/menu'
-import { ElTag, ElButton } from 'element-plus'
+import { addMenuApi, getMenuListApi } from '@/api/menu'
+import { ElTag, ElButton, ElMessage } from 'element-plus'
 import AddButtonPermission from './AddButtonPermission.vue'
 
 const { t } = useI18n()
@@ -58,6 +58,16 @@ const formSchema = reactive<FormSchema[]>([
                 field: 'component',
                 path: 'componentProps.disabled',
                 value: false
+              },
+              {
+                field: 'permissionList',
+                path: 'hidden',
+                value: false
+              },
+              {
+                field: 'parentId',
+                path: 'componentProps.disabled',
+                value: false
               }
             ])
             setValues({
@@ -67,6 +77,17 @@ const formSchema = reactive<FormSchema[]>([
             setSchema([
               {
                 field: 'component',
+                path: 'componentProps.disabled',
+                value: true
+              },
+              //  当选择目录项目, 也就是一级菜单时, 隐藏权限录入按钮功能
+              {
+                field: 'permissionList',
+                path: 'hidden',
+                value: true
+              },
+              {
+                field: 'parentId',
                 path: 'componentProps.disabled',
                 value: true
               }
@@ -87,10 +108,12 @@ const formSchema = reactive<FormSchema[]>([
     }
   },
   {
+    // hidden: true,
     field: 'parentId',
     label: '父级菜单',
     component: 'TreeSelect',
     componentProps: {
+      disabled: true,
       nodeKey: 'id',
       props: {
         label: 'title',
@@ -184,6 +207,7 @@ const formSchema = reactive<FormSchema[]>([
     }
   },
   {
+    hidden: true,
     field: 'permissionList',
     label: t('menu.permission'),
     component: 'CheckboxGroup',
@@ -262,6 +286,33 @@ const submit = async () => {
   })
   if (valid) {
     const formData = await getFormData()
+    console.log('🚀 ~ file: Write.vue:289 ~ submit ~ formData:', formData)
+    return
+    try {
+      const res = await addMenuApi(formData)
+      console.log('🚀 ~ file: Write.vue:292 ~ submit ~ res:', res)
+
+      return
+      if (res) {
+        ElMessage({
+          message: t('common.addSuccess'),
+          type: 'success'
+        })
+        //  触发父组件  更新角色列表功能   也可以采用前端 假push, 节省网络请求
+        // emit('updataListBySon')
+        // // 清空表单并关闭dialog
+        // emit('closeDialogBySon')
+        const elFormExpose = await getElFormExpose()
+        elFormExpose?.resetFields()
+      }
+    } catch (err) {
+      ElMessage({
+        message: t('common.addFail'),
+        type: 'error'
+      })
+    } finally {
+      // emit('toggleSaveBtnBySon', 'false')
+    }
     return formData
   }
 }
@@ -319,6 +370,7 @@ defineExpose({
   submit
 })
 
+// 添加权限按钮
 const confirm = async (data: any) => {
   const formData = await getFormData()
   setValues({

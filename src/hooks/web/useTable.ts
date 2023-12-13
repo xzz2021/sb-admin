@@ -94,6 +94,23 @@ export const useTable = (config: UseTableConfig) => {
       }
     },
 
+    getListXzz: async () => {
+      loading.value = true
+      try {
+        const res = await config?.fetchDataApi()
+        console.log('🚀 ~ file: useTable.ts:84 ~ getList: ~ res:', res)
+
+        if (res) {
+          dataList.value = res.list || []
+          total.value = res.total || 0
+        }
+      } catch (err) {
+        console.log('fetchDataApi error')
+      } finally {
+        loading.value = false
+      }
+    },
+
     /**
      * @description 设置table组件的props
      * @param props table组件的props

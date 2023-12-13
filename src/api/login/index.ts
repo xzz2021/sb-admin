@@ -2,7 +2,7 @@ import request from '@/axios'
 import type { UserRegisterType, UserType } from './types'
 
 interface RoleParams {
-  roleName: string
+  rolesArr: any[]
 }
 
 // export const loginApi2 = (data: UserType): Promise<IResponse<UserType>> => {
@@ -45,10 +45,11 @@ export const getTestRoleApi = (params: RoleParams): Promise<IResponse<string[]>>
   return request.get({ url: '/mock/role/list2', params })
 }
 
+//  根据用户角色数组  获取菜单
 export const getAdminRoleApi = (
   params: RoleParams
 ): Promise<IResponse<AppCustomRouteRecordRaw[]>> => {
-  return request.get({ url: 'api/role/getMenu', params })
+  return request.get({ url: 'api/menu/getMenu', params })
 }
 
 //  检查token是否过期

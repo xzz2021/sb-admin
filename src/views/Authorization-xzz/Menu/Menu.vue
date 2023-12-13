@@ -1,6 +1,6 @@
 <script setup lang="tsx">
 import { reactive, ref, unref } from 'vue'
-import { getMenuListApi } from '@/api/menu'
+import { getAllMenuListApi } from '@/api/menu'
 import { useTable } from '@/hooks/web/useTable'
 import { useI18n } from '@/hooks/web/useI18n'
 import { Table, TableColumn } from '@/components/Table'
@@ -17,9 +17,9 @@ const { t } = useI18n()
 
 const { tableRegister, tableState, tableMethods } = useTable({
   fetchDataApi: async () => {
-    const res = await getMenuListApi()
+    const res = await getAllMenuListApi()
     return {
-      list: res.data.list || []
+      list: res.data || []
     }
   }
 })
@@ -148,6 +148,7 @@ const writeRef = ref<ComponentRef<typeof Write>>()
 const saveLoading = ref(false)
 
 const action = (row: any, type: string) => {
+  console.log('🚀 ~ file: Menu.vue:151 ~ action ~ row:', row)
   dialogTitle.value = t(type === 'edit' ? 'exampleDemo.edit' : 'exampleDemo.detail')
   actionType.value = type
   currentRow.value = row

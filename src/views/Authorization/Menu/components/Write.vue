@@ -247,6 +247,7 @@ const formSchema = reactive<FormSchema[]>([
 ])
 
 const rules = reactive({
+  // parentId: [required()],
   component: [required()],
   path: [required()],
   'meta.title': [required()]
