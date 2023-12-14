@@ -106,51 +106,72 @@ export const asyncRouterMap: AppRouteRecordRaw[] = [
   //     }
   //   ]
   // },
-  {
-    path: '/authorization-xzz',
-    component: Layout,
-    redirect: '/authorization/user-xzz',
-    name: 'Authorization-xzz',
-    meta: {
-      title: t('router.authorization'),
-      icon: 'eos-icons:role-binding',
-      alwaysShow: true
-    },
-    children: [
-      // {
-      //   path: 'department-xzz',
-      //   component: () => import('@/views/Authorization-xzz/Department/Department.vue'),
-      //   name: 'Department-xzz',
-      //   meta: {
-      //     title: t('router.department')
-      //   }
-      // },
-      {
-        path: 'user-xzz',
-        component: () => import('@/views/Authorization-xzz/User/User.vue'),
-        name: 'User-xzz',
-        meta: {
-          title: t('router.user')
-        }
-      },
-      {
-        path: 'menu-xzz',
-        component: () => import('@/views/Authorization-xzz/Menu/Menu.vue'),
-        name: 'Menu-xzz',
-        meta: {
-          title: t('router.menuManagement')
-        }
-      },
-      {
-        path: 'role-xzz',
-        component: () => import('@/views/Authorization-xzz/Role/Role.vue'),
-        name: 'Role-xzz',
-        meta: {
-          title: t('router.role')
-        }
-      }
-    ]
-  },
+  // {
+  //   path: '/datascan-xzz',
+  //   component: Layout,
+  //   redirect: '/datascan/tableone-xzz',
+  //   name: 'Datascan-xzz',
+  //   meta: {
+  //     title: '数据面板',
+  //     icon: 'eos-icons:role-binding',
+  //     alwaysShow: false
+  //   },
+  //   children: [
+  //     {
+  //       path: 'tableone-xzz',
+  //       component: () => import('@/views/Datascan-xzz/Tableone/Tableone.vue'),
+  //       name: 'Tableone-xzz',
+  //       meta: {
+  //         title: '表格一'
+  //       }
+  //     }
+  //   ]
+  // },
+  // {
+  //   path: '/authorization-xzz',
+  //   component: Layout,
+  //   redirect: '/authorization/user-xzz',
+  //   name: 'Authorization-xzz',
+  //   meta: {
+  //     title: t('router.authorization'),
+  //     icon: 'eos-icons:role-binding',
+  //     alwaysShow: true
+  //   },
+  //   children: [
+  //     // {
+  //     //   path: 'department-xzz',
+  //     //   component: () => import('@/views/Authorization-xzz/Department/Department.vue'),
+  //     //   name: 'Department-xzz',
+  //     //   meta: {
+  //     //     title: t('router.department')
+  //     //   }
+  //     // },
+  //     {
+  //       path: 'user-xzz',
+  //       component: () => import('@/views/Authorization-xzz/User/User.vue'),
+  //       name: 'User-xzz',
+  //       meta: {
+  //         title: t('router.user')
+  //       }
+  //     },
+  //     {
+  //       path: 'menu-xzz',
+  //       component: () => import('@/views/Authorization-xzz/Menu/Menu.vue'),
+  //       name: 'Menu-xzz',
+  //       meta: {
+  //         title: t('router.menuManagement')
+  //       }
+  //     },
+  //     {
+  //       path: 'role-xzz',
+  //       component: () => import('@/views/Authorization-xzz/Role/Role.vue'),
+  //       name: 'Role-xzz',
+  //       meta: {
+  //         title: t('router.role')
+  //       }
+  //     }
+  //   ]
+  // },
   {
     path: '/guide',
     component: Layout,

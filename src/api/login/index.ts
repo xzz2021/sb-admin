@@ -45,7 +45,7 @@ export const getTestRoleApi = (params: RoleParams): Promise<IResponse<string[]>>
   return request.get({ url: '/mock/role/list2', params })
 }
 
-//  根据用户角色数组  获取菜单
+//  根据用户角色数组  获取当前用户的菜单
 export const getAdminRoleApi = (
   params: RoleParams
 ): Promise<IResponse<AppCustomRouteRecordRaw[]>> => {

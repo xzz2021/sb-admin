@@ -292,7 +292,7 @@ const getRole = async (rolesArr: any[]) => {
         await getAdminRoleApi(params)
       : await getTestRoleApi(params)
   if (res && res.data) {
-    console.log('🚀 ~ file: LoginForm.vue:302 ~ getRole ~ res:', res)
+    // console.log('🚀 ~ file: LoginForm.vue:302 ~ getRole ~ res:', res)
     //将meta.title赋值给菜单自身title, 以符合数据格式框架要求
     const backendMenuAndBtnArr = res.data
     backendMenuAndBtnArr.map((item) => {
@@ -305,7 +305,7 @@ const getRole = async (rolesArr: any[]) => {
     //  需要转换成带children的嵌套数据格式
     let nestedArr = formatToTree(backendMenuAndBtnArr, undefined)
     nestedArr = nestedArr.concat(adminList)
-    console.log('🚀 ~ file: LoginForm.vue:305 ~ getRole ~ nestedArr:', nestedArr)
+    // console.log('🚀 ~ file: LoginForm.vue:305 ~ getRole ~ nestedArr:', nestedArr)
     // //  这里把游客默认菜单 和 后端经角色权限获取的菜单 进行合并  否则  只显示游客的
     const routers = nestedArr || []
     // const routers = backendMenuAndBtnArr || []

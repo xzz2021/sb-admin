@@ -68,6 +68,27 @@ const adminList = [
   //   ]
   // },
   {
+    path: '/datascan-xzz',
+    component: '#',
+    redirect: '/datascan/tableone-xzz',
+    name: 'Datascan-xzz',
+    meta: {
+      title: '数据面板',
+      icon: 'eos-icons:role-binding',
+      alwaysShow: true
+    },
+    children: [
+      {
+        path: 'tableone-xzz',
+        component: 'views/Datascan-xzz/Tableone/Tableone',
+        name: 'Tableone-xzz',
+        meta: {
+          title: '表格一'
+        }
+      }
+    ]
+  },
+  {
     path: '/dashboard',
     component: '#',
     redirect: '/dashboard/Workplace',
