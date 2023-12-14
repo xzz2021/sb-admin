@@ -58,17 +58,17 @@ const formSchema = reactive<FormSchema[]>([
                 field: 'component',
                 path: 'componentProps.disabled',
                 value: false
-              },
-              {
-                field: 'permissionList',
-                path: 'hidden',
-                value: false
-              },
-              {
-                field: 'parentId',
-                path: 'componentProps.disabled',
-                value: false
               }
+              // {
+              //   field: 'permissionList',
+              //   path: 'hidden',
+              //   value: false
+              // },
+              // {
+              //   field: 'parentId',
+              //   path: 'componentProps.disabled',
+              //   value: false
+              // }
             ])
             setValues({
               component: unref(cacheComponent)
@@ -79,18 +79,18 @@ const formSchema = reactive<FormSchema[]>([
                 field: 'component',
                 path: 'componentProps.disabled',
                 value: true
-              },
-              //  当选择目录项目, 也就是一级菜单时, 隐藏权限录入按钮功能
-              {
-                field: 'permissionList',
-                path: 'hidden',
-                value: true
-              },
-              {
-                field: 'parentId',
-                path: 'componentProps.disabled',
-                value: true
               }
+              //  当选择目录项目, 也就是一级菜单时, 隐藏权限录入按钮功能
+              // {
+              //   field: 'permissionList',
+              //   path: 'hidden',
+              //   value: true
+              // },
+              // {
+              //   field: 'parentId',
+              //   path: 'componentProps.disabled',
+              //   value: true
+              // }
             ])
 
             if (formData.parentId === void 0) {
@@ -113,7 +113,7 @@ const formSchema = reactive<FormSchema[]>([
     label: '父级菜单',
     component: 'TreeSelect',
     componentProps: {
-      disabled: true,
+      // disabled: true,
       nodeKey: 'id',
       props: {
         label: 'title',
@@ -207,7 +207,7 @@ const formSchema = reactive<FormSchema[]>([
     }
   },
   {
-    hidden: true,
+    // hidden: true,
     field: 'permissionList',
     label: t('menu.permission'),
     component: 'CheckboxGroup',
@@ -272,6 +272,7 @@ const formSchema = reactive<FormSchema[]>([
 
 const rules = reactive({
   component: [required()],
+  name: [required()],
   path: [required()],
   'meta.title': [required()]
 })
@@ -287,12 +288,12 @@ const submit = async () => {
   if (valid) {
     const formData = await getFormData()
     console.log('🚀 ~ file: Write.vue:289 ~ submit ~ formData:', formData)
-    return
+    // return
     try {
       const res = await addMenuApi(formData)
       console.log('🚀 ~ file: Write.vue:292 ~ submit ~ res:', res)
 
-      return
+      // return
       if (res) {
         ElMessage({
           message: t('common.addSuccess'),

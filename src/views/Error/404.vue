@@ -26,6 +26,8 @@ onMounted(async () => {
 </script>
 
 <template>
-  <Error @error-click="errorClick" />
-  <div @click="clearInfo">清空信息</div>
+  <div>
+    <Error @error-click="errorClick" />
+    <div @click="clearInfo">清空信息</div>
+  </div>
 </template>

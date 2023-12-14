@@ -8,6 +8,7 @@ import { NO_RESET_WHITE_LIST } from '@/constants'
 const { t } = useI18n()
 
 export const constantRouterMap: AppRouteRecordRaw[] = [
+  // 这里是菜单元数据 ,需要和后端比对 一致才能用 ???  不需要!!!
   {
     path: '/',
     component: Layout,
@@ -57,38 +58,38 @@ export const constantRouterMap: AppRouteRecordRaw[] = [
 ]
 
 export const asyncRouterMap: AppRouteRecordRaw[] = [
-  {
-    path: '/dashboard',
-    component: Layout,
-    redirect: '/dashboard/workplace',
-    name: 'Dashboard',
-    meta: {
-      title: t('router.dashboard'),
-      icon: 'ant-design:dashboard-filled',
-      alwaysShow: true
-    },
-    children: [
-      // {
-      //   path: 'analysis',
-      //   component: () => import('@/views/Dashboard/Analysis.vue'),
-      //   name: 'Analysis',
-      //   meta: {
-      //     title: t('router.analysis'),
-      //     noCache: true,
-      //     affix: true
-      //   }
-      // },
-      {
-        path: 'workplace',
-        component: () => import('@/views/Dashboard/Workplace.vue'),
-        name: 'Workplace',
-        meta: {
-          title: t('router.workplace'),
-          noCache: true
-        }
-      }
-    ]
-  },
+  // {
+  //   path: '/dashboard-xzz',
+  //   component: Layout,
+  //   redirect: '/dashboard-xzz/workplace',
+  //   name: 'Dashboard-xzz',
+  //   meta: {
+  //     title: t('router.dashboard'),
+  //     icon: 'ant-design:dashboard-filled',
+  //     alwaysShow: true
+  //   },
+  //   children: [
+  //     // {
+  //     //   path: 'analysis',
+  //     //   component: () => import('@/views/Dashboard/Analysis.vue'),
+  //     //   name: 'Analysis',
+  //     //   meta: {
+  //     //     title: t('router.analysis'),
+  //     //     noCache: true,
+  //     //     affix: true
+  //     //   }
+  //     // },
+  //     {
+  //       path: 'workplace-xzz',
+  //       component: () => import('@/views/Dashboard-xzz/Workplace.vue'),
+  //       name: 'Workplace-xzz',
+  //       meta: {
+  //         title: t('router.workplace'),
+  //         noCache: true
+  //       }
+  //     }
+  //   ]
+  // },
   // {
   //   path: '/external-link',
   //   component: Layout,
@@ -105,6 +106,51 @@ export const asyncRouterMap: AppRouteRecordRaw[] = [
   //     }
   //   ]
   // },
+  {
+    path: '/authorization-xzz',
+    component: Layout,
+    redirect: '/authorization/user-xzz',
+    name: 'Authorization-xzz',
+    meta: {
+      title: t('router.authorization'),
+      icon: 'eos-icons:role-binding',
+      alwaysShow: true
+    },
+    children: [
+      // {
+      //   path: 'department-xzz',
+      //   component: () => import('@/views/Authorization-xzz/Department/Department.vue'),
+      //   name: 'Department-xzz',
+      //   meta: {
+      //     title: t('router.department')
+      //   }
+      // },
+      {
+        path: 'user-xzz',
+        component: () => import('@/views/Authorization-xzz/User/User.vue'),
+        name: 'User-xzz',
+        meta: {
+          title: t('router.user')
+        }
+      },
+      {
+        path: 'menu-xzz',
+        component: () => import('@/views/Authorization-xzz/Menu/Menu.vue'),
+        name: 'Menu-xzz',
+        meta: {
+          title: t('router.menuManagement')
+        }
+      },
+      {
+        path: 'role-xzz',
+        component: () => import('@/views/Authorization-xzz/Role/Role.vue'),
+        name: 'Role-xzz',
+        meta: {
+          title: t('router.role')
+        }
+      }
+    ]
+  },
   {
     path: '/guide',
     component: Layout,

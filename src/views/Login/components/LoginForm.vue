@@ -14,6 +14,7 @@ import { useValidator } from '@/hooks/web/useValidator'
 import { Icon } from '@/components/Icon'
 import { useUserStore } from '@/store/modules/user'
 import { onMounted } from 'vue'
+import adminList from './list'
 
 const { required } = useValidator()
 
@@ -267,21 +268,18 @@ const signIn = async () => {
   })
 }
 
-const getNestedArray: (arr: any[], pid: string) => any[] = (arr, pid = '1000') => {
-  // 创建一个空数组来保存嵌套的父子关系
-  var nestedArr: any[] = []
-  // 遍历数组中的每个元素
-  for (var i = 0; i < arr.length; i++) {
-    // 如果当前元素的pid等于给定的pid，则它是父节点
-    if (arr[i].pid === pid || arr[i].pid.length < 10) {
-      // 使用递归调用辅助函数来查找子节点，并将它们添加到父节点的children属性中
-      arr[i].children = getNestedArray(arr, arr[i].id)
-      // 将当前父节点添加到嵌套数组中
-      nestedArr.push(arr[i])
-    }
-  }
-  // 返回嵌套的父子关系数组
-  return nestedArr
+const formatToTree = (ary: any[], pid: number | undefined) => {
+  return ary
+    .filter((item) =>
+      // 如果没有父id（第一次递归的时候）将所有父级查询出来
+      // 这里认为 item.parentId === 1 就是最顶层 需要根据业务调整
+      pid === undefined ? item.parentId === null : item.parentId === pid
+    )
+    .map((item) => {
+      // 通过父节点ID查询所有子节点
+      item.children = formatToTree(ary, item.id)
+      return item
+    })
 }
 
 // 根据用户角色信息 获取  菜单
@@ -295,13 +293,22 @@ const getRole = async (rolesArr: any[]) => {
       : await getTestRoleApi(params)
   if (res && res.data) {
     console.log('🚀 ~ file: LoginForm.vue:302 ~ getRole ~ res:', res)
+    //将meta.title赋值给菜单自身title, 以符合数据格式框架要求
+    const backendMenuAndBtnArr = res.data
+    backendMenuAndBtnArr.map((item) => {
+      item.title = item.meta?.title || ''
+    })
+    adminList.map((item) => {
+      item['title'] = item.meta?.title || ''
+    })
     // 这里是从后端拿到扁平的菜单数据
     //  需要转换成带children的嵌套数据格式
-    // const nestedArr = getNestedArray(res.data, '1000')
-    // console.log('🚀 ~ file: LoginForm.vue:305 ~ getRole ~ nestedArr:', nestedArr)
-    //  这里把游客默认菜单 和 后端经角色权限获取的菜单 进行合并  否则  只显示游客的
-    // const routers = nestedArr || []
-    const routers = res.data || []
+    let nestedArr = formatToTree(backendMenuAndBtnArr, undefined)
+    nestedArr = nestedArr.concat(adminList)
+    console.log('🚀 ~ file: LoginForm.vue:305 ~ getRole ~ nestedArr:', nestedArr)
+    // //  这里把游客默认菜单 和 后端经角色权限获取的菜单 进行合并  否则  只显示游客的
+    const routers = nestedArr || []
+    // const routers = backendMenuAndBtnArr || []
     userStore.setRoleRouters(routers)
     appStore.getDynamicRouter && appStore.getServerDynamicRouter
       ? await permissionStore.generateRoutes('server', routers).catch(() => {})
