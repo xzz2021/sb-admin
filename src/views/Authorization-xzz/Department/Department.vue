@@ -44,6 +44,21 @@ const getNestedArray: (arr: any[], pid: string) => any[] = (arr, pid = '1000') =
   return nestedArr
 }
 
+const formatToTree = (arr: any[], pid: number | undefined) => {
+  arr.map((item) => (item.value = item.id))
+  return arr
+    .filter((item) =>
+      // 如果没有父id（第一次递归的时候）将所有父级查询出来
+      // 这里认为 item.parentId === 1 就是最顶层 需要根据业务调整
+      pid === undefined ? item.parentId === null : item.parentId === pid
+    )
+    .map((item) => {
+      // 通过父节点ID查询所有子节点
+      item.children = formatToTree(arr, item.id)
+      return item
+    })
+}
+
 const { tableRegister, tableState, tableMethods } = useTable({
   fetchDataApi: async () => {
     //此处用于表格展示数据
@@ -59,9 +74,9 @@ const { tableRegister, tableState, tableMethods } = useTable({
     //   total: res.data.total
     // }
 
-    let newList = getNestedArray(res.data, '1000')
+    let newList = formatToTree(res.data, undefined)
     // console.log('🚀 ~ file: Department.vue:137 ~ optionApi: ~ newList:', newList)
-
+    // 返回带有嵌套数据的数结构
     return {
       list: newList,
       total: newList.length
@@ -124,7 +139,7 @@ const crudSchemas = reactive<CrudSchema[]>([
     },
     // formItemProps: { disabled: true },
     // 用于新增部门的上级部门 录入表单
-    field: 'pid',
+    field: 'parentId',
     // label: t('tableDemo.index'),
     label: '上级部门',
     table: {
@@ -160,7 +175,7 @@ const crudSchemas = reactive<CrudSchema[]>([
         //此处用于表单输入数据获取
         const res = await getDepartmentApi()
         // return list
-        const newList = getNestedArray(res.data, '1000')
+        const newList = formatToTree(res.data, undefined)
         return newList
       }
     }
@@ -382,7 +397,7 @@ const delLoading = ref(false)
 
 const batchDel = async (arr: any[]) => {
   const res = await batchDeleteDepartmentApi(arr)
-  console.log('🚀 ~ file: Department.vue:376 ~ batchDel ~ res:', res)
+  console.log('🚀 ~ file: Department.vue:400 ~ batchDel ~ res:', res)
   try {
     if (res.data && res.data.affected != 0) {
       ElMessage({
@@ -407,6 +422,7 @@ const batchDel = async (arr: any[]) => {
 
 //  删除部门功能
 const delData = async (row: DepartmentItem | any) => {
+  console.log('🚀 ~ file: Department.vue:425 ~ delData ~ row:', row)
   if (row == null) {
     //  新增 旁边的   删除按钮 功能
     const elTableRef = await getElTableExpose()
@@ -423,7 +439,7 @@ const delData = async (row: DepartmentItem | any) => {
     ElMessage({ type: 'error', message: '当前项存在多个子项目,请单个删除' })
   } else {
     // 单个删除
-    batchDel([row.departmentId])
+    batchDel([row.id])
   }
   // const elTableExpose = await getElTableExpose()
   // ids.value = row

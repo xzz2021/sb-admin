@@ -12,7 +12,7 @@ const { required } = useValidator()
 const formSchema = reactive<FormSchema[]>([
   {
     field: 'label',
-    label: 'label',
+    label: '权限名称',
     component: 'Input',
     colProps: {
       span: 24
@@ -20,7 +20,7 @@ const formSchema = reactive<FormSchema[]>([
   },
   {
     field: 'value',
-    label: 'value',
+    label: '绑定值',
     component: 'Input',
     colProps: {
       span: 24

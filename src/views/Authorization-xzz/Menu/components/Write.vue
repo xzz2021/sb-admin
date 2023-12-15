@@ -299,7 +299,7 @@ const submit = async () => {
           message: t('common.addSuccess'),
           type: 'success'
         })
-        //  触发父组件  更新角色列表功能   也可以采用前端 假push, 节省网络请求
+        //  触发父组件  更新菜单列表功能
         // emit('updataListBySon')
         // // 清空表单并关闭dialog
         // emit('closeDialogBySon')
