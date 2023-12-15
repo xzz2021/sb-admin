@@ -277,9 +277,17 @@ const rules = reactive({
   'meta.title': [required()]
 })
 
+interface Emits {
+  (e: 'updataListBySon'): void
+  (e: 'closeDialogBySon'): void
+  (e: 'toggleSaveBtnBySon', payload: string): void
+}
+
 const { formRegister, formMethods } = useForm()
 const { setValues, getFormData, getElFormExpose, setSchema } = formMethods
 
+//  触发父组件  更新角色列表功能
+let emit = defineEmits<Emits>()
 const submit = async () => {
   const elForm = await getElFormExpose()
   const valid = await elForm?.validate().catch((err) => {
@@ -287,11 +295,9 @@ const submit = async () => {
   })
   if (valid) {
     const formData = await getFormData()
-    console.log('🚀 ~ file: Write.vue:289 ~ submit ~ formData:', formData)
     // return
     try {
       const res = await addMenuApi(formData)
-      console.log('🚀 ~ file: Write.vue:292 ~ submit ~ res:', res)
 
       // return
       if (res) {
@@ -300,7 +306,7 @@ const submit = async () => {
           type: 'success'
         })
         //  触发父组件  更新菜单列表功能
-        // emit('updataListBySon')
+        emit('updataListBySon')
         // // 清空表单并关闭dialog
         // emit('closeDialogBySon')
         const elFormExpose = await getElFormExpose()
@@ -312,7 +318,7 @@ const submit = async () => {
         type: 'error'
       })
     } finally {
-      // emit('toggleSaveBtnBySon', 'false')
+      emit('toggleSaveBtnBySon', 'false')
     }
     return formData
   }

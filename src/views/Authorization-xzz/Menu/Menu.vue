@@ -174,6 +174,11 @@ const save = async () => {
     }, 1000)
   }
 }
+
+// 切换保存按钮状态
+const toggleSaveBtn = (value: string) => {
+  saveLoading.value = value == 'true' ? true : false
+}
 </script>
 
 <template>
@@ -193,7 +198,13 @@ const save = async () => {
   </ContentWrap>
 
   <Dialog v-model="dialogVisible" :title="dialogTitle">
-    <Write v-if="actionType !== 'detail'" ref="writeRef" :current-row="currentRow" />
+    <Write
+      v-if="actionType !== 'detail'"
+      ref="writeRef"
+      :current-row="currentRow"
+      @updata-list-by-son="getList"
+      @toggle-save-btn-by-son="toggleSaveBtn"
+    />
 
     <Detail v-if="actionType === 'detail'" :current-row="currentRow" />
 
