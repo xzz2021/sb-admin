@@ -6,7 +6,6 @@ import { useI18n } from '@/hooks/web/useI18n'
 import { ElButton, ElTag } from 'element-plus'
 import { Table } from '@/components/Table'
 import {
-  getDepartmentApi,
   saveDepartmentApi,
   deleteDepartmentApi,
   getDepartmentTableApi01,
