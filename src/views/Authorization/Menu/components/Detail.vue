@@ -82,13 +82,14 @@ const detailSchema = ref<DescriptionsSchema[]>([
     slots: {
       default: (data: any) => (
         <>
-          {data?.permissionList?.map((v) => {
-            return (
-              <ElTag class="mr-1" key={v.value}>
-                {v.label}
-              </ElTag>
-            )
-          })}
+          {data?.permissionList != '' &&
+            data?.permissionList?.map((v) => {
+              return (
+                <ElTag class="mr-1" key={v.value}>
+                  {v.label}
+                </ElTag>
+              )
+            })}
         </>
       )
     }

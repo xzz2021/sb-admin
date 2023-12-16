@@ -13,8 +13,12 @@ export const getDepartmentApi222 = () => {
   return request.get<DepartmentListResponse>({ url: '/mock/department/list' })
 }
 
-export const getUserByIdApi = (params: DepartmentUserParams) => {
+export const getUserByIdApi000 = (params: DepartmentUserParams) => {
   return request.get<DepartmentUserResponse>({ url: '/mock/department/users', params })
+}
+
+export const getUserByIdApi = (params: DepartmentUserParams) => {
+  return request.get<DepartmentUserResponse>({ url: '/api/department/users', params })
 }
 
 export const deleteUserByIdApi = (ids: string[] | number[]) => {

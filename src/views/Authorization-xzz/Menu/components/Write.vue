@@ -4,7 +4,7 @@ import { useForm } from '@/hooks/web/useForm'
 import { PropType, reactive, watch, ref, unref } from 'vue'
 import { useValidator } from '@/hooks/web/useValidator'
 import { useI18n } from '@/hooks/web/useI18n'
-import { addMenuApi, getMenuListApi } from '@/api/menu'
+import { addMenuApi, getAllMenuListApi } from '@/api/menu'
 import { ElTag, ElButton, ElMessage } from 'element-plus'
 import AddButtonPermission from './AddButtonPermission.vue'
 
@@ -52,6 +52,7 @@ const formSchema = reactive<FormSchema[]>([
       on: {
         change: async (val: number) => {
           const formData = await getFormData()
+          console.log('🚀 ~ file: Write.vue:55 ~ change: ~ formData:', formData)
           if (val === 1) {
             setSchema([
               {
@@ -145,8 +146,10 @@ const formSchema = reactive<FormSchema[]>([
       }
     },
     optionApi: async () => {
-      const res = await getMenuListApi()
-      return res.data.list || []
+      const res = await getAllMenuListApi()
+      //  新增菜单 走这里    应当可以 获取 所有的
+      console.log('🚀 ~ file: Write.vue:150 ~ optionApi: ~ res:', res)
+      return res.data || []
     }
   },
   {
@@ -218,13 +221,14 @@ const formSchema = reactive<FormSchema[]>([
       slots: {
         default: (data: any) => (
           <>
-            {data?.permissionList?.map((v) => {
-              return (
-                <ElTag class="mr-1" key={v.value} closable onClose={() => handleClose(v)}>
-                  {v.label}
-                </ElTag>
-              )
-            })}
+            {data?.permissionList != '' &&
+              data?.permissionList?.map((v) => {
+                return (
+                  <ElTag class="mr-1" key={v.value} closable onClose={() => handleClose(v)}>
+                    {v.label}
+                  </ElTag>
+                )
+              })}
             <ElButton type="primary" size="small" onClick={() => (showDrawer.value = true)}>
               添加权限
             </ElButton>
@@ -295,6 +299,7 @@ const submit = async () => {
   })
   if (valid) {
     const formData = await getFormData()
+    formData.meta.title && (formData.title = formData.meta.title)
     // return
     try {
       const res = await addMenuApi(formData)

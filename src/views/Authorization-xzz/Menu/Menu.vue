@@ -15,9 +15,11 @@ import { Dialog } from '@/components/Dialog'
 
 const { t } = useI18n()
 
+//  表格数据获取在
 const { tableRegister, tableState, tableMethods } = useTable({
   fetchDataApi: async () => {
     const res = await getAllMenuListApi()
+    // console.log('🚀 ~ file: Menu.vue:22 ~ fetchDataApi: ~ res:', res)
     return {
       list: res.data || []
     }
@@ -115,7 +117,9 @@ const tableColumns = reactive<TableColumn[]>([
             <ElButton type="success" onClick={() => action(row, 'detail')}>
               {t('exampleDemo.detail')}
             </ElButton>
-            <ElButton type="danger">{t('exampleDemo.del')}</ElButton>
+            <ElButton type="danger" onClick={() => deleteAction(row)}>
+              {t('exampleDemo.del')}
+            </ElButton>
           </>
         )
       }
@@ -148,11 +152,15 @@ const writeRef = ref<ComponentRef<typeof Write>>()
 const saveLoading = ref(false)
 
 const action = (row: any, type: string) => {
-  console.log('🚀 ~ file: Menu.vue:151 ~ action ~ row:', row)
+  // console.log('🚀 ~ file: Menu.vue:151 ~ action ~ row:', row)
   dialogTitle.value = t(type === 'edit' ? 'exampleDemo.edit' : 'exampleDemo.detail')
   actionType.value = type
   currentRow.value = row
   dialogVisible.value = true
+}
+
+const deleteAction = (row: any) => {
+  console.log('🚀 ~ file: Menu.vue:163 ~ deleteAction ~ row:', row)
 }
 
 const AddAction = () => {
@@ -164,15 +172,16 @@ const AddAction = () => {
 
 const save = async () => {
   const write = unref(writeRef)
-  const formData = await write?.submit()
-  console.log(formData)
-  if (formData) {
-    saveLoading.value = true
-    setTimeout(() => {
-      saveLoading.value = false
-      dialogVisible.value = false
-    }, 1000)
-  }
+  // const formData = await write?.submit()
+  await write?.submit()
+  // console.log(formData)
+  // if (formData) {
+  //   saveLoading.value = true
+  //   setTimeout(() => {
+  //     saveLoading.value = false
+  //     dialogVisible.value = false
+  //   }, 1000)
+  // }
 }
 
 // 切换保存按钮状态

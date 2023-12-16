@@ -9,7 +9,8 @@ import {
   getUserByIdApi,
   saveUserApi,
   deleteUserByIdApi,
-  getDepartmentApi222
+  getDepartmentApi222,
+  getDepartmentApi
 } from '@/api/department'
 import type { DepartmentItem, DepartmentUserItem } from '@/api/department/types'
 import { useTable } from '@/hooks/web/useTable'
@@ -25,7 +26,9 @@ const { t } = useI18n()
 const { tableRegister, tableState, tableMethods } = useTable({
   fetchDataApi: async () => {
     const { pageSize, currentPage } = tableState
+    //  获取部门 用户列表
     const res = await getUserByIdApi({
+      // 查询需要传参数
       id: unref(currentNodeKey),
       pageIndex: unref(currentPage),
       pageSize: unref(pageSize),
@@ -209,10 +212,9 @@ const treeEl = ref<typeof ElTree>()
 const currentNodeKey = ref('')
 const departmentList = ref<DepartmentItem[]>([])
 const fetchDepartment = async () => {
-  const res = await getDepartmentApi222()
-  departmentList.value = res.data.list
-  currentNodeKey.value =
-    (res.data.list[0] && res.data.list[0]?.children && res.data.list[0].children[0].id) || ''
+  const res = await getDepartmentApi()
+  departmentList.value = res.data
+  currentNodeKey.value = (res.data && res.data[0]?.children && res.data[0].children[0].id) || ''
   await nextTick()
   unref(treeEl)?.setCurrentKey(currentNodeKey.value)
 }

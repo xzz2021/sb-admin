@@ -3,7 +3,7 @@ import { PropType, ref, unref, nextTick } from 'vue'
 import { Descriptions, DescriptionsSchema } from '@/components/Descriptions'
 import { ElTag, ElTree } from 'element-plus'
 import { findIndex } from '@/utils'
-import { getMenuListApi } from '@/api/menu'
+// import { getMenuListApi } from '@/api/menu'
 
 defineProps({
   currentRow: {
@@ -32,7 +32,9 @@ const nodeClick = (treeData: any) => {
 
 const treeData = ref<any[]>([])
 const getMenuList = async () => {
-  const res = await getMenuListApi()
+  const res = await getMenuListApiByRole()
+  //  新增角色 走这里  获取当前角色 能分配的 菜单
+  console.log('🚀 ~ file: Detail.vue:36 ~ getMenuList ~ res:', res)
   if (res) {
     treeData.value = res.data.list
     await nextTick()

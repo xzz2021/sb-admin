@@ -127,7 +127,7 @@ const formSchema = reactive<FormSchema[]>([
     }
   },
   {
-    field: 'meta.title',
+    field: 'title',
     label: t('menu.menuName'),
     component: 'Input'
   },
@@ -194,13 +194,14 @@ const formSchema = reactive<FormSchema[]>([
       slots: {
         default: (data: any) => (
           <>
-            {data?.permissionList?.map((v) => {
-              return (
-                <ElTag class="mr-1" key={v.value} closable onClose={() => handleClose(v)}>
-                  {v.label}
-                </ElTag>
-              )
-            })}
+            {data?.permissionList != '' &&
+              data?.permissionList?.map((v) => {
+                return (
+                  <ElTag class="mr-1" key={v.value} closable onClose={() => handleClose(v)}>
+                    {v.label}
+                  </ElTag>
+                )
+              })}
             <ElButton type="primary" size="small" onClick={() => (showDrawer.value = true)}>
               添加权限
             </ElButton>

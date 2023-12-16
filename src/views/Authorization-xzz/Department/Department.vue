@@ -44,20 +44,20 @@ const getNestedArray: (arr: any[], pid: string) => any[] = (arr, pid = '1000') =
   return nestedArr
 }
 
-const formatToTree = (arr: any[], pid: number | undefined) => {
-  arr.map((item) => (item.value = item.id))
-  return arr
-    .filter((item) =>
-      // 如果没有父id（第一次递归的时候）将所有父级查询出来
-      // 这里认为 item.parentId === 1 就是最顶层 需要根据业务调整
-      pid === undefined ? item.parentId === null : item.parentId === pid
-    )
-    .map((item) => {
-      // 通过父节点ID查询所有子节点
-      item.children = formatToTree(arr, item.id)
-      return item
-    })
-}
+// const formatToTree = (arr: any[], pid: number | undefined) => {
+//   arr.map((item) => (item.value = item.id))
+//   return arr
+//     .filter((item) =>
+//       // 如果没有父id（第一次递归的时候）将所有父级查询出来
+//       // 这里认为 item.parentId === 1 就是最顶层 需要根据业务调整
+//       pid === undefined ? item.parentId === null : item.parentId === pid
+//     )
+//     .map((item) => {
+//       // 通过父节点ID查询所有子节点
+//       item.children = formatToTree(arr, item.id)
+//       return item
+//     })
+// }
 
 const { tableRegister, tableState, tableMethods } = useTable({
   fetchDataApi: async () => {
@@ -68,18 +68,11 @@ const { tableRegister, tableState, tableMethods } = useTable({
       pageSize: unref(pageSize),
       ...unref(searchParams)
     })
-    // console.log('🚀 ~ file: Department.vue:31 ~ fetchDataApi: ~ res:', res)
-    // return {
-    //   list: res.data.list,
-    //   total: res.data.total
-    // }
-
-    let newList = formatToTree(res.data, undefined)
-    // console.log('🚀 ~ file: Department.vue:137 ~ optionApi: ~ newList:', newList)
+    console.log('🚀 ~ file: Department.vue:67 ~ fetchDataApi: ~ res:', res)
     // 返回带有嵌套数据的数结构
     return {
-      list: newList,
-      total: newList.length
+      list: res.data,
+      total: res.data.length
     }
   }
   // fetchDelApi: async () => {

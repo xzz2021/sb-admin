@@ -4,7 +4,13 @@ import { useI18n } from '@/hooks/web/useI18n'
 import { Table } from '@/components/Table'
 import { ref, unref, nextTick, watch, reactive } from 'vue'
 import { ElButton, ElTree, ElInput, ElDivider } from 'element-plus'
-import { getDepartmentApi, getUserByIdApi, saveUserApi, deleteUserByIdApi } from '@/api/department'
+import {
+  getDepartmentApi,
+  getUserByIdApi,
+  saveUserApi,
+  deleteUserByIdApi,
+  getDepartmentApi000
+} from '@/api/department'
 import type { DepartmentItem, DepartmentUserItem } from '@/api/department/types'
 import { useTable } from '@/hooks/web/useTable'
 import { Search } from '@/components/Search'
@@ -202,7 +208,7 @@ const treeEl = ref<typeof ElTree>()
 const currentNodeKey = ref('')
 const departmentList = ref<DepartmentItem[]>([])
 const fetchDepartment = async () => {
-  const res = await getDepartmentApi()
+  const res = await getDepartmentApi000()
   departmentList.value = res.data.list
   currentNodeKey.value =
     (res.data.list[0] && res.data.list[0]?.children && res.data.list[0].children[0].id) || ''

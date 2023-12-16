@@ -4,7 +4,7 @@ import { Form, FormSchema } from '@/components/Form'
 import { useI18n } from '@/hooks/web/useI18n'
 import { ElButton, ElCheckbox, ElInput, ElLink } from 'element-plus'
 import { useForm } from '@/hooks/web/useForm'
-import { loginApi, getTestRoleApi, getAdminRoleApi } from '@/api/login'
+import { loginApi, getTestRoleApi, getRoleMenuApi } from '@/api/login'
 import { useAppStore } from '@/store/modules/app'
 import { usePermissionStore } from '@/store/modules/permission'
 import { useRouter } from 'vue-router'
@@ -245,7 +245,7 @@ const signIn = async () => {
           userStore.setTokenKey(res.data.tokenKey)
           // 是否使用动态路由
           if (appStore.getDynamicRouter) {
-            getRole(res.data.userInfo.rolesArr || [])
+            getRole()
           } else {
             await permissionStore.generateRoutes('static').catch(() => {})
             permissionStore.getAddRouters.forEach((route) => {
@@ -268,47 +268,60 @@ const signIn = async () => {
   })
 }
 
-const formatToTree = (ary: any[], pid: number | undefined) => {
-  return ary
-    .filter((item) =>
-      // 如果没有父id（第一次递归的时候）将所有父级查询出来
-      // 这里认为 item.parentId === 1 就是最顶层 需要根据业务调整
-      pid === undefined ? item.parentId === null : item.parentId === pid
-    )
-    .map((item) => {
-      // 通过父节点ID查询所有子节点
-      item.children = formatToTree(ary, item.id)
-      return item
-    })
-}
+// const formatToTree = (ary: any[], pid: number | undefined) => {
+//   return ary
+//     .filter((item) =>
+//       // 如果没有父id（第一次递归的时候）将所有父级查询出来
+//       // 这里认为 item.parentId === 1 就是最顶层 需要根据业务调整
+//       pid === undefined ? item.parentId === null : item.parentId === pid
+//     )
+//     .map((item) => {
+//       // 通过父节点ID查询所有子节点
+//       item.children = formatToTree(ary, item.id)
+//       return item
+//     })
+// }
+
+// const findBtn = (arr) => {
+//   return arr.map((item) => {
+//     if (item.children && item.children.length > 0) {
+//       if (item.children[0].type == 3) {
+//         item.permissionList = item.children
+//         item.children.length = 0
+//         return item
+//       } else {
+//         findBtn(item.children)
+//       }
+//     }
+//   })
+// }
 
 // 根据用户角色信息 获取  菜单
-const getRole = async (rolesArr: any[]) => {
+const getRole = async () => {
   // const params = { rolesArr: userRole }
-  const params = { rolesArr }
+  // const params = { role }
   const res =
     appStore.getDynamicRouter && appStore.getServerDynamicRouter
       ? // 其实这里后端可以通过token解析角色数组,不传参也是可以的
-        await getAdminRoleApi(params)
-      : await getTestRoleApi(params)
+        await getRoleMenuApi()
+      : await getTestRoleApi()
   if (res && res.data) {
+    console.log('🚀 ~ file: LoginForm.vue:309 ~ getRole ~ res.data:', res.data)
     // console.log('🚀 ~ file: LoginForm.vue:302 ~ getRole ~ res:', res)
     //将meta.title赋值给菜单自身title, 以符合数据格式框架要求
-    const backendMenuAndBtnArr = res.data
-    backendMenuAndBtnArr.map((item) => {
-      item.title = item.meta?.title || ''
-    })
+    let backendMenuAndBtnArr = res.data
+    // backendMenuAndBtnArr.map((item) => {
+    //   item.title = item.meta ? item.meta?.title || '' : ''
+    // })
     adminList.map((item) => {
-      item['title'] = item.meta?.title || ''
+      item['title'] = item.meta ? item.meta?.title || '' : ''
     })
     // 这里是从后端拿到扁平的菜单数据
     //  需要转换成带children的嵌套数据格式
-    let nestedArr = formatToTree(backendMenuAndBtnArr, undefined)
-    nestedArr = nestedArr.concat(adminList)
-    // console.log('🚀 ~ file: LoginForm.vue:305 ~ getRole ~ nestedArr:', nestedArr)
-    // //  这里把游客默认菜单 和 后端经角色权限获取的菜单 进行合并  否则  只显示游客的
-    const routers = nestedArr || []
-    // const routers = backendMenuAndBtnArr || []
+    // let nestedArr = formatToTree(backendMenuAndBtnArr, undefined)
+    let newData = [...backendMenuAndBtnArr, ...adminList]
+    // const routers = res.data || []
+    const routers = newData || []
     userStore.setRoleRouters(routers)
     appStore.getDynamicRouter && appStore.getServerDynamicRouter
       ? await permissionStore.generateRoutes('server', routers).catch(() => {})

@@ -81,6 +81,7 @@ export const useTable = (config: UseTableConfig) => {
       loading.value = true
       try {
         const res = await config?.fetchDataApi()
+        // //  在这里可以 直接生成 一次 嵌套数据  就可以了
         // console.log('🚀 ~ file: useTable.ts:84 ~ getList: ~ res:', res)
 
         if (res) {

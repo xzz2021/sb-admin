@@ -5,7 +5,7 @@ import { PropType, reactive, watch, ref, unref, nextTick } from 'vue'
 import { useValidator } from '@/hooks/web/useValidator'
 import { useI18n } from '@/hooks/web/useI18n'
 import { ElTree, ElCheckboxGroup, ElCheckbox, ElMessage } from 'element-plus'
-import { getAllMenuListApi } from '@/api/menu'
+import { getAllMenuListApi, getAllMenuListApiSelf } from '@/api/menu'
 import { filter, eachTree } from '@/utils/tree'
 // import { eachTree } from '@/utils/tree'
 import { findIndex } from '@/utils'
@@ -115,7 +115,12 @@ const { formRegister, formMethods } = useForm()
 const { setValues, getFormData, getElFormExpose } = formMethods
 
 const formatToTree = (arr: any[], pid: number | undefined) => {
-  arr.map((item) => (item.value = item.id))
+  arr.map((item) => {
+    item.value = item.id
+    // if (!item.title) {
+    //   item.title = ''
+    // }
+  })
   return arr
     .filter((item) =>
       // 如果没有父id（第一次递归的时候）将所有父级查询出来
@@ -131,11 +136,12 @@ const formatToTree = (arr: any[], pid: number | undefined) => {
 
 const treeData = ref([])
 const getMenuList = async () => {
-  const res = await getAllMenuListApi()
-  console.log('🚀 ~ file: Write.vue:121 ~ getMenuList ~ res:', res)
+  //  通过用户角色  请求数据
+  const res = await getAllMenuListApiSelf({})
+  console.log('🚀 ~ file: Write.vue:140 ~ getMenuList ~ res:', res)
   if (res) {
-    const newData = formatToTree(res.data, undefined)
-    treeData.value = newData
+    // const newData = formatToTree(res.data, undefined)
+    treeData.value = res.data
     if (!props.currentRow) return
     await nextTick()
     const checked: any[] = []
@@ -187,38 +193,39 @@ const submit = async () => {
 
     // emit('toggleSaveBtnBySon', 'true')
     const formData = await getFormData()
-    console.log('🚀 ~ file: Write.vue:191 ~ submit ~ formData:', formData)
 
-    // const checkedKeys = unref(treeRef)?.getCheckedKeys() || []
-    // const data = filter(unref(treeData), (item: any) => {
-    //   return checkedKeys.includes(item.id)
-    // })
-    // formData.menusArr = data || []
-    // 把扁平化的菜单数据发给后端,  菜单关联的权限['edit', 'add'] 是存在item.meta.permission数组里
-    const treeRefData = treeRef.value?.getCheckedNodes(false, true)
-    if (treeRefData.length == 0) {
-      return ElMessage({
-        message: '未勾选菜单项,请选择对应菜单',
-        type: 'error'
-      })
-    }
-    //  如果不是空 要做下判断  遍历其权限
-    const newdata = treeRefData.map((item) => {
-      if (item.meta?.permission && item.meta?.permission.length > 0) {
-        const permissionArr = item.meta?.permission
-        const list = item.permissionList
-        item.newPermissionList = []
-        for (let i = 0; i < permissionArr.length; i++) {
-          const newItem = list.find((listItem) => listItem.value == permissionArr[i])
-          item.newPermissionList.push(newItem)
-        }
-        return item
-      }
-      return item
+    const checkedKeys = unref(treeRef)?.getCheckedKeys() || []
+    const data = filter(unref(treeData), (item: any) => {
+      return checkedKeys.includes(item.id)
     })
+    formData.menusArr = data || []
+    console.log('🚀 ~ file: Write.vue:201 ~ submit ~ formData:', formData)
+    // return
+    // 把扁平化的菜单数据发给后端,  菜单关联的权限['edit', 'add'] 是存在item.meta.permission数组里
+    // const treeRefData = treeRef.value?.getCheckedNodes(false, true)
+    // if (treeRefData.length == 0) {
+    //   return ElMessage({
+    //     message: '未勾选菜单项,请选择对应菜单',
+    //     type: 'error'
+    //   })
+    // }
+    //  如果不是空 要做下判断  遍历其权限
+    // const newdata = treeRefData.map((item) => {
+    //   if (item.meta?.permission && item.meta?.permission.length > 0) {
+    //     const permissionArr = item.meta?.permission
+    //     const list = item.permissionList
+    //     item.newPermissionList = []
+    //     for (let i = 0; i < permissionArr.length; i++) {
+    //       const newItem = list.find((listItem) => listItem.value == permissionArr[i])
+    //       item.newPermissionList.push(newItem)
+    //     }
+    //     return item
+    //   }
+    //   return item
+    // })
     // newdata.permissionList = newdata.newPermissionList
-    formData.menusArr = newdata
-    console.log('🚀 ~ file: Write.vue:223 ~ submit ~ formData:', formData)
+    // formData.menusArr = newdata
+    // return
     try {
       const res = await addRoleApi(formData)
       if (res) {
