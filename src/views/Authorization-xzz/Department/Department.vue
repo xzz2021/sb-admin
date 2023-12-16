@@ -216,7 +216,7 @@ const crudSchemas = reactive<CrudSchema[]>([
         //此处用于表单输入数据获取
         const res = await getDepartmentApi()
         const list: any[] = res.data
-        // return list
+        return list
         let newList = getNestedArray(list, '1000')
         return newList
       }
