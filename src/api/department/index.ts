@@ -49,6 +49,10 @@ export const getDepartmentTableApi0 = (params: any) => {
   return request.get({ url: '/mock/department/table/list', params })
 }
 
+export const getDepartmentTableApi01 = (params: any) => {
+  return request.get({ url: '/mock/department/table/list', params })
+}
+
 export const getDepartmentTableApi = (params: any) => {
   return request.get({ url: '/api/department/getDepartmentTable', params })
 }

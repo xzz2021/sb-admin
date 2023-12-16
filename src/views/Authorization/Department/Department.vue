@@ -7,9 +7,10 @@ import { ElButton, ElTag } from 'element-plus'
 import { Table } from '@/components/Table'
 import {
   getDepartmentApi,
-  getDepartmentTableApi,
   saveDepartmentApi,
-  deleteDepartmentApi
+  deleteDepartmentApi,
+  getDepartmentTableApi01,
+  getDepartmentApi000
 } from '@/api/department'
 import type { DepartmentItem } from '@/api/department/types'
 import { useTable } from '@/hooks/web/useTable'
@@ -23,7 +24,7 @@ const ids = ref<string[]>([])
 const { tableRegister, tableState, tableMethods } = useTable({
   fetchDataApi: async () => {
     const { currentPage, pageSize } = tableState
-    const res = await getDepartmentTableApi({
+    const res = await getDepartmentTableApi01({
       pageIndex: unref(currentPage),
       pageSize: unref(pageSize),
       ...unref(searchParams)
@@ -98,7 +99,7 @@ const crudSchemas = reactive<CrudSchema[]>([
         }
       },
       optionApi: async () => {
-        const res = await getDepartmentApi()
+        const res = await getDepartmentApi000()
         return res.data.list
       }
     },

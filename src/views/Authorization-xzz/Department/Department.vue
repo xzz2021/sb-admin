@@ -156,7 +156,7 @@ const crudSchemas = reactive<CrudSchema[]>([
         // },
 
         renderAfterExpand: true,
-        // nodeKey: 'id',
+        nodeKey: 'id', //  千万不要移除
         // showCheckbox: true,
         checkStrictly: true,
         checkOnClickNode: true,
@@ -167,7 +167,7 @@ const crudSchemas = reactive<CrudSchema[]>([
       optionApi: async () => {
         //此处用于表单输入数据获取
         const res = await getDepartmentApi()
-        return res
+        return res.data
         // const newList = formatToTree(res.data, undefined)
         // return newList
       }
@@ -302,7 +302,7 @@ const crudSchemas = reactive<CrudSchema[]>([
     }
   },
   {
-    field: 'createtime',
+    field: 'createTime',
     label: t('tableDemo.displayTime'),
     search: {
       hidden: true
@@ -359,7 +359,7 @@ const crudSchemas = reactive<CrudSchema[]>([
               <ElButton type="success" onClick={() => action(data.row, 'detail')}>
                 {t('exampleDemo.detail')}
               </ElButton>
-              <ElButton type="danger" onClick={() => delData(data.row)}>
+              <ElButton type="danger" v-hasPermi="'delete'" onClick={() => delData(data.row)}>
                 {t('exampleDemo.del')}
               </ElButton>
             </>

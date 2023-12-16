@@ -27,12 +27,12 @@ const props = defineProps({
 const rules = reactive({
   id: [required()],
   pid: [required()],
-  status: [required()],
+  // status: [required()],
   departmentName: [required()]
 })
 
 const { formRegister, formMethods } = useForm()
-const { setValues, getFormData, getElFormExpose, getFormItemExpose } = formMethods
+const { setValues, getFormData, getElFormExpose } = formMethods
 
 interface Emits {
   (e: 'updataListBySon'): void
