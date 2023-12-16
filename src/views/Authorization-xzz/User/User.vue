@@ -84,10 +84,10 @@ const crudSchemas = reactive<CrudSchema[]>([
     field: 'username',
     label: t('userDemo.username')
   },
-  {
-    field: 'account',
-    label: t('userDemo.account')
-  },
+  // {
+  //   field: 'account',
+  //   label: t('userDemo.account')
+  // },
   {
     field: 'department.id',
     label: t('userDemo.department'),
@@ -142,16 +142,16 @@ const crudSchemas = reactive<CrudSchema[]>([
       }
     }
   },
-  {
-    field: 'email',
-    label: t('userDemo.email'),
-    form: {
-      component: 'Input'
-    },
-    search: {
-      hidden: true
-    }
-  },
+  // {
+  //   field: 'email',
+  //   label: t('userDemo.email'),
+  //   form: {
+  //     component: 'Input'
+  //   },
+  //   search: {
+  //     hidden: true
+  //   }
+  // },
   {
     field: 'createTime',
     label: t('userDemo.createTime'),

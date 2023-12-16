@@ -42,11 +42,10 @@ interface Emits {
 //  触发父组件  更新角色列表功能
 let emit = defineEmits<Emits>()
 
-const checkPid = async () => {
-  console.log('🚀 ~ file: Write.vue:49 ~ checkPid ~ checkPid:')
-  const getPidForm = await getFormItemExpose('pid')
-  console.log('🚀 ~ file: Write.vue:47 ~ checkPid ~ getPidForm:', getPidForm)
-}
+// const checkPid = async () => {
+//   const getPidForm = await getFormItemExpose('pid')
+//   console.log('🚀 ~ file: Write.vue:47 ~ checkPid ~ getPidForm:', getPidForm)
+// }
 
 const submit = async () => {
   const elForm = await getElFormExpose()
@@ -94,8 +93,8 @@ watch(
 )
 
 defineExpose({
-  submit,
-  checkPid
+  submit
+  // checkPid
 })
 </script>
 

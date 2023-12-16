@@ -167,9 +167,9 @@ const crudSchemas = reactive<CrudSchema[]>([
       optionApi: async () => {
         //此处用于表单输入数据获取
         const res = await getDepartmentApi()
-        // return list
-        const newList = formatToTree(res.data, undefined)
-        return newList
+        return res
+        // const newList = formatToTree(res.data, undefined)
+        // return newList
       }
     }
   },
@@ -302,7 +302,7 @@ const crudSchemas = reactive<CrudSchema[]>([
     }
   },
   {
-    field: 'createTime',
+    field: 'createtime',
     label: t('tableDemo.displayTime'),
     search: {
       hidden: true

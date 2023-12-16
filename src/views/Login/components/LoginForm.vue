@@ -14,7 +14,6 @@ import { useValidator } from '@/hooks/web/useValidator'
 import { Icon } from '@/components/Icon'
 import { useUserStore } from '@/store/modules/user'
 import { onMounted } from 'vue'
-import adminList from './list'
 
 const { required } = useValidator()
 
@@ -309,19 +308,12 @@ const getRole = async () => {
     console.log('🚀 ~ file: LoginForm.vue:309 ~ getRole ~ res.data:', res.data)
     // console.log('🚀 ~ file: LoginForm.vue:302 ~ getRole ~ res:', res)
     //将meta.title赋值给菜单自身title, 以符合数据格式框架要求
-    let backendMenuAndBtnArr = res.data
-    // backendMenuAndBtnArr.map((item) => {
-    //   item.title = item.meta ? item.meta?.title || '' : ''
-    // })
-    adminList.map((item) => {
-      item['title'] = item.meta ? item.meta?.title || '' : ''
-    })
     // 这里是从后端拿到扁平的菜单数据
     //  需要转换成带children的嵌套数据格式
     // let nestedArr = formatToTree(backendMenuAndBtnArr, undefined)
-    let newData = [...backendMenuAndBtnArr, ...adminList]
+    // let newData = [...backendMenuAndBtnArr, ...adminList]
     // const routers = res.data || []
-    const routers = newData || []
+    const routers = res.data || []
     userStore.setRoleRouters(routers)
     appStore.getDynamicRouter && appStore.getServerDynamicRouter
       ? await permissionStore.generateRoutes('server', routers).catch(() => {})
