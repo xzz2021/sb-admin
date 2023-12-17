@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { onMounted, reactive, ref } from 'vue'
 import { Table, TableColumn } from '@/components/Table'
-import { getItemLog } from '@/api/log'
+import { getMoneyLog } from '@/api/log'
 const columns = reactive<TableColumn[]>([
   {
     field: 'ID',
@@ -20,36 +20,36 @@ const columns = reactive<TableColumn[]>([
     label: '分组ID'
   },
   {
-    field: 'RoleID',
-    label: '角色ID'
+    field: 'SourceID',
+    label: '操作人物ID'
   },
   {
-    field: 'ActionType',
-    label: '类型'
+    field: 'TargetID',
+    label: '目标人物ID'
   },
   {
-    field: 'Guid',
-    label: '二进制索引'
+    field: 'Param',
+    label: '参数'
   },
   {
-    field: 'TemplateID',
-    label: '物品ID'
-  },
-  {
-    field: 'ItemCount',
-    label: '数量'
+    field: 'Action',
+    label: '动作类型'
   },
   {
     field: 'Reason',
     label: '操作类型'
   },
   {
-    field: 'UserDefinedID',
-    label: '定义ID'
+    field: 'MoneyType',
+    label: '货币类型'
+  },
+  {
+    field: 'MoneyCount',
+    label: '数量'
   }
 ])
 onMounted(async () => {
-  const res = await getItemLog()
+  const res = await getMoneyLog()
   console.log('🚀 ~ file: Tableone.vue:53 ~ onMounted ~ res:', res)
   if (res.data) {
     data.value = res.data

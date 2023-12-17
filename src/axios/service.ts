@@ -32,7 +32,7 @@ axiosInstance.interceptors.response.use(
   },
   (error: AxiosError | any) => {
     console.log('err: ' + error) // for debug
-    ElMessage.error(error?.response?.data?.message || '后端错误内容没有提示')
+    ElMessage.error(error?.response?.data?.message || '后端服务器异常,请告知管理员!')
 
     //  后端返回401 说明Unauthorized, 所以主动退出登录
     if (error?.response?.data?.statusCode == 401) {
