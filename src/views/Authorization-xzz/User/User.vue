@@ -9,7 +9,6 @@ import {
   getUserByIdApi,
   saveUserApi,
   deleteUserByIdApi,
-  getDepartmentApi222,
   getDepartmentApi
 } from '@/api/department'
 import type { DepartmentItem, DepartmentUserItem } from '@/api/department/types'
@@ -35,9 +34,10 @@ const { tableRegister, tableState, tableMethods } = useTable({
       ...unref(searchParams)
     })
     console.log('🚀 ~ file: User.vue:28 ~ fetchDataApi: ~ res:', res)
+    const total = res?.data?.length
     return {
-      list: res.data.list || [],
-      total: res.data.total || 0
+      list: res.data || [],
+      total: total || 0
     }
   },
   fetchDelApi: async () => {
@@ -82,23 +82,36 @@ const crudSchemas = reactive<CrudSchema[]>([
   },
   {
     field: 'username',
-    label: t('userDemo.username')
+    label: '登录账户'
   },
   // {
-  //   field: 'account',
-  //   label: t('userDemo.account')
+  //   field: 'password',
+  //   label: '登录密码',
+  //   // componentProps: {
+  //   //   props: {
+  //   //     disabled: true
+  //   //   }
+  //   // },
+  //   search: {
+  //     hidden: true
+  //   }
   // },
   {
-    field: 'department.id',
+    field: 'nickname',
+    label: t('userDemo.username')
+  },
+  {
+    // 显示  数据  对应的 键
+    field: 'department.departmentName',
     label: t('userDemo.department'),
-    detail: {
-      hidden: true
-      // slots: {
-      //   default: (data: DepartmentUserItem) => {
-      //     return <>{data.department.departmentName}</>
-      //   }
-      // }
-    },
+    // detail: {
+    //   hidden: true
+    //   // slots: {
+    //   //   default: (data: DepartmentUserItem) => {
+    //   //     return <>{data.department.departmentName}</>
+    //   //   }
+    //   // }
+    // },
     search: {
       hidden: true
     },
@@ -108,36 +121,43 @@ const crudSchemas = reactive<CrudSchema[]>([
         nodeKey: 'id',
         props: {
           label: 'departmentName'
+          // value: 'department.id'
         }
       },
       optionApi: async () => {
-        const res = await getDepartmentApi222()
-        return res.data.list
+        const res = await getDepartmentApi()
+        return res.data
       }
-    },
-    table: {
-      hidden: true
     }
+    // table: {
+    //   hidden: true
+    // }
   },
   {
-    field: 'role',
+    field: 'role.roleName', //  对应表单数据data 返回的新字段   值为下拉选择的值
     label: t('userDemo.role'),
-    search: {
-      hidden: true
-    },
     form: {
       component: 'Select',
-      value: [],
+      value: {},
       componentProps: {
-        multiple: true,
-        collapseTags: true,
-        maxCollapseTags: 1
+        // multiple: true,
+        // collapseTags: true,
+        maxCollapseTags: 1,
+        on: {
+          change: async (val: string) => {
+            // const formData = await getFormData()
+            // console.log('🚀 ~ file: User.vue:184 ~ val:', val)
+          }
+        }
       },
+
       optionApi: async () => {
+        // 新增 角色 表单  获取  角色 选择下拉项
         const res = await getRoleListApi()
-        return res.data?.list?.map((v) => ({
+        // return res.data.role
+        return res.data?.map((v) => ({
           label: v.roleName,
-          value: v.id
+          value: v.id // 提交表单时  下拉选项 所 返回的值
         }))
       }
     }
@@ -153,10 +173,11 @@ const crudSchemas = reactive<CrudSchema[]>([
   //   }
   // },
   {
-    field: 'createTime',
+    field: 'createtime',
     label: t('userDemo.createTime'),
     form: {
-      component: 'Input'
+      component: 'Input',
+      hidden: true
     },
     search: {
       hidden: true
@@ -181,13 +202,25 @@ const crudSchemas = reactive<CrudSchema[]>([
           const row = data.row as DepartmentUserItem
           return (
             <>
-              <ElButton type="primary" onClick={() => action(row, 'edit')}>
+              <ElButton
+                type="primary"
+                v-show={row?.role?.roleName != '超级管理员'}
+                onClick={() => action(row, 'edit')}
+              >
                 {t('exampleDemo.edit')}
               </ElButton>
-              <ElButton type="success" onClick={() => action(row, 'detail')}>
+              <ElButton
+                type="success"
+                v-show={row?.role?.roleName != '超级管理员'}
+                onClick={() => action(row, 'detail')}
+              >
                 {t('exampleDemo.detail')}
               </ElButton>
-              <ElButton type="danger" onClick={() => delData(row)}>
+              <ElButton
+                type="danger"
+                v-show={row?.role?.roleName != '超级管理员'}
+                onClick={() => delData(row)}
+              >
                 {t('exampleDemo.del')}
               </ElButton>
             </>
@@ -229,7 +262,7 @@ watch(
 )
 
 const currentChange = (data: DepartmentItem) => {
-  // if (data.children) return
+  // if (!data.id) return
   currentNodeKey.value = data.id
   currentPage.value = 1
   getList()
@@ -344,7 +377,9 @@ const save = async () => {
       />
 
       <div class="mb-10px">
-        <ElButton type="primary" @click="AddAction">{{ t('exampleDemo.add') }}</ElButton>
+        <ElButton type="primary" v-hasPermi="'all'" @click="AddAction">{{
+          t('exampleDemo.add')
+        }}</ElButton>
         <ElButton :loading="delLoading" type="danger" @click="delData()">
           {{ t('exampleDemo.del') }}
         </ElButton>

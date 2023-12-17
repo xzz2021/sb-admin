@@ -1,5 +1,10 @@
 import request from '@/axios'
-import { DepartmentListResponse, DepartmentUserParams, DepartmentUserResponse } from './types'
+import {
+  DepartmentListResponse,
+  DepartmentUserParams,
+  DepartmentUserResponse,
+  DepartmentUserResponseXzz
+} from './types'
 
 export const getDepartmentApi000 = () => {
   return request.get<DepartmentListResponse>({ url: '/mock/department/list' })
@@ -18,7 +23,7 @@ export const getUserByIdApi000 = (params: DepartmentUserParams) => {
 }
 
 export const getUserByIdApi = (params: DepartmentUserParams) => {
-  return request.get<DepartmentUserResponse>({ url: '/api/department/users', params })
+  return request.get<DepartmentUserResponseXzz>({ url: '/api/department/users', params })
 }
 
 export const deleteUserByIdApi = (ids: string[] | number[]) => {
@@ -27,6 +32,10 @@ export const deleteUserByIdApi = (ids: string[] | number[]) => {
 
 export const saveUserApi = (data: any) => {
   return request.post({ url: '/mock/department/user/save', data })
+}
+
+export const updateUserApi = (data: any) => {
+  return request.post({ url: '/api/userinfo/updateUser', data })
 }
 
 export const saveDepartmentApi = (data: any) => {

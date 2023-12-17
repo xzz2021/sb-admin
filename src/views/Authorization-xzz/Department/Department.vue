@@ -359,7 +359,8 @@ const crudSchemas = reactive<CrudSchema[]>([
               <ElButton type="success" onClick={() => action(data.row, 'detail')}>
                 {t('exampleDemo.detail')}
               </ElButton>
-              <ElButton type="danger" v-hasPermi="'delete'" onClick={() => delData(data.row)}>
+              {/* <ElButton type="danger" v-hasPermi="'delete'" onClick={() => delData(data.row)}> */}
+              <ElButton type="danger" onClick={() => delData(data.row)}>
                 {t('exampleDemo.del')}
               </ElButton>
             </>
@@ -390,7 +391,7 @@ const delLoading = ref(false)
 
 const batchDel = async (arr: any[]) => {
   const res = await batchDeleteDepartmentApi(arr)
-  console.log('🚀 ~ file: Department.vue:400 ~ batchDel ~ res:', res)
+  // console.log('🚀 ~ file: Department.vue:400 ~ batchDel ~ res:', res)
   try {
     if (res.data && res.data.affected != 0) {
       ElMessage({

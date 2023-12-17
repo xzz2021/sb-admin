@@ -17,8 +17,21 @@ export interface DepartmentUserParams {
   pageIndex: number
   id: string
   username?: string
-  account?: string
+  password?: string
+  nickname?: string
+  role?: any
+  createtime?: any
 }
+
+// export interface DepartmentUserItem {
+//   id: string
+//   username: string
+//   account: string
+//   email: string
+//   createTime: string
+//   role: string
+//   department: DepartmentItem
+// }
 
 export interface DepartmentUserItem {
   id: string
@@ -26,11 +39,16 @@ export interface DepartmentUserItem {
   account: string
   email: string
   createTime: string
-  role: string
-  department: DepartmentItem
+  role: any
+  department: any
 }
 
 export interface DepartmentUserResponse {
   list: DepartmentUserItem[]
   total: number
+}
+
+export interface DepartmentUserResponseXzz {
+  data: DepartmentUserItem[]
+  length: number
 }

@@ -111,6 +111,9 @@ const writeRef = ref<ComponentRef<typeof Write>>()
 const saveLoading = ref(false)
 
 const action = (row: any, type: string) => {
+  // console.log('🚀 ~ file: Role.vue:114 ~ action ~ row:', row)
+  //  这里时当前角色菜单权限数据   用于  回显
+  row.menusArr = JSON.parse(row.menusArr)
   dialogTitle.value = t(type === 'edit' ? 'exampleDemo.edit' : 'exampleDemo.detail')
   actionType.value = type
   currentRow.value = row
@@ -137,7 +140,8 @@ const save = async () => {
 }
 
 const deleteRow = async (row: any) => {
-  const res = await deleteRoleApi(row.roleId)
+  toggleSaveBtn(true)
+  const res = await deleteRoleApi(row.id)
   console.log('🚀 ~ file: Role.vue:141 ~ deleteRow ~ res:', res)
   try {
     if (res?.data?.affected == 1) {
@@ -145,9 +149,9 @@ const deleteRow = async (row: any) => {
         type: 'success',
         message: t('common.delSuccess')
       })
-      // 删除成功  更新表格
+      // 删除成功  更新表格  不向后端请求 直接假删
       dataList.value.splice(
-        dataList.value.findIndex((item) => item.roleId === row.roleId),
+        dataList.value.findIndex((item) => item.id === row.id),
         1
       )
     } else {
@@ -161,6 +165,8 @@ const deleteRow = async (row: any) => {
       type: 'error',
       message: '接口异常' + e
     })
+  } finally {
+    toggleSaveBtn(false)
   }
 }
 
@@ -170,9 +176,16 @@ const closeDialog = () => {
 }
 
 // 切换保存按钮状态
-const toggleSaveBtn = (value: string) => {
-  saveLoading.value = value == 'true' ? true : false
+const toggleSaveBtn = (value: boolean) => {
+  // saveLoading.value = value == 'true' ? true : false
+  saveLoading.value = value
 }
+
+// 切换表格删除按钮状态
+// const toggleDeleteBtn = (value: boolean) => {
+//   // saveLoading.value = value == 'true' ? true : false
+//   deleteLoading.value = value
+// }
 </script>
 
 <template>

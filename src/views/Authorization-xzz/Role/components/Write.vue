@@ -5,9 +5,8 @@ import { PropType, reactive, watch, ref, unref, nextTick } from 'vue'
 import { useValidator } from '@/hooks/web/useValidator'
 import { useI18n } from '@/hooks/web/useI18n'
 import { ElTree, ElCheckboxGroup, ElCheckbox, ElMessage } from 'element-plus'
-import { getAllMenuListApi, getAllMenuListApiSelf } from '@/api/menu'
+import { getAllMenuListApiSelf } from '@/api/menu'
 import { filter, eachTree } from '@/utils/tree'
-// import { eachTree } from '@/utils/tree'
 import { findIndex } from '@/utils'
 import { addRoleApi } from '@/api/role'
 
@@ -136,16 +135,17 @@ const formatToTree = (arr: any[], pid: number | undefined) => {
 
 const treeData = ref([])
 const getMenuList = async () => {
-  //  通过用户角色  请求数据
+  //  通过用户角色  请求 菜单 数据
   const res = await getAllMenuListApiSelf({})
-  console.log('🚀 ~ file: Write.vue:140 ~ getMenuList ~ res:', res)
+  console.log('🚀 ~ file: Write.vue:141 ~ getMenuList ~ res:', res)
+
   if (res) {
     // const newData = formatToTree(res.data, undefined)
     treeData.value = res.data
     if (!props.currentRow) return
     await nextTick()
     const checked: any[] = []
-    eachTree(props.currentRow.menu, (v) => {
+    eachTree(props.currentRow.menusArr, (v) => {
       checked.push({
         id: v.id,
         permission: v.meta?.permission || []
@@ -175,7 +175,7 @@ getMenuList()
 interface Emits {
   (e: 'updataListBySon'): void
   (e: 'closeDialogBySon'): void
-  (e: 'toggleSaveBtnBySon', payload: string): void
+  (e: 'toggleSaveBtnBySon', payload: boolean): void
 }
 //  触发父组件  更新角色列表功能   也可以采用前端 假push, 节省网络请求
 // const emit = defineEmits(['updataListBySon', 'closeDialogBySon', 'toggleSaveBtnBySon'])
@@ -187,6 +187,8 @@ const submit = async () => {
     console.log(err)
   })
   if (valid) {
+    emit('toggleSaveBtnBySon', true)
+
     //  获取当前用户
     // const userStore = useUserStore()
     // const aaa = userStore.getUserInfo
@@ -199,7 +201,6 @@ const submit = async () => {
       return checkedKeys.includes(item.id)
     })
     formData.menusArr = data || []
-    console.log('🚀 ~ file: Write.vue:201 ~ submit ~ formData:', formData)
     // return
     // 把扁平化的菜单数据发给后端,  菜单关联的权限['edit', 'add'] 是存在item.meta.permission数组里
     // const treeRefData = treeRef.value?.getCheckedNodes(false, true)
@@ -236,7 +237,7 @@ const submit = async () => {
         //  触发父组件  更新角色列表功能   也可以采用前端 假push, 节省网络请求
         emit('updataListBySon')
         // 清空表单并关闭dialog
-        // emit('closeDialogBySon')
+        emit('closeDialogBySon')
         const elFormExpose = await getElFormExpose()
         elFormExpose?.resetFields()
       }
@@ -246,7 +247,7 @@ const submit = async () => {
         type: 'error'
       })
     } finally {
-      emit('toggleSaveBtnBySon', 'false')
+      emit('toggleSaveBtnBySon', false)
     }
   }
 }

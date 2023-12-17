@@ -1,10 +1,10 @@
 <script setup lang="tsx">
 import { reactive, ref, unref } from 'vue'
-import { getAllMenuListApi } from '@/api/menu'
+import { deleteMenuApi, getAllMenuListApi } from '@/api/menu'
 import { useTable } from '@/hooks/web/useTable'
 import { useI18n } from '@/hooks/web/useI18n'
 import { Table, TableColumn } from '@/components/Table'
-import { ElButton, ElTag } from 'element-plus'
+import { ElButton, ElMessage, ElTag } from 'element-plus'
 import { Icon } from '@/components/Icon'
 import { Search } from '@/components/Search'
 import { FormSchema } from '@/components/Form'
@@ -159,8 +159,29 @@ const action = (row: any, type: string) => {
   dialogVisible.value = true
 }
 
-const deleteAction = (row: any) => {
+const deleteAction = async (row: any) => {
   console.log('🚀 ~ file: Menu.vue:163 ~ deleteAction ~ row:', row)
+  try {
+    const res = await deleteMenuApi(row.id)
+    // return
+    if (res?.data?.affected == 1) {
+      // 删除成功  更新表格  不向后端请求 直接假删
+      dataList.value.splice(
+        dataList.value.findIndex((item) => item.id === row.id),
+        1
+      )
+      ElMessage({
+        message: t('common.deleteSuccess'),
+        type: 'success'
+      })
+    }
+  } catch (err) {
+    ElMessage({
+      message: t('common.addFail'),
+      type: 'error'
+    })
+  } finally {
+  }
 }
 
 const AddAction = () => {
@@ -184,9 +205,14 @@ const save = async () => {
   // }
 }
 
+//  关闭面板
+const closeDialog = () => {
+  dialogVisible.value = false
+}
+
 // 切换保存按钮状态
-const toggleSaveBtn = (value: string) => {
-  saveLoading.value = value == 'true' ? true : false
+const toggleSaveBtn = (value: boolean) => {
+  saveLoading.value = value
 }
 </script>
 
@@ -212,6 +238,7 @@ const toggleSaveBtn = (value: string) => {
       ref="writeRef"
       :current-row="currentRow"
       @updata-list-by-son="getList"
+      @close-dialog-by-son="closeDialog"
       @toggle-save-btn-by-son="toggleSaveBtn"
     />
 

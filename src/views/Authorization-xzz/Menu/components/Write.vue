@@ -284,7 +284,7 @@ const rules = reactive({
 interface Emits {
   (e: 'updataListBySon'): void
   (e: 'closeDialogBySon'): void
-  (e: 'toggleSaveBtnBySon', payload: string): void
+  (e: 'toggleSaveBtnBySon', payload: boolean): void
 }
 
 const { formRegister, formMethods } = useForm()
@@ -298,6 +298,7 @@ const submit = async () => {
     console.log(err)
   })
   if (valid) {
+    emit('toggleSaveBtnBySon', true)
     const formData = await getFormData()
     formData.meta.title && (formData.title = formData.meta.title)
     // return
@@ -313,17 +314,17 @@ const submit = async () => {
         //  触发父组件  更新菜单列表功能
         emit('updataListBySon')
         // // 清空表单并关闭dialog
-        // emit('closeDialogBySon')
+        emit('closeDialogBySon')
         const elFormExpose = await getElFormExpose()
         elFormExpose?.resetFields()
       }
     } catch (err) {
       ElMessage({
-        message: t('common.addFail'),
+        message: t('common.deleteFail'),
         type: 'error'
       })
     } finally {
-      emit('toggleSaveBtnBySon', 'false')
+      emit('toggleSaveBtnBySon', false)
     }
     return formData
   }
