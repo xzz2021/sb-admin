@@ -2,6 +2,8 @@
 import { onMounted, reactive, ref } from 'vue'
 import { Table, TableColumn } from '@/components/Table'
 import { getItemLog } from '@/api/log'
+import { ActionType, ReasonType } from './itemlog.enum'
+
 const columns = reactive<TableColumn[]>([
   {
     field: 'ID',
@@ -48,11 +50,21 @@ const columns = reactive<TableColumn[]>([
     label: '定义ID'
   }
 ])
+
+//  获取枚举  对应值
+const getEnumValue = (enumType: any[], value: string): string => {
+  const enumItem = enumType.find((item) => item.key === value)
+  return enumItem ? enumItem.value : value
+}
 onMounted(async () => {
   const res = await getItemLog()
-  console.log('🚀 ~ file: Tableone.vue:53 ~ onMounted ~ res:', res)
-  if (res.data) {
-    data.value = res.data
+  if (res.data && res.data.length > 0) {
+    const list = res.data.map((item) => {
+      item.ActionType = getEnumValue(ActionType, item.ActionType)
+      item.Reason = getEnumValue(ReasonType, item.Reason)
+      return item
+    })
+    data.value = list
   }
 })
 

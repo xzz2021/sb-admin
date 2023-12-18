@@ -17,7 +17,7 @@ import { Search } from '@/components/Search'
 import Write from './components/Write.vue'
 import Detail from './components/Detail.vue'
 import { Dialog } from '@/components/Dialog'
-import { getRoleListApi } from '@/api/role'
+import { getRoleListApi, getRoleListIdApi } from '@/api/role'
 import { CrudSchema, useCrudSchemas } from '@/hooks/web/useCrudSchemas'
 
 const { t } = useI18n()
@@ -119,6 +119,7 @@ const crudSchemas = reactive<CrudSchema[]>([
       component: 'TreeSelect',
       componentProps: {
         nodeKey: 'id',
+        // 'value-key': 'id',
         props: {
           label: 'departmentName'
           // value: 'department.id'
@@ -133,27 +134,59 @@ const crudSchemas = reactive<CrudSchema[]>([
     //   hidden: true
     // }
   },
+  // {
+  //   //  新增------------------------------------------------
+  //   field: 'role.roleName', //  对应表单数据data 返回的新字段   值为下拉选择的值
+  //   label: t('userDemo.role'),
+  //   form: {
+  //     component: 'Select',
+  //     value: {},
+  //     componentProps: {
+  //       // multiple: true,
+  //       // collapseTags: true,
+  //       maxCollapseTags: 1,
+  //       on: {
+  //         change: async (val: string) => {
+  //           // const formData = await getFormData()
+  //           // console.log('🚀 ~ file: User.vue:184 ~ val:', val)
+  //         }
+  //       }
+  //     },
+
+  //     optionApi: async () => {
+  //       // 新增 角色 表单  获取  角色 选择下拉项
+  //       //  此处 只获取角色 id 及 角色  名称  用于 下拉  并返回  id用于更新用户信息
+  //       const res = await getRoleListIdApi()
+  //       // return res.data.role
+  //       return res.data?.map((v) => ({
+  //         label: v.roleName,
+  //         value: v.id // 提交表单时  下拉选项 所 返回的值
+  //       }))
+  //     }
+  //   }
+  // },
   {
-    field: 'role.roleName', //  对应表单数据data 返回的新字段   值为下拉选择的值
+    field: 'role.id', //  对应表单数据data 返回的新字段   值为下拉选择的值
     label: t('userDemo.role'),
     form: {
       component: 'Select',
-      value: {},
+      // value: {},
       componentProps: {
         // multiple: true,
         // collapseTags: true,
-        maxCollapseTags: 1,
-        on: {
-          change: async (val: string) => {
-            // const formData = await getFormData()
-            // console.log('🚀 ~ file: User.vue:184 ~ val:', val)
-          }
-        }
+        'value-key': 'id',
+        maxCollapseTags: 1
+        // on: {
+        //   change: async (val: string) => {
+        //     // const formData = await getFormData()
+        //     // console.log('🚀 ~ file: User.vue:184 ~ val:', val)
+        //   }
+        // }
       },
 
       optionApi: async () => {
         // 新增 角色 表单  获取  角色 选择下拉项
-        const res = await getRoleListApi()
+        const res = await getRoleListIdApi()
         // return res.data.role
         return res.data?.map((v) => ({
           label: v.roleName,

@@ -42,8 +42,11 @@ const submit = async () => {
   if (valid) {
     const formData = await getFormData()
     console.log('🚀 ~ file: Write.vue:44 ~ submit ~ formData:', formData)
-    //  下拉 表单  提交  选项时 会将新的字段 覆盖 role 或 department 相应字段  所以
+    //  下拉 表单  提交  选项时 会将所选择项的id 覆盖 roleName 或 departmentName 相应字段  所以
     //  需要 提取 字段 根据
+    // const roleId = formData.role.id
+    // const departmentId = formData.department.id
+    // let newFormData
     try {
       // return
       const res = await updateUserApi(formData)
