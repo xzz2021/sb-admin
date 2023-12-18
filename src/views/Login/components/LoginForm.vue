@@ -15,6 +15,8 @@ import { Icon } from '@/components/Icon'
 import { useUserStore } from '@/store/modules/user'
 import { onMounted } from 'vue'
 
+import { useEmittXzz } from '@/hooks/event/useEmittXzz'
+
 const { required } = useValidator()
 
 const emit = defineEmits(['to-register'])
@@ -224,6 +226,8 @@ onMounted(async () => {
   // 本地持久化切换时需要手动设定
   // appStore.setDynamicRouter(!true)
   // appStore.setServerDynamicRouter(!true)
+  //  用于添加  菜单更新 后  触发  重新  获取 路由功能
+  useEmittXzz({ eventname: 'updateMenu', callback: getRole })
 })
 
 // 登录
@@ -236,10 +240,8 @@ const signIn = async () => {
       const formData = await getFormData<UserType>()
       try {
         const res = await loginApi(formData)
-        console.log('🚀 ~ file: LoginForm.vue:217 ~ awaitformRef?.validate ~ res:', res)
         // const { userInfo, tokenKey } = res.data
         if (res) {
-          console.log('🚀 ~ file: LoginForm.vue:242 ~ awaitformRef?.validate ~ res:', res)
           userStore.setUserInfo(res.data.userInfo)
           userStore.setTokenKey(res.data.tokenKey)
           // 是否使用动态路由
@@ -297,6 +299,7 @@ const signIn = async () => {
 
 // 根据用户角色信息 获取  菜单
 const getRole = async () => {
+  console.log('🚀 ~ file: LoginForm.vue:303 ~ 据用户角色信息: 获取  菜单')
   // const params = { rolesArr: userRole }
   // const params = { role }
   const res =
@@ -315,6 +318,7 @@ const getRole = async () => {
     // const routers = res.data || []
     const routers = res.data || []
     userStore.setRoleRouters(routers)
+    console.log('🚀 ~ file: LoginForm.vue:322 ~ getRole ~ userStore:', userStore.getRoleRouters)
     appStore.getDynamicRouter && appStore.getServerDynamicRouter
       ? await permissionStore.generateRoutes('server', routers).catch(() => {})
       : await permissionStore.generateRoutes('frontEnd', routers).catch(() => {})

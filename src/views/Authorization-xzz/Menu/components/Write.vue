@@ -7,6 +7,7 @@ import { useI18n } from '@/hooks/web/useI18n'
 import { addMenuApi, getAllMenuListApi } from '@/api/menu'
 import { ElTag, ElButton, ElMessage } from 'element-plus'
 import AddButtonPermission from './AddButtonPermission.vue'
+import { useEmittXzz } from '@/hooks/event/useEmittXzz'
 
 const { t } = useI18n()
 
@@ -317,6 +318,7 @@ const submit = async () => {
         emit('closeDialogBySon')
         const elFormExpose = await getElFormExpose()
         elFormExpose?.resetFields()
+        useEmittXzz({ eventname: 'updateMenu' })
       }
     } catch (err) {
       ElMessage({

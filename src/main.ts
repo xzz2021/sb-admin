@@ -14,7 +14,7 @@ import { setupStore } from '@/store'
 import { setupGlobCom } from '@/components'
 
 // 引入element-plus
-import { setupElementPlus } from '@/plugins/elementPlus'
+// import { setupElementPlus } from '@/plugins/elementPlus'
 
 // 引入全局样式
 import '@/styles/index.less'
@@ -34,17 +34,22 @@ import App from './App.vue'
 
 import './permission'
 
+import ElementPlus from 'element-plus'
+
+// 引入element plus 样式
+import 'element-plus/dist/index.css'
+
 // 创建实例
 const setupAll = async () => {
   const app = createApp(App)
-
+  app.use(ElementPlus)
   await setupI18n(app)
 
   setupStore(app)
 
   setupGlobCom(app)
 
-  setupElementPlus(app)
+  // setupElementPlus(app)   //  已经全局引入
 
   setupRouter(app)
 
