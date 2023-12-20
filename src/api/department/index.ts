@@ -22,8 +22,12 @@ export const getUserByIdApi000 = (params: DepartmentUserParams) => {
   return request.get<DepartmentUserResponse>({ url: '/mock/department/users', params })
 }
 
+// export const getUserByIdApi = (params: DepartmentUserParams) => {
+//   return request.get<DepartmentUserResponseXzz>({ url: '/api/department/users', params })
+// }
+
 export const getUserByIdApi = (params: DepartmentUserParams) => {
-  return request.get<DepartmentUserResponseXzz>({ url: '/api/department/users', params })
+  return request.get<DepartmentUserResponseXzz | any>({ url: '/api/department/users', params })
 }
 
 export const deleteUserByIdApi = (ids: string[] | number[]) => {
@@ -34,6 +38,7 @@ export const saveUserApi = (data: any) => {
   return request.post({ url: '/mock/department/user/save', data })
 }
 
+//  用户管理中  编辑 修改已有 用户
 export const updateUserApi = (data: any) => {
   return request.post({ url: '/api/userinfo/updateUser', data })
 }

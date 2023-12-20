@@ -114,7 +114,7 @@ export default {
     small: '小'
   },
   login: {
-    welcome: '欢迎使用本系统',
+    welcome: '欢迎使用盛柏管理系统',
     message: '开箱即用的中后台管理系统',
     username: '用户名',
     password: '密码',

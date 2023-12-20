@@ -76,6 +76,18 @@ const schema = reactive<FormSchema[]>([
     }
   },
   {
+    field: 'nickname',
+    label: '昵称',
+    value: '',
+    component: 'Input',
+    colProps: {
+      span: 24
+    },
+    componentProps: {
+      placeholder: '输入你的称呼'
+    }
+  },
+  {
     field: 'code',
     label: t('login.code'),
     colProps: {
@@ -131,7 +143,7 @@ const checkPwd = async (_rule: any, value: any, callback: any) => {
   // 获取用户名表单数据
   const formData = await getFormData<UserRegisterType>()
   if (value === '') {
-    callback(new Error('Please input the password again'))
+    callback(new Error('请再次输入密码!'))
   } else if (value !== formData.password) {
     callback(new Error(t('common.isEqual')))
   } else {

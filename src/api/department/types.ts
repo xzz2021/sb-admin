@@ -49,7 +49,7 @@ export interface DepartmentUserResponse {
 }
 
 export interface DepartmentUserResponseXzz {
-  list?: DepartmentUserItem[]
+  list?: DepartmentUserItem[] | any
   data?: DepartmentUserItem[]
   length: number
 }

@@ -48,6 +48,9 @@ const { tableRegister, tableState, tableMethods } = useTable({
 const { total, loading, dataList, pageSize, currentPage } = tableState
 const { getList, getElTableExpose, delList } = tableMethods
 
+// const test = (val) => {
+//   console.log('🚀 ~ file: User.vue:52 ~ test ~ val:', val)
+// }
 const crudSchemas = reactive<CrudSchema[]>([
   {
     field: 'selection',
@@ -116,66 +119,97 @@ const crudSchemas = reactive<CrudSchema[]>([
       hidden: true
     },
     form: {
+      hidden: true
+      // component: 'TreeSelect'
+      // componentProps: {
+      //   // nodeKey: 'id',
+      //   // 'value-key': 'id',
+      //   props: {
+      //     label: 'departmentName'
+      //     // value: 'department.id'
+      //   }
+      // },
+      // optionApi: async () => {
+      //   const res = await getDepartmentApi()
+      //   return res.data
+      // }
+    }
+  },
+  //  模拟项================================================================
+  {
+    // 此处为   编辑用户 信息时   供  下拉选择的  项目
+    field: 'departmentId',
+    label: t('userDemo.department'),
+    table: { hidden: true },
+    detail: { hidden: true },
+    form: {
       component: 'TreeSelect',
       componentProps: {
         nodeKey: 'id',
         // 'value-key': 'id',
+        on: {
+          change: (_val) => {
+            // getCurrentNode
+            // test(val)
+            // console.log('🚀 ~ file: User.vue:150 ~ val:', val)
+          }
+        },
         props: {
           label: 'departmentName'
-          // value: 'department.id'
         }
       },
       optionApi: async () => {
         const res = await getDepartmentApi()
         return res.data
+        // return res.data?.map((v) => ({
+        //   label: v.departmentName,
+        //   value: v.id // 提交表单时  下拉选项 所 返回的值
+        // }))
       }
     }
-    // table: {
-    //   hidden: true
-    // }
   },
-  // {
-  //   //  新增------------------------------------------------
-  //   field: 'role.roleName', //  对应表单数据data 返回的新字段   值为下拉选择的值
-  //   label: t('userDemo.role'),
-  //   form: {
-  //     component: 'Select',
-  //     value: {},
-  //     componentProps: {
-  //       // multiple: true,
-  //       // collapseTags: true,
-  //       maxCollapseTags: 1,
-  //       on: {
-  //         change: async (val: string) => {
-  //           // const formData = await getFormData()
-  //           // console.log('🚀 ~ file: User.vue:184 ~ val:', val)
-  //         }
-  //       }
-  //     },
+  {
+    //  新增-------------------此处为   编辑用户 信息时   供  下拉选择的  项目-----------------------------
+    field: 'roleId', //  对应表单数据data 返回的新字段   值为下拉选择的值
+    label: t('userDemo.role'),
+    table: { hidden: true },
+    detail: { hidden: true },
+    form: {
+      component: 'Select',
+      // value: {},
+      componentProps: {
+        on: {
+          change: async (_val: string) => {
+            // const formData = await getFormData()
+            // console.log('🚀 ~ file: User.vue:184 ~ val:', val)
+          }
+        }
+      },
 
-  //     optionApi: async () => {
-  //       // 新增 角色 表单  获取  角色 选择下拉项
-  //       //  此处 只获取角色 id 及 角色  名称  用于 下拉  并返回  id用于更新用户信息
-  //       const res = await getRoleListIdApi()
-  //       // return res.data.role
-  //       return res.data?.map((v) => ({
-  //         label: v.roleName,
-  //         value: v.id // 提交表单时  下拉选项 所 返回的值
-  //       }))
-  //     }
-  //   }
-  // },
+      optionApi: async () => {
+        // 新增 角色 表单  获取  角色 选择下拉项
+        //  此处 只获取角色 id 及 角色  名称  用于 下拉  并返回  id用于更新用户信息
+        const res = await getRoleListIdApi()
+        // return res.data.role
+        return res.data?.map((v) => ({
+          label: v.roleName,
+          value: v.id // 提交表单时  下拉选项 所 返回的值
+        }))
+      }
+    }
+  },
   {
     field: 'role.roleName', //  对应表单数据data 返回的新字段   值为下拉选择的值 ?? 表格显示内容对应的 字段
     label: t('userDemo.role'),
     form: {
+      hidden: true,
       component: 'Select',
       // value: {},
       componentProps: {
         // multiple: true,
         // collapseTags: true,
-        'value-key': 'id',
-        maxCollapseTags: 1
+        // 'value-key': 'id',
+        // maxCollapseTags: 1
         // on: {
         //   change: async (val: string) => {
         //     // const formData = await getFormData()
@@ -364,6 +398,17 @@ const save = async () => {
     }
   }
 }
+
+//  关闭面板
+const closeDialog = () => {
+  dialogVisible.value = false
+}
+
+// 切换保存按钮状态
+const toggleSaveBtn = (value: boolean) => {
+  // saveLoading.value = value == 'true' ? true : false
+  saveLoading.value = value
+}
 </script>
 
 <template>
@@ -436,6 +481,9 @@ const save = async () => {
         ref="writeRef"
         :form-schema="allSchemas.formSchema"
         :current-row="currentRow"
+        @updata-list-by-son="getList"
+        @close-dialog-by-son="closeDialog"
+        @toggle-save-btn-by-son="toggleSaveBtn"
       />
 
       <Detail

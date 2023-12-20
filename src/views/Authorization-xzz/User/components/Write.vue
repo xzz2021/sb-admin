@@ -5,9 +5,8 @@ import { PropType, reactive, watch } from 'vue'
 import { DepartmentUserItem } from '@/api/department/types'
 import { useValidator } from '@/hooks/web/useValidator'
 import { updateUserApi } from '@/api/department'
-import { t } from '@wangeditor/editor'
 import { ElMessage } from 'element-plus'
-import { emit } from 'process'
+import { useI18n } from '@/hooks/web/useI18n'
 
 const { required } = useValidator()
 
@@ -21,11 +20,13 @@ const props = defineProps({
     default: () => []
   }
 })
+const { t } = useI18n()
 
 const rules = reactive({
   username: [required()],
   account: [required()],
-  'department.id': [required()],
+  departmentId: [required()],
+  roleId: [required()],
   password: [required()],
   nickname: [required()],
   role: [required()]
@@ -33,6 +34,14 @@ const rules = reactive({
 
 const { formRegister, formMethods } = useForm()
 const { setValues, getFormData, getElFormExpose } = formMethods
+
+interface Emits {
+  (e: 'updataListBySon'): void
+  (e: 'closeDialogBySon'): void
+  (e: 'toggleSaveBtnBySon', payload: boolean): void
+}
+
+let emit = defineEmits<Emits>()
 
 const submit = async () => {
   const elForm = await getElFormExpose()
@@ -47,19 +56,22 @@ const submit = async () => {
     // const roleId = formData.role.id
     // const departmentId = formData.department.id
     // let newFormData
+    //  剔除  原有的  角色 和  部门  信息   返回  新的 对应 id
+    const { role, department, ...newFormData } = formData
+    console.log('🚀 ~ file: Write.vue:52 ~ submit ~ newFormData:', newFormData)
+    // return
     try {
       // return
-      const res = await updateUserApi(formData)
-      console.log('🚀 ~ file: Write.vue:46 ~ submit ~ res:', res)
+      const res = await updateUserApi(newFormData)
       if (res.data) {
         ElMessage({
           message: t('common.addSuccess'),
           type: 'success'
         })
         //  触发父组件  更新角色列表功能   也可以采用前端 假push, 节省网络请求
-        // emit('updataListBySon')
-        // // 清空表单并关闭dialog
-        // emit('closeDialogBySon')
+        emit('updataListBySon')
+        // 清空表单并关闭dialog
+        emit('closeDialogBySon')
         const elFormExpose = await getElFormExpose()
         elFormExpose?.resetFields()
       }
@@ -69,7 +81,7 @@ const submit = async () => {
         type: 'error'
       })
     } finally {
-      // emit('toggleSaveBtnBySon', false)
+      emit('toggleSaveBtnBySon', false)
     }
   }
 }
