@@ -2,7 +2,7 @@
 import { onMounted, reactive, ref } from 'vue'
 import { Table, TableColumn } from '@/components/Table'
 import { getItemLog } from '@/api/log'
-import { ActionType, ReasonType } from './itemlog.enum'
+import { searchEnumitem } from '@/api/datascan'
 
 const columns = reactive<TableColumn[]>([
   {
@@ -27,7 +27,7 @@ const columns = reactive<TableColumn[]>([
   },
   {
     field: 'ActionType',
-    label: '类型'
+    label: '动作类型'
   },
   {
     field: 'Guid',
@@ -51,20 +51,29 @@ const columns = reactive<TableColumn[]>([
   }
 ])
 
+interface keyValue {
+  key: string
+  value: string
+}
 //  获取枚举  对应值
-const getEnumValue = (enumType: any[], value: string): string => {
+const getEnumValue = (enumType: keyValue[], value: string): string => {
   const enumItem = enumType.find((item) => item.key === value)
   return enumItem ? enumItem.value : value
 }
 onMounted(async () => {
+  const ActionType = await searchEnumitem({ enumName: 'item_ActionType' })
+  const ReasonType = await searchEnumitem({ enumName: 'item_Reason' })
+  const ActionEnum = ActionType?.data?.itemJson || []
+  const ReasonEnum = ReasonType.data.itemJson || []
   const res = await getItemLog()
   if (res.data && res.data.length > 0) {
     const list = res.data.map((item) => {
-      item.ActionType = getEnumValue(ActionType, item.ActionType)
-      item.Reason = getEnumValue(ReasonType, item.Reason)
+      item.ActionType = getEnumValue(ActionEnum, item.ActionType)
+      item.Reason = getEnumValue(ReasonEnum, item.Reason)
       return item
     })
     data.value = list
+    console.log('🚀 ~ file: Tableone.vue:74 ~ onMounted ~ list:', list)
   }
 })
 

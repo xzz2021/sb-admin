@@ -12,6 +12,7 @@
   <el-upload
     class="upload-demo"
     accept=".xlsx,.xls"
+    ref="uploadForm"
     drag
     action=""
     :limit="1"
@@ -26,27 +27,23 @@
     <template #tip>
       <el-text class="mx-1" type="danger">每次只能上传一张表,且只能上传.xls/.xlsx文件</el-text>
     </template>
+    <!-- <template #file>
+      <Icon icon="vscode-icons:file-type-excel" />
+    </template> -->
   </el-upload>
 </template>
 
 <script lang="ts" setup>
-// 此依赖没有ts库
-import { ElMessage } from 'element-plus'
+// 此依赖没有ts库??
+import { ElMessage, UploadStatus } from 'element-plus'
 import * as XLSX from 'xlsx/xlsx.mjs'
-// import { ElUpload, ElIcon } from 'element-plus'
-
-// import { }
-// import { read, utils } from 'xlsx'
-// import { ElMessage } from 'element-plus'
+import { ref } from 'vue'
+import { Ref } from 'vue'
 
 const getCurrentFile = async (ev: any) => {
   //获取当前 文件  信息
   let file = ev.raw
   if (file.name.indexOf('xlsx') == -1 || file.name.indexOf('xls') == -1) {
-    // this.$message({
-    //   message: '请选择xlsx、xls格式文件',
-    //   type: 'warning'
-    // })
     ElMessage({
       message: '请选择xlsx、xls格式文件',
       type: 'error'
@@ -62,9 +59,7 @@ const getCurrentFile = async (ev: any) => {
   } else {
     let data = await readFile(file)
     let workbook = XLSX.read(data, { type: 'binary' }) //解析二进制格式数据
-
     let worksheet = workbook.Sheets[workbook.SheetNames[0]] //获取第一个Sheet
-    // console.log('🚀 ~ file: UploadExcel.vue:58 ~ getCurrentFile ~ worksheet:', worksheet)
     let rawData = XLSX.utils.sheet_to_json(worksheet, { header: 1 }) //json数据格式 指定header参数  会将每一行按前后顺序以数组返回
     if (rawData.length > 0) {
       const uploadData = rawData.map((item) => {
@@ -75,9 +70,16 @@ const getCurrentFile = async (ev: any) => {
   }
 }
 
+const uploadForm: Ref = ref(null)
+
+const clearFiles = (_status?: UploadStatus[]) => {
+  uploadForm.value && uploadForm.value.clearFiles()
+}
 const fileExceed = () => {
+  clearFiles()
+
   ElMessage({
-    message: '每次只能上传一张表格,请先移除已有文件!',
+    message: '每次只能上传一张表格,请重新选择文件!',
     type: 'error'
   })
 }
@@ -102,6 +104,10 @@ interface Emits {
 }
 //  触发父组件 事件
 let emit = defineEmits<Emits>()
+
+defineExpose({
+  clearFiles
+})
 </script>
 
 <style scoped>

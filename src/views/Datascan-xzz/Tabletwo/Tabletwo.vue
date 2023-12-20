@@ -2,7 +2,7 @@
 import { onMounted, reactive, ref } from 'vue'
 import { Table, TableColumn } from '@/components/Table'
 import { getMoneyLog } from '@/api/log'
-import { reasonType } from './moneylog.enum'
+import { searchEnumitem } from '@/api/datascan'
 const columns = reactive<TableColumn[]>([
   {
     field: 'ID',
@@ -54,12 +54,16 @@ const getEnumValue = (enumType: any[], value: string): string => {
   return enumItem ? enumItem.value : value
 }
 onMounted(async () => {
+  const ActionType = await searchEnumitem({ enumName: 'money_ActionType' })
+  const ReasonType = await searchEnumitem({ enumName: 'money_Reason' })
+  const ActionEnum = ActionType?.data?.itemJson || []
+  const ReasonEnum = ReasonType.data.itemJson || []
   const res = await getMoneyLog()
-  // console.log('🚀 ~ file: Tableone.vue:53 ~ onMounted ~ res:', res)
 
   if (res.data && res.data.length > 0) {
     const list = res.data.map((item) => {
-      item.Reason = getEnumValue(reasonType, item.Reason)
+      item.Reason = getEnumValue(ReasonEnum, item.Reason)
+      item.Action = getEnumValue(ActionEnum, item.Action)
       return item
     })
     data.value = list

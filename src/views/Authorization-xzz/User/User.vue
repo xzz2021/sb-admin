@@ -17,7 +17,7 @@ import { Search } from '@/components/Search'
 import Write from './components/Write.vue'
 import Detail from './components/Detail.vue'
 import { Dialog } from '@/components/Dialog'
-import { getRoleListApi, getRoleListIdApi } from '@/api/role'
+import { getRoleListIdApi } from '@/api/role'
 import { CrudSchema, useCrudSchemas } from '@/hooks/web/useCrudSchemas'
 
 const { t } = useI18n()
@@ -166,7 +166,7 @@ const crudSchemas = reactive<CrudSchema[]>([
   //   }
   // },
   {
-    field: 'role.id', //  对应表单数据data 返回的新字段   值为下拉选择的值
+    field: 'role.roleName', //  对应表单数据data 返回的新字段   值为下拉选择的值 ?? 表格显示内容对应的 字段
     label: t('userDemo.role'),
     form: {
       component: 'Select',
