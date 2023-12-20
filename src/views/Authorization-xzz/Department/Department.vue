@@ -239,19 +239,19 @@ const crudSchemas = reactive<CrudSchema[]>([
       }
     }
   },
-  {
-    field: 'departmentName',
-    // label: t('userDemo.remark'),
-    label: '部门名称',
-    search: {
-      hidden: true
-    },
-    table: { hidden: true },
-    component: 'Input',
-    detail: {
-      hidden: true
-    }
-  },
+  // {
+  //   field: 'departmentName',
+  //   // label: t('userDemo.remark'),
+  //   label: '部门名称',
+  //   search: {
+  //     hidden: true
+  //   },
+  //   table: { hidden: true },
+  //   component: 'Input',
+  //   detail: {
+  //     hidden: true
+  //   }
+  // },
   {
     field: 'status',
     label: t('userDemo.status'),

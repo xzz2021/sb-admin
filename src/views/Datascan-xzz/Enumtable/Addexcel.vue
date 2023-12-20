@@ -9,15 +9,9 @@
     class="mb-10px"
     label="枚举项目"
   >
-    <el-option-group v-for="group in options" :key="group.label" :label="group.label">
-      <el-option
-        v-for="item in group.options"
-        :key="item.value"
-        :label="item.label"
-        :value="item.value"
-      />
-    </el-option-group>
+    <el-option v-for="item in options" :key="item.value" :label="item.label" :value="item.value" />
   </el-select>
+  <!-- <el-divider /> -->
 
   <el-divider />
   <UploadExcel @updatae-excel-list-by-son="getExcelList" ref="uploadComponent" />
@@ -47,7 +41,7 @@
 </template>
 
 <script lang="ts" setup>
-import { ElSelect, ElOptionGroup, ElOption, ElMessage } from 'element-plus'
+import { ElSelect, ElOption, ElMessage } from 'element-plus'
 import UploadExcel from './UploadExcel.vue'
 import { Ref, ref, watch } from 'vue'
 import Showtable from './Showtable.vue'
@@ -59,36 +53,27 @@ const { t } = useI18n()
 
 const tableList: Ref<any[]> = ref([])
 const change = (_value: string) => {
+  console.log('🚀 ~ file: Addexcel.vue:55 ~ change ~ _value:', _value)
   return {}
 }
 
 const apivalue = ref('')
 const options = [
   {
-    label: 'item日志',
-    options: [
-      {
-        value: 'item_Reason',
-        label: 'item_Reason操作类型'
-      },
-      {
-        value: 'item_ActionType',
-        label: 'item_ActionType动作类型'
-      }
-    ]
+    value: 'item_Reason',
+    label: 'item_Reason操作类型'
   },
   {
-    label: '金钱日志',
-    options: [
-      {
-        value: 'money_Reason',
-        label: 'money_Reason操作类型'
-      },
-      {
-        value: 'money_MoneyType',
-        label: 'money_MoneyType货币类型'
-      }
-    ]
+    value: 'item_ActionType',
+    label: 'item_ActionType动作类型'
+  },
+  {
+    value: 'money_Reason',
+    label: 'money_Reason操作类型'
+  },
+  {
+    value: 'money_MoneyType',
+    label: 'money_MoneyType货币类型'
   }
 ]
 
