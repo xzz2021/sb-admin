@@ -8,6 +8,9 @@ export interface UserType {
   password: string
   role: string
   roleId: string
+  nickname: string
+  code?: string
+  sqlMessage?: string
 }
 
 export interface UserRegisterType {

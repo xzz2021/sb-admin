@@ -177,9 +177,11 @@ const loginRegister = async () => {
         // ElMessage.success('注册成功！')
         // return
         const res = await registerApi(formData)
-        if (res) {
+        if (res && !res.data.code) {
           ElMessage.success('注册成功！')
           toLogin()
+        } else if (res.data.code == 'ER_DUP_ENTRY') {
+          ElMessage.error(`注册失败, 原因: 用户名已存在,请更换!`)
         } else {
           ElMessage.error('网络异常，请稍后再试！')
         }

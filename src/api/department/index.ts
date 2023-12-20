@@ -30,8 +30,13 @@ export const getUserByIdApi = (params: DepartmentUserParams) => {
   return request.get<DepartmentUserResponseXzz | any>({ url: '/api/department/users', params })
 }
 
-export const deleteUserByIdApi = (ids: string[] | number[]) => {
+export const deleteUserByIdApi000 = (ids: string[] | number[]) => {
   return request.post({ url: '/mock/department/user/delete', data: { ids } })
+}
+
+// 用户管理面板   批量 删除用户  操作
+export const deleteUserByIdApi = (ids: string[] | number[]) => {
+  return request.post({ url: '/api/userinfo/delete', data: { ids } })
 }
 
 export const saveUserApi = (data: any) => {

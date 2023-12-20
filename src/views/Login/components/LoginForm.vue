@@ -299,16 +299,12 @@ const signIn = async () => {
 
 // 根据用户角色信息 获取  菜单
 const getRole = async () => {
-  console.log('🚀 ~ file: LoginForm.vue:303 ~ 据用户角色信息: 获取  菜单')
-  // const params = { rolesArr: userRole }
-  // const params = { role }
   const res =
     appStore.getDynamicRouter && appStore.getServerDynamicRouter
       ? // 其实这里后端可以通过token解析角色数组,不传参也是可以的
         await getRoleMenuApi()
       : await getTestRoleApi()
   if (res && res.data) {
-    console.log('🚀 ~ file: LoginForm.vue:309 ~ getRole ~ res.data:', res.data)
     // console.log('🚀 ~ file: LoginForm.vue:302 ~ getRole ~ res:', res)
     //将meta.title赋值给菜单自身title, 以符合数据格式框架要求
     // 这里是从后端拿到扁平的菜单数据
@@ -318,7 +314,6 @@ const getRole = async () => {
     // const routers = res.data || []
     const routers = res.data || []
     userStore.setRoleRouters(routers)
-    console.log('🚀 ~ file: LoginForm.vue:322 ~ getRole ~ userStore:', userStore.getRoleRouters)
     appStore.getDynamicRouter && appStore.getServerDynamicRouter
       ? await permissionStore.generateRoutes('server', routers).catch(() => {})
       : await permissionStore.generateRoutes('frontEnd', routers).catch(() => {})

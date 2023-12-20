@@ -33,7 +33,6 @@ const { tableRegister, tableState, tableMethods } = useTable({
       pageSize: unref(pageSize),
       ...unref(searchParams)
     })
-    console.log('🚀 ~ file: User.vue:28 ~ fetchDataApi: ~ res:', res)
     const total = res?.data?.length
     return {
       list: res.data || [],
@@ -41,6 +40,7 @@ const { tableRegister, tableState, tableMethods } = useTable({
     }
   },
   fetchDelApi: async () => {
+    // 数据依然按数组  传递   后续可以直接开放 批量删除功能
     const res = await deleteUserByIdApi(unref(ids))
     return !!res
   }
@@ -140,6 +140,9 @@ const crudSchemas = reactive<CrudSchema[]>([
     // 此处为   编辑用户 信息时   供  下拉选择的  项目
     field: 'departmentId',
     label: t('userDemo.department'),
+    search: {
+      hidden: true
+    },
     table: { hidden: true },
     detail: { hidden: true },
     form: {
@@ -174,6 +177,8 @@ const crudSchemas = reactive<CrudSchema[]>([
     label: t('userDemo.role'),
     table: { hidden: true },
     detail: { hidden: true },
+    search: { hidden: true },
+
     form: {
       component: 'Select',
       // value: {},
@@ -229,16 +234,6 @@ const crudSchemas = reactive<CrudSchema[]>([
       }
     }
   },
-  // {
-  //   field: 'email',
-  //   label: t('userDemo.email'),
-  //   form: {
-  //     component: 'Input'
-  //   },
-  //   search: {
-  //     hidden: true
-  //   }
-  // },
   {
     field: 'createtime',
     label: t('userDemo.createTime'),
@@ -354,7 +349,7 @@ const AddAction = () => {
 }
 
 const delLoading = ref(false)
-const ids = ref<string[]>([])
+const ids = ref<number[]>([])
 
 const delData = async (row?: DepartmentUserItem) => {
   const elTableExpose = await getElTableExpose()
@@ -363,11 +358,11 @@ const delData = async (row?: DepartmentUserItem) => {
     : elTableExpose?.getSelectionRows().map((v: DepartmentUserItem) => v.id) || []
   delLoading.value = true
 
+  console.log('🚀 ~ file: User.vue:362 ~ awaitdelList ~ ids:', ids.value)
   await delList(unref(ids).length).finally(() => {
     delLoading.value = false
   })
 }
-
 const action = (row: DepartmentUserItem, type: string) => {
   dialogTitle.value = t(type === 'edit' ? 'exampleDemo.edit' : 'exampleDemo.detail')
   actionType.value = type
@@ -458,7 +453,7 @@ const toggleSaveBtn = (value: boolean) => {
         <ElButton type="primary" v-hasPermi="'all'" @click="AddAction">{{
           t('exampleDemo.add')
         }}</ElButton>
-        <ElButton :loading="delLoading" type="danger" @click="delData()">
+        <ElButton :loading="delLoading" v-hasPermi="'all'" type="danger" @click="delData()">
           {{ t('exampleDemo.del') }}
         </ElButton>
       </div>

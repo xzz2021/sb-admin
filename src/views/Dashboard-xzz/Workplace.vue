@@ -18,6 +18,10 @@ import {
 } from '../../api/dashboard/workplace'
 import type { WorkplaceTotal, Project, Dynamic, Team } from '../../api/dashboard/workplace/types'
 import { set } from 'lodash-es'
+import { useUserStore } from '@/store/modules/user'
+import { onMounted } from 'vue'
+import { UserType } from '@/api/login/types'
+import { Ref } from 'vue'
 // import { useUserStore } from '@/store/modules/user'
 
 // import { onMounted } from 'vue'
@@ -117,7 +121,12 @@ getAllApi()
 
 const { t } = useI18n()
 
-// const userStore = useUserStore()
+const userStore = useUserStore()
+const nickname2: Ref = ref('Archer')
+onMounted(() => {
+  const { nickname } = userStore.getUserInfo || ({} as UserType)
+  nickname2.value = nickname || 'Archer'
+})
 // onMounted(async () => {
 //   userStore.logout()
 // })
@@ -137,7 +146,7 @@ const { t } = useI18n()
               />
               <div>
                 <div class="text-20px">
-                  {{ t('workplace.goodMorning') }}，Archer，{{ t('workplace.happyDay') }}
+                  {{ t('workplace.goodMorning') }}，{{ nickname2 }}，{{ t('workplace.happyDay') }}
                 </div>
                 <div class="mt-10px text-14px text-gray-500">
                   {{ t('workplace.toady') }}，20℃ - 32℃！
