@@ -58,41 +58,26 @@ const getCurrentFile = async (ev: any) => {
     return
   } else {
     let data = await readFile(file)
-    const newData = getEachSheet(data)
-    console.log('🚀 ~ file: UploadExcel.vue:62 ~ getCurrentFile ~ newData:', newData)
-    const simpleData = newData.map((item) => {
-      return { sheetName: item.sheetName, length: item.sheetData.length }
-    })
-    emit('updataeExcelListBySon', simpleData) //  表格 展示  大致上传内容
+    let workbook = XLSX.read(data, { type: 'binary' }) //解析二进制格式数据
+    let worksheet = workbook.Sheets[workbook.SheetNames[0]] //获取第一个Sheet
+    let rawData = XLSX.utils.sheet_to_json(worksheet, { header: 1 }) //json数据格式 指定header参数  会将每一行按前后顺序以数组返回
+    if (rawData.length > 0) {
+      const uploadData = rawData.map((item) => {
+        return { key: item[0], value: item[1] }
+      })
+      emit('updataeExcelListBySon', uploadData)
+    }
   }
 }
 
-const getEachSheet = (data) => {
-  let itemArr: { sheetName: string; sheetData: { key: string; value: string }[] }[] = []
-  let workbook = XLSX.read(data, { type: 'binary' }) //解析二进制格式数据
-  const sheetSum = workbook.SheetNames.length
-  for (let i = 0; i < sheetSum; i++) {
-    let sheetName = workbook.SheetNames[i].split('_').slice(1).join('_')
-    let worksheet = workbook.Sheets[workbook.SheetNames[i]] //获取第一个Sheet
-    let rawData = XLSX.utils.sheet_to_json(worksheet, { header: 1 }) //json数据格式 指定header参数  会将每一行按前后顺序以数组返回
-    if (rawData.length > 0) {
-      const sheetData = rawData.map((item) => {
-        return { key: item[0], value: item[1] }
-      })
-      itemArr.push({ sheetName, sheetData })
-    } else {
-    }
-  }
-  return itemArr
-}
 const uploadForm: Ref = ref(null)
 
 const clearFiles = (_status?: UploadStatus[]) => {
   uploadForm.value && uploadForm.value.clearFiles()
 }
 const fileExceed = () => {
-  clearFiles() //清除上传表单区域 文件
-  clearList() // 清除表格展示内容
+  clearFiles()
+
   ElMessage({
     message: '每次只能上传一张表格,请重新选择文件!',
     type: 'error'

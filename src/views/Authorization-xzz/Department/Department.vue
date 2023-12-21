@@ -1,6 +1,6 @@
 <script setup lang="tsx">
 import { ContentWrap } from '@/components/ContentWrap'
-import { Search } from '@/components/Search'
+// import { Search } from '@/components/Search'
 import { Dialog } from '@/components/Dialog'
 import { useI18n } from '@/hooks/web/useI18n'
 import { ElButton, ElMessage, ElTag } from 'element-plus'
@@ -65,8 +65,8 @@ const { tableRegister, tableState, tableMethods } = useTable({
     const { currentPage, pageSize } = tableState
     const res = await getDepartmentTableApi({
       pageIndex: unref(currentPage),
-      pageSize: unref(pageSize),
-      ...unref(searchParams)
+      pageSize: unref(pageSize)
+      // ...unref(searchParams)
     })
     console.log('🚀 ~ file: Department.vue:67 ~ fetchDataApi: ~ res:', res)
     // 返回带有嵌套数据的数结构
@@ -88,11 +88,11 @@ const { loading, dataList, total, currentPage, pageSize } = tableState
 // const { getList, getElTableExpose, delList } = tableMethods
 const { getList } = tableMethods
 
-const searchParams = ref({})
-const setSearchParams = (params: any) => {
-  searchParams.value = params
-  getList()
-}
+// const searchParams = ref({})
+// const setSearchParams = (params: any) => {
+//   searchParams.value = params
+//   getList()
+// }
 
 const { t } = useI18n()
 
@@ -134,7 +134,7 @@ const crudSchemas = reactive<CrudSchema[]>([
     // 用于新增部门的上级部门 录入表单
     field: 'parentId',
     // label: t('tableDemo.index'),
-    label: '上级部门',
+    label: '搜索部门',
     table: {
       hidden: true,
       slots: {
@@ -497,7 +497,7 @@ const toggleSaveBtn = (value: string) => {
 
 <template>
   <ContentWrap>
-    <Search :schema="allSchemas.searchSchema" @search="setSearchParams" @reset="setSearchParams" />
+    <!-- <Search :schema="allSchemas.searchSchema" @search="setSearchParams" @reset="setSearchParams" /> -->
 
     <div class="mb-10px">
       <ElButton type="primary" @click="AddAction">{{ t('exampleDemo.add') }}</ElButton>

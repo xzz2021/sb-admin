@@ -3,7 +3,7 @@ import { Ref, onMounted, reactive, ref } from 'vue'
 import { Table, TableColumn } from '@/components/Table'
 import { getMoneyLog } from '@/api/log'
 import { searchEnumitem } from '@/api/datascan'
-import { useDatascanStore } from '@/store/modules/datascan'
+// import { useDatascanStore } from '@/store/modules/datascan'
 import { ElButton } from 'element-plus'
 const columns = reactive<TableColumn[]>([
   {
@@ -68,19 +68,28 @@ const getData = async () => {
       item.Reason = getEnumValue(ReasonEnum, item.Reason)
       return item
     })
-    datascanStore.setMoneylog(list)
-    moneyData.value = datascanStore.getMoneylog
+    // datascanStore.setMoneylog(list)
+    // moneyData.value = datascanStore.getMoneylog
+    moneyData.value = list
   }
 }
 
-const datascanStore = useDatascanStore()
+// const datascanStore = useDatascanStore()
 onMounted(async () => {
+  getData()
   //  通过 存储数据到本地  节省 网络请求 开支
-  const storeData = datascanStore.getMoneylog
-  storeData.length == 0 ? getData() : (moneyData.value = datascanStore.getMoneylog)
+  // const storeData = datascanStore.getMoneylog
+  // storeData.length == 0 ? getData() : (moneyData.value = datascanStore.getMoneylog)
 })
 
 let moneyData: Ref<any[]> = ref([])
+
+//  用于 keep-alive 保持组件 缓存   则不需要pinia进行存储
+defineOptions({
+  // 这里页面名称需与路由名称 一致  // 避免 eslint 告警  后续 一律 使用驼峰形式
+  // eslint-disable-next-line vue/component-definition-name-casing
+  name: 'Tabletwo-xzz'
+})
 </script>
 
 <template>

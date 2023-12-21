@@ -5,8 +5,8 @@ import { useTable } from '@/hooks/web/useTable'
 import { useI18n } from '@/hooks/web/useI18n'
 import { Table, TableColumn } from '@/components/Table'
 import { ElButton, ElMessage, ElTag } from 'element-plus'
-import { Search } from '@/components/Search'
-import { FormSchema } from '@/components/Form'
+// import { Search } from '@/components/Search'
+// import { FormSchema } from '@/components/Form'
 import { ContentWrap } from '@/components/ContentWrap'
 import Write from './components/Write.vue'
 import Detail from './components/Detail.vue'
@@ -17,7 +17,6 @@ const { t } = useI18n()
 const { tableRegister, tableState, tableMethods } = useTable({
   fetchDataApi: async () => {
     const res = await getRoleListApi()
-    console.log('🚀 ~ file: Role.vue:20 ~ fetchDataApi: ~ res:', res)
     return {
       list: res.data || [],
       total: res.data.length || 0
@@ -70,13 +69,25 @@ const tableColumns = reactive<TableColumn[]>([
         const row = data.row
         return (
           <>
-            <ElButton type="primary" onClick={() => action(row, 'edit')}>
+            <ElButton
+              type="primary"
+              onClick={() => action(row, 'edit')}
+              v-show={row?.role?.roleName != '超级管理员'}
+            >
               {t('exampleDemo.edit')}
             </ElButton>
-            <ElButton type="success" onClick={() => action(row, 'detail')}>
+            <ElButton
+              type="success"
+              onClick={() => action(row, 'detail')}
+              v-show={row?.role?.roleName != '超级管理员'}
+            >
               {t('exampleDemo.detail')}
             </ElButton>
-            <ElButton type="danger" onClick={() => deleteRow(row)}>
+            <ElButton
+              type="danger"
+              onClick={() => deleteRow(row)}
+              v-show={row?.role?.roleName != '超级管理员'}
+            >
               {t('exampleDemo.del')}
             </ElButton>
           </>
@@ -86,19 +97,19 @@ const tableColumns = reactive<TableColumn[]>([
   }
 ])
 
-const searchSchema = reactive<FormSchema[]>([
-  {
-    field: 'roleName',
-    label: t('role.roleName'),
-    component: 'Input'
-  }
-])
+// const searchSchema = reactive<FormSchema[]>([
+//   {
+//     field: 'roleName',
+//     label: t('role.roleName'),
+//     component: 'Input'
+//   }
+// ])
 
-const searchParams = ref({})
-const setSearchParams = (data: any) => {
-  searchParams.value = data
-  getList()
-}
+// const searchParams = ref({})
+// const setSearchParams = (data: any) => {
+//   searchParams.value = data
+//   getList()
+// }
 
 const dialogVisible = ref(false)
 const dialogTitle = ref('')
@@ -190,7 +201,7 @@ const toggleSaveBtn = (value: boolean) => {
 
 <template>
   <ContentWrap>
-    <Search :schema="searchSchema" @reset="setSearchParams" @search="setSearchParams" />
+    <!-- <Search :schema="searchSchema" @reset="setSearchParams" @search="setSearchParams" /> -->
     <div class="mb-10px">
       <ElButton type="primary" @click="AddAction">{{ t('exampleDemo.add') }}</ElButton>
     </div>

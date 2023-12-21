@@ -1,14 +1,22 @@
 <script setup lang="ts">
-import { Ref, onMounted, reactive, ref } from 'vue'
+import { reactive, ref } from 'vue'
 import { Table, TableColumn } from '@/components/Table'
 import { getItemLog } from '@/api/log'
 import { searchEnumitem } from '@/api/datascan'
-import { useDatascanStore } from '@/store/modules/datascan'
+// import { useDatascanStore } from '@/store/modules/datascan'
+import { Search } from '@/components/Search'
 
-const columns = reactive<TableColumn[]>([
+import { useTableXzz } from '@/hooks/web/useTableXzz'
+import { FormSchema } from '@/components/Form'
+
+const tableColumns = reactive<TableColumn[]>([
   {
     field: 'ID',
     label: '序号'
+    // width: 20
+    // componentProps: {
+    //   width: '10%'
+    // }
   },
   {
     field: 'LogTime',
@@ -52,6 +60,21 @@ const columns = reactive<TableColumn[]>([
   }
 ])
 
+// const { tableRegister, tableState, tableMethods } = useTableXzz({
+const { tableRegister, tableState, tableMethods } = useTableXzz({
+  fetchDataApi: async () => {
+    const res = await getData()
+    // 这里的数据 返回给hook  统一处理
+    return {
+      list: res?.list || [],
+      total: res?.list.length || 0
+    }
+  }
+})
+
+const { dataList, loading, total } = tableState
+const { getList } = tableMethods
+
 interface keyValue {
   key: string
   value: string
@@ -61,12 +84,12 @@ const getEnumValue = (enumType: keyValue[], value: string): string => {
   const enumItem = enumType.find((item) => item.key === value)
   return enumItem ? enumItem.value : value
 }
+// 生成 匹配枚举值的 新列表
 const getData = async () => {
   const ActionType = await searchEnumitem({ enumName: 'item_ActionType' })
-  console.log('🚀 ~ file: Tableone.vue:66 ~ getData ~ item_ActionType:')
   const ReasonType = await searchEnumitem({ enumName: 'item_Reason' })
   const ActionEnum = ActionType?.data?.itemJson || []
-  const ReasonEnum = ReasonType.data.itemJson || []
+  const ReasonEnum = ReasonType?.data?.itemJson || []
   const res = await getItemLog()
   if (res.data && res.data.length > 0) {
     const list = res.data.map((item) => {
@@ -74,23 +97,64 @@ const getData = async () => {
       item.Reason = getEnumValue(ReasonEnum, item.Reason)
       return item
     })
-    datascanStore.setItemlog(list)
-    itemData.value = datascanStore.getItemlog
+    return { list }
   }
 }
 
-const datascanStore = useDatascanStore()
-onMounted(async () => {
-  //  通过 存储数据到本地  节省 网络请求 开支
-  const storeData = datascanStore.getItemlog
-  storeData.length == 0 ? getData() : (itemData.value = datascanStore.getItemlog)
-})
+// ==============搜索 逻辑================
+const searchSchema = reactive<FormSchema[]>([
+  {
+    field: 'ActionType',
+    label: '动作类型',
+    component: 'Input'
+  },
+  {
+    field: 'Reason',
+    label: '操作类型',
+    component: 'Input'
+  },
+  {
+    field: 'LogTime',
+    label: '日志时间',
+    component: 'DatePicker',
+    componentProps: {
+      'value-format': 'YYYY-MM-DD'
+    }
+  }
+])
 
-let itemData: Ref<any[]> = ref([])
+const searchParams = ref({})
+const setSearchParams = (data: any) => {
+  console.log('🚀 ~ file: Tableone.vue:125 ~ setSearchParams ~ data:', data)
+  searchParams.value = data
+  getList()
+}
+
+//=========================
+
+// onMounted(async () => {
+// })
+
+//  用于 keep-alive 保持组件 缓存   则不需要pinia进行存储
+defineOptions({
+  // eslint-disable-next-line vue/component-definition-name-casing
+  name: 'Tableone-xzz'
+})
 </script>
 
 <template>
+  <!-- 要注意的是  如果 使用的是模板代码  二次封装的组件   需要 单独引入一下 -->
+  <Search :schema="searchSchema" @reset="setSearchParams" @search="setSearchParams" />
+
   <el-text class="mx-1" type="danger">数据未同步?</el-text>
   <el-button type="primary" plain @click="getData" text>点我更新</el-button>
-  <Table :columns="columns" :data="itemData" />
+  <Table
+    :columns="tableColumns"
+    :data="dataList"
+    :loading="loading"
+    :pagination="{
+      total
+    }"
+    @register="tableRegister"
+  />
 </template>

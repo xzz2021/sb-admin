@@ -15,7 +15,7 @@ import { Icon } from '@/components/Icon'
 import { useUserStore } from '@/store/modules/user'
 import { onMounted } from 'vue'
 
-import { useEmittXzz } from '@/hooks/event/useEmittXzz'
+// import { useEmittXzz } from '@/hooks/event/useEmittXzz'
 
 const { required } = useValidator()
 
@@ -227,7 +227,13 @@ onMounted(async () => {
   // appStore.setDynamicRouter(!true)
   // appStore.setServerDynamicRouter(!true)
   //  用于添加  菜单更新 后  触发  重新  获取 路由功能
-  useEmittXzz({ eventname: 'updateMenu', callback: getRole })
+  // useEmittXzz({
+  //   eventname: 'updateMenu',
+  //   callback: (_type: string) => {
+  //     getRole()
+  //   }
+  // })
+  // useEmittXzz({ eventname: 'updateMenu', callback: getRole })
 })
 
 // 登录
@@ -296,9 +302,9 @@ const signIn = async () => {
 //     }
 //   })
 // }
-
 // 根据用户角色信息 获取  菜单
 const getRole = async () => {
+  console.log('🚀 ~ file: LoginForm.vue:300 ~ ===============getRolegetRolegetRolegetRole:')
   const res =
     appStore.getDynamicRouter && appStore.getServerDynamicRouter
       ? // 其实这里后端可以通过token解析角色数组,不传参也是可以的

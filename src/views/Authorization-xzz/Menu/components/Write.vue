@@ -7,7 +7,12 @@ import { useI18n } from '@/hooks/web/useI18n'
 import { addMenuApi, getAllMenuListApi } from '@/api/menu'
 import { ElTag, ElButton, ElMessage } from 'element-plus'
 import AddButtonPermission from './AddButtonPermission.vue'
-import { useEmittXzz } from '@/hooks/event/useEmittXzz'
+import { useAppStore } from '@/store/modules/app'
+import { useUserStore } from '@/store/modules/user'
+import { usePermissionStore } from '@/store/modules/permission'
+import { RouteRecordRaw, useRouter } from 'vue-router'
+import { getRoleMenuApi } from '@/api/login'
+// import { useEmittXzz } from '@/hooks/event/useEmittXzz'
 
 const { t } = useI18n()
 
@@ -291,6 +296,41 @@ interface Emits {
 const { formRegister, formMethods } = useForm()
 const { setValues, getFormData, getElFormExpose, setSchema } = formMethods
 
+const appStore = useAppStore()
+const permissionStore = usePermissionStore()
+const { addRoute, push } = useRouter()
+const redirect = ref<string>('')
+
+const userStore = useUserStore()
+const updateMenu = async () => {
+  // 修改菜单 后更新 当前菜单 路由
+  console.log('🚀 ~ file: LoginForm.vue:300 ~ ===============getRolegetRolegetRolegetRole:')
+  const res = await getRoleMenuApi()
+  if (res && res.data) {
+    // console.log('🚀 ~ file: LoginForm.vue:302 ~ getRole ~ res:', res)
+    //将meta.title赋值给菜单自身title, 以符合数据格式框架要求
+    // 这里是从后端拿到扁平的菜单数据
+    //  需要转换成带children的嵌套数据格式
+    // let nestedArr = formatToTree(backendMenuAndBtnArr, undefined)
+    // let newData = [...backendMenuAndBtnArr, ...adminList]
+    // const routers = res.data || []
+    const routers = res.data || []
+    userStore.setRoleRouters(routers)
+    appStore.getDynamicRouter && appStore.getServerDynamicRouter
+      ? await permissionStore.generateRoutes('server', routers).catch(() => {})
+      : await permissionStore.generateRoutes('frontEnd', routers).catch(() => {})
+
+    permissionStore.getAddRouters.forEach((route) => {
+      addRoute(route as RouteRecordRaw) // 动态添加可访问路由表
+    })
+    permissionStore.setIsAddRouters(true)
+    // 获取完角色路由表, 自动跳转
+    push({ path: redirect.value || permissionStore.addRouters[0].path })
+  } else {
+    //  当未获取到路由时
+    // 停留在当前页面  提示获取路由失败
+  }
+}
 //  触发父组件  更新角色列表功能
 let emit = defineEmits<Emits>()
 const submit = async () => {
@@ -298,6 +338,9 @@ const submit = async () => {
   const valid = await elForm?.validate().catch((err) => {
     console.log(err)
   })
+
+  // const { emitter } = useEmittXzz()
+
   if (valid) {
     emit('toggleSaveBtnBySon', true)
     const formData = await getFormData()
@@ -318,7 +361,9 @@ const submit = async () => {
         emit('closeDialogBySon')
         const elFormExpose = await getElFormExpose()
         elFormExpose?.resetFields()
-        useEmittXzz({ eventname: 'updateMenu' })
+        // useEmittXzz({ eventname: 'updateMenu' })
+        // emitter.emit('updateMenu')
+        updateMenu()
       }
     } catch (err) {
       ElMessage({

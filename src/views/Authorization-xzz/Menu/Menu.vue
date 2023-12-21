@@ -6,8 +6,8 @@ import { useI18n } from '@/hooks/web/useI18n'
 import { Table, TableColumn } from '@/components/Table'
 import { ElButton, ElMessage, ElTag } from 'element-plus'
 import { Icon } from '@/components/Icon'
-import { Search } from '@/components/Search'
-import { FormSchema } from '@/components/Form'
+// import { Search } from '@/components/Search'
+// import { FormSchema } from '@/components/Form'
 import { ContentWrap } from '@/components/ContentWrap'
 import Write from './components/Write.vue'
 import Detail from './components/Detail.vue'
@@ -127,19 +127,19 @@ const tableColumns = reactive<TableColumn[]>([
   }
 ])
 
-const searchSchema = reactive<FormSchema[]>([
-  {
-    field: 'meta.title',
-    label: t('menu.menuName'),
-    component: 'Input'
-  }
-])
+// const searchSchema = reactive<FormSchema[]>([
+//   {
+//     field: 'meta.title',
+//     label: t('menu.menuName'),
+//     component: 'Input'
+//   }
+// ])
 
-const searchParams = ref({})
-const setSearchParams = (data: any) => {
-  searchParams.value = data
-  getList()
-}
+// const searchParams = ref({})
+// const setSearchParams = (data: any) => {
+//   searchParams.value = data
+//   getList()
+// }
 
 const dialogVisible = ref(false)
 const dialogTitle = ref('')
@@ -218,7 +218,7 @@ const toggleSaveBtn = (value: boolean) => {
 
 <template>
   <ContentWrap>
-    <Search :schema="searchSchema" @reset="setSearchParams" @search="setSearchParams" />
+    <!-- <Search :schema="searchSchema" @reset="setSearchParams" @search="setSearchParams" /> -->
     <div class="mb-10px">
       <ElButton type="primary" @click="AddAction">{{ t('exampleDemo.add') }}</ElButton>
     </div>
