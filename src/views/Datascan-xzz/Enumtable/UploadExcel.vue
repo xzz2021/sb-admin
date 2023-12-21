@@ -58,12 +58,10 @@ const getCurrentFile = async (ev: any) => {
     return
   } else {
     let data = await readFile(file)
-    const newData = getEachSheet(data)
-    console.log('🚀 ~ file: UploadExcel.vue:62 ~ getCurrentFile ~ newData:', newData)
-    const simpleData = newData.map((item) => {
-      return { sheetName: item.sheetName, length: item.sheetData.length }
-    })
-    emit('updataeExcelListBySon', simpleData) //  表格 展示  大致上传内容
+    const formData = getEachSheet(data)
+
+    emit('updataeExcelListBySon', formData) //  表格 展示  大致上传内容
+    // return formData
   }
 }
 

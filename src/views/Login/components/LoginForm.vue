@@ -304,7 +304,6 @@ const signIn = async () => {
 // }
 // 根据用户角色信息 获取  菜单
 const getRole = async () => {
-  console.log('🚀 ~ file: LoginForm.vue:300 ~ ===============getRolegetRolegetRolegetRole:')
   const res =
     appStore.getDynamicRouter && appStore.getServerDynamicRouter
       ? // 其实这里后端可以通过token解析角色数组,不传参也是可以的

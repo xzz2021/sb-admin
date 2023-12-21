@@ -13,35 +13,33 @@
 </template>
 
 <script lang="ts" setup>
-// import { ElMessage } from 'element-plus'
+import { ElMessage } from 'element-plus'
 import UploadExcel from './UploadExcel.vue'
 import { Ref, ref } from 'vue'
 import { isArray } from 'lodash-es'
-// import { addEnumitem } from '@/api/datascan'
-// import { useI18n } from '@/hooks/web/useI18n'
+import { addEnumitem } from '@/api/datascan'
+import { useI18n } from '@/hooks/web/useI18n'
 
 const tableList: Ref<any[]> = ref([])
+const { t } = useI18n()
 
 const getExcelList = (data: any[]) => {
-  console.log('🚀 ~ file: Addexcel.vue:26 ~ getExcelList ~ data:', data)
-  if (isArray(data)) {
-    tableList.value = data
+  if (isArray(data) && data.length > 0) {
+    formData.value = data
+    const simpleData = data.map((item) => {
+      return { sheetName: item.sheetName, length: item.sheetData.length }
+    })
+    tableList.value = simpleData
   }
 }
-
+const formData: Ref<updateEnumitem[]> = ref([])
 const confirmEvent = async () => {
-  // if (apivalue.value == '') {
-  //   return ElMessage({
-  //     message: '请先选择枚举项目',
-  //     type: 'error'
-  //   })
-  // }
-  // if (tableList.value.length === 0) {
-  //   return ElMessage({
-  //     message: '请先上传excel枚举文件',
-  //     type: 'error'
-  //   })
-  // }
+  if (tableList.value.length == 0 || formData.value.length == 0) {
+    return ElMessage({
+      message: '请先上传excel枚举文件',
+      type: 'error'
+    })
+  }
   await updateEnumitem()
 }
 const uploadComponent: Ref = ref(null)
@@ -49,24 +47,23 @@ const uploadComponent: Ref = ref(null)
 //   uploadComponent.value.clearFiles()
 // }
 const updateEnumitem = async () => {
-  // try {
-  //   const res = await addEnumitem({
-  //     itemJson: JSON.stringify(tableList.value)
-  //   })
-  //   if (res?.data?.id) {
-  //     clearForm()
-  //     ElMessage({
-  //       message: t('common.addSuccess'),
-  //       type: 'success'
-  //     })
-  //   }
-  // } catch (err) {
-  //   console.log('🚀 ~ file: Addexcel.vue:145 ~ updateEnumitem ~ err:', err)
-  //   ElMessage({
-  //     message: t('common.addFail'),
-  //     type: 'error'
-  //   })
-  // } finally {
-  // }
+  try {
+    const res = await addEnumitem(formData.value)
+    console.log('🚀 ~ file: Addexcel.vue:52 ~ updateEnumitem ~ res:', res)
+    if (res?.data?.ids) {
+      tableList.value = []
+      ElMessage({
+        message: t('common.addSuccess'),
+        type: 'success'
+      })
+    }
+  } catch (err) {
+    console.log('🚀 ~ file: Addexcel.vue:145 ~ updateEnumitem ~ err:', err)
+    ElMessage({
+      message: t('common.addFail'),
+      type: 'error'
+    })
+  } finally {
+  }
 }
 </script>

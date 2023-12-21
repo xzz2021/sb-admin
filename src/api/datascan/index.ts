@@ -13,7 +13,7 @@ interface searchEnum {
   enumName: string
   itemJson: keyValue[]
 }
-export const addEnumitem = (data: updateEnum) => {
+export const addEnumitem = (data: updateEnumitem[]) => {
   return request.post({ url: '/api/enumitem/update', data })
 }
 
