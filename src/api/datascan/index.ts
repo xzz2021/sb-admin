@@ -17,8 +17,6 @@ export const addEnumitem = (data: updateEnumitem[]) => {
   return request.post({ url: '/api/enumitem/update', data })
 }
 
-export const searchEnumitem = (params: { enumName: string }) => {
-  return request.get<{
-    [x: string]: never[]
-  }>({ url: '/api/enumitem/search', params })
+export const searchEnumitem = (data: string[]) => {
+  return request.post<searchEnum[]>({ url: '/api/enumitem/search', data })
 }

@@ -56,20 +56,34 @@ const getEnumValue = (enumType: any[], value: string): string => {
   return enumItem ? enumItem.value : value
 }
 
+//  向后端请求 需要 的 枚举数据
+const getEnumApi = async () => {
+  const needEnum: string[] = ['Reason', 'MoneyType', 'Action']
+  let searchArr: string[] = needEnum.map((item) => `money_${item}`)
+  let enumArr: any[] = []
+  const res = await searchEnumitem(searchArr)
+  if (res && res.data && res.data.length > 0) {
+    enumArr = res?.data.map((item) => {
+      return {
+        itemName: item.enumName.split('_')[1],
+        data: item.itemJson
+      }
+    })
+  }
+  return enumArr
+}
 const getData = async () => {
-  const ActionType = await searchEnumitem({ enumName: 'money_ActionType' })
-  const ReasonType = await searchEnumitem({ enumName: 'money_Reason' })
-  const ActionEnum = ActionType?.data?.itemJson || []
-  const ReasonEnum = ReasonType.data.itemJson || []
+  let enumArr: { itemName: string; data: any[] }[] = await getEnumApi()
+
   const res = await getMoneyLog()
   if (res.data && res.data.length > 0) {
     const list = res.data.map((item) => {
-      item.ActionType = getEnumValue(ActionEnum, item.ActionType)
-      item.Reason = getEnumValue(ReasonEnum, item.Reason)
+      for (let i = 0; i < enumArr.length; i++) {
+        const curItem = enumArr[i]['itemName']
+        item[curItem] = getEnumValue(enumArr[i]['data'], item[curItem])
+      }
       return item
     })
-    // datascanStore.setMoneylog(list)
-    // moneyData.value = datascanStore.getMoneylog
     moneyData.value = list
   }
 }

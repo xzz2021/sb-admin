@@ -35,6 +35,7 @@
 
 <script lang="ts" setup>
 // 此依赖没有ts库??
+
 import { ElMessage, UploadStatus } from 'element-plus'
 import * as XLSX from 'xlsx/xlsx.mjs'
 import { ref } from 'vue'

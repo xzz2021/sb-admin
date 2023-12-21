@@ -1,15 +1,17 @@
 <template>
-  <UploadExcel @updatae-excel-list-by-son="getExcelList" ref="uploadComponent" />
-  <el-divider />
+  <div v-loading="loading">
+    <UploadExcel @updatae-excel-list-by-son="getExcelList" ref="uploadComponent" />
+    <el-divider />
 
-  <el-text class="mx-1" type="success">当前excel文件夹的所有内容:</el-text>
-  <el-table :data="tableList" style="width: 40%">
-    <el-table-column type="index" width="50" />
-    <el-table-column prop="sheetName" label="表名" />
-    <el-table-column prop="length" label="数据长度" />
-  </el-table>
-  <el-divider />
-  <el-button type="primary" @click="confirmEvent">确认提交</el-button>
+    <el-text class="mx-1" type="success">当前excel文件夹的所有内容:</el-text>
+    <el-table :data="tableList" style="width: 40%">
+      <el-table-column type="index" width="50" />
+      <el-table-column prop="sheetName" label="表名" />
+      <el-table-column prop="length" label="数据长度" />
+    </el-table>
+    <el-divider />
+    <el-button type="primary" @click="confirmEvent">确认提交</el-button>
+  </div>
 </template>
 
 <script lang="ts" setup>
@@ -22,7 +24,7 @@ import { useI18n } from '@/hooks/web/useI18n'
 
 const tableList: Ref<any[]> = ref([])
 const { t } = useI18n()
-
+const loading = ref(false)
 const getExcelList = (data: any[]) => {
   if (isArray(data) && data.length > 0) {
     formData.value = data
@@ -48,10 +50,13 @@ const uploadComponent: Ref = ref(null)
 // }
 const updateEnumitem = async () => {
   try {
+    loading.value = true
     const res = await addEnumitem(formData.value)
-    console.log('🚀 ~ file: Addexcel.vue:52 ~ updateEnumitem ~ res:', res)
-    if (res?.data?.ids) {
+    console.log('🚀 ~ file: Addexcel.vue:55 ~ updateEnumitem ~ res:', res)
+    // const res = { data: { ids: ['uuu'] } }
+    if (res?.data.length > 0) {
       tableList.value = []
+      formData.value = []
       ElMessage({
         message: t('common.addSuccess'),
         type: 'success'
@@ -64,6 +69,7 @@ const updateEnumitem = async () => {
       type: 'error'
     })
   } finally {
+    loading.value = false
   }
 }
 </script>

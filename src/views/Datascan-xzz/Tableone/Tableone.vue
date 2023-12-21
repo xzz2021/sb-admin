@@ -44,7 +44,7 @@ const tableColumns = reactive<TableColumn[]>([
   },
   {
     field: 'TemplateID',
-    label: '物品ID'
+    label: '物品'
   },
   {
     field: 'ItemCount',
@@ -84,40 +84,50 @@ const getEnumValue = (enumType: keyValue[], value: string): string => {
   const enumItem = enumType.find((item) => item.key === value)
   return enumItem ? enumItem.value : value
 }
-
-// const forOfAllTable = async (tableColumns) => {
-//   const enumArr = tableColumns.map(async (item: any) => {
-//     const res = await searchEnumitem({ enumName: `item_${item.field}` })
-//   const eachItem = res?.data?.itemJson || []
-//     if(eachItem.length > 0){
-//     }
-//     )
-//   }
+const armorData: Ref<keyValue[]> = ref([])
+//  向后端请求 需要 的 枚举数据
+const getEnumApi = async () => {
+  const needEnum: string[] = ['Reason', 'TemplateID', 'ActionType', 'armor']
+  let searchArr: string[] = needEnum.map((item) => `item_${item}`)
+  let enumArr: any[] = []
+  const res = await searchEnumitem(searchArr)
+  if (res && res.data && res.data.length > 0) {
+    enumArr = res?.data.map((item) => {
+      return {
+        itemName: item.enumName.split('_')[1],
+        data: item.itemJson
+      }
+    })
+  }
+  const tempData = enumArr.filter((item) => item.itemName == 'armor')
+  armorData.value = tempData[0].data
+  return enumArr
+}
+// const getArmorData = async () => {
+//   let tempData = await getEnumApi()
+//   const armorData = tempData.filter((item) => item.itemName == 'armor')
+//   return armorData[0].data
 // }
 
-const needEnum: string[] = ['Reason', 'TemplateID', 'ActionType', 'TemplateID']
 // 生成 匹配枚举值的 新列表
+
 const getData = async () => {
-  // const ActionType = await searchEnumitem({ enumName: 'item_ActionType' })
-  // const ReasonType = await searchEnumitem({ enumName: 'item_Reason' })
-  // const ActionEnum = ActionType?.data?.itemJson || []
-  // const ReasonEnum = ReasonType?.data?.itemJson || []
-  let enumArr: { itemName: string; data: any[] }[] = []
-  for (let i = 0; i < needEnum.length; i++) {
-    const res = await searchEnumitem({ enumName: `item_${needEnum[i]}` })
-    const eachItem = res?.data?.itemJson || []
-    // console.log('🚀 ~ file: Tableone.vue:111 ~ list ~ res:', res)
-    if (eachItem.length > 0) {
-      const aa = { itemName: needEnum[i], data: eachItem }
-      enumArr.push(aa)
-    }
-  }
+  const enumArr: { itemName: string; data: any[] }[] = await getEnumApi()
   const res = await getItemLog()
   if (res.data && res.data.length > 0) {
     const list = res.data.map((item) => {
       for (let i = 0; i < enumArr.length; i++) {
         const curItem = enumArr[i]['itemName']
-        item[curItem] = getEnumValue(enumArr[i]['data'], item[curItem])
+        if (curItem == 'TemplateID') {
+          const tempName = getEnumValue(enumArr[i]['data'], item[curItem]) + '-' + item[curItem]
+          if (!/[\u4E00-\u9FA5]+/g.test(tempName)) {
+            item[curItem] = getEnumValue(armorData.value, item[curItem]) + '-' + item[curItem]
+          } else {
+            item[curItem] = tempName
+          }
+        } else {
+          item[curItem] = getEnumValue(enumArr[i]['data'], item[curItem])
+        }
       }
       return item
     })
