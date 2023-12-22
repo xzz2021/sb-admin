@@ -1,7 +1,11 @@
 import { useI18n } from '@/hooks/web/useI18n'
 import { Table, TableExpose, TableProps, TableSetProps, TableColumn } from '@/components/Table'
 import { ElTable, ElMessageBox, ElMessage } from 'element-plus'
-import { ref, watch, unref, nextTick, onMounted } from 'vue'
+import { ref, watch, unref, nextTick, onMounted, reactive, Ref } from 'vue'
+import { searchEnumitem } from '@/api/datascan'
+import { FormSchema } from '@/components/Form'
+import { formatToDateTime } from '@/utils/dateUtil'
+import { isString } from 'lodash-es'
 
 const { t } = useI18n()
 
@@ -18,6 +22,11 @@ interface UseTableConfig {
   fetchDelApi?: () => Promise<boolean>
 }
 
+interface keyValue {
+  key: string
+  value: string
+}
+
 export const useTableXzz = (config: UseTableConfig) => {
   const { immediate = true } = config
 
@@ -26,6 +35,69 @@ export const useTableXzz = (config: UseTableConfig) => {
   const pageSize = ref(10)
   const total = ref(0)
   const dataList = ref<any[]>([])
+  //  日期查询结构 预设值
+  const shortcuts = [
+    {
+      text: '上周',
+      value: () => {
+        const end = new Date()
+        const start = new Date()
+        start.setTime(start.getTime() - 3600 * 1000 * 24 * 7)
+        return [start, end]
+      }
+    },
+    {
+      text: '上个月',
+      value: () => {
+        const end = new Date()
+        const start = new Date()
+        start.setTime(start.getTime() - 3600 * 1000 * 24 * 30)
+        return [start, end]
+      }
+    },
+    {
+      text: '前3个月',
+      value: () => {
+        const end = new Date()
+        const start = new Date()
+        start.setTime(start.getTime() - 3600 * 1000 * 24 * 90)
+        return [start, end]
+      }
+    }
+  ]
+  //  日期组件 默认 时间 区间  设置
+  const defaultTime: [Date, Date] = [
+    new Date(2000, 1, 1, 0, 0, 0),
+    new Date(2000, 2, 1, 23, 59, 59)
+  ]
+  //  公共搜索项目
+  const commonSearchSchema = reactive<FormSchema[]>([
+    // {
+    //   field: 'Reason',
+    //   label: '操作类型',
+    //   component: 'Input'
+    // },
+    {
+      field: 'LogTime',
+      label: '日志时间',
+      component: 'DatePicker',
+      componentProps: {
+        type: 'datetimerange',
+        'unlink-panels': true,
+        'range-separator': '至',
+        'start-placeholder': '开始日期',
+        'end-placeholder': '结束日期',
+        shortcuts: shortcuts,
+        'default-time': defaultTime
+        // labelWidth: '100px',
+        // inline: false
+      }
+    }
+  ])
+
+  const searchParams = ref({})
+
+  const allEnumArr: Ref<any[]> = ref([])
 
   watch(
     () => currentPage.value,
@@ -177,6 +249,62 @@ export const useTableXzz = (config: UseTableConfig) => {
           methods.getList()
         }
       })
+    },
+    //  获取枚举  对应中文值
+    getEnumValue: (enumType: keyValue[], value: string): string => {
+      const enumItem = enumType.find((item) => item.key === value)
+      return enumItem ? enumItem.value : value
+    },
+    //  获取枚举  原本的值   即通过中文反取 对应 英文
+    getRawEnumValue: (enumType: keyValue[], value: string): string => {
+      const enumItem = enumType.find((item) => item.value === value)
+      return enumItem ? enumItem.key : value
+    },
+    //  移除 对象内部 指定键名  的键值 数据
+    omit: (obj, keys) =>
+      Object.keys(obj)
+        .filter((k) => !keys.includes(k))
+        .reduce((res, k) => Object.assign(res, { [k]: obj[k] }), {}),
+    //  向后端请求 需要 的 枚举数据
+    getEnumApi: async (logType: string, needEnum: string[]) => {
+      if (logType.length === 0) return []
+      const searchArr: string[] = needEnum.map((item) => `${logType}_${item}`)
+      let enumArr: any[] = []
+      const res = await searchEnumitem(searchArr)
+      if (res && res.data && res.data.length > 0) {
+        enumArr = res?.data.map((item) => {
+          return {
+            itemName: item.enumName.split('_')[1],
+            data: item.itemJson
+          }
+        })
+      }
+      return enumArr
+    },
+    setSearchParams: (data: any) => {
+      // return
+      //  如果 时间区间 条件 存在
+      let LogTimeValue: string[] = []
+      if (data.LogTime) {
+        LogTimeValue = [formatToDateTime(data.LogTime[0]), formatToDateTime(data.LogTime[1])]
+        data = methods.omit(data, ['LogTime'])
+      }
+      Object.keys(data).forEach(function (key) {
+        isString(data[key]) && (data[key] = data[key].trim()) // 去除查询字段  误输入的 空格
+        if (/[\u4E00-\u9FA5]+/g.test(data[key])) {
+          //  如果  复制时 同时包含了 中文-以及后面的英文value  只取中文
+          if (data[key].includes('-')) data[key] = data[key].split('-')[0]
+          const rawKeyValueObj = allEnumArr.value.find((item) => item.itemName == key)
+          //  如果枚举项 存在   则提取对应键  中文 value
+          rawKeyValueObj && (data[key] = methods.getRawEnumValue(rawKeyValueObj?.data, data[key]))
+        }
+      })
+      if (LogTimeValue.length > 0) {
+        searchParams.value = { ...data, ...{ LogTime: LogTimeValue } }
+      } else {
+        searchParams.value = data
+      }
+      methods.getList()
     }
   }
 
@@ -188,7 +316,12 @@ export const useTableXzz = (config: UseTableConfig) => {
       pageSize,
       total,
       dataList,
-      loading
+      loading,
+      // shortcuts,
+      // defaultTime,
+      commonSearchSchema,
+      searchParams,
+      allEnumArr
     }
   }
 }

@@ -76,7 +76,7 @@ const getEachSheet = (data) => {
     let rawData = XLSX.utils.sheet_to_json(worksheet, { header: 1 }) //json数据格式 指定header参数  会将每一行按前后顺序以数组返回
     if (rawData.length > 0) {
       const sheetData = rawData.map((item) => {
-        return { key: item[0], value: item[1] }
+        return { key: item[0].trim(), value: item[1].trim() }
       })
       itemArr.push({ sheetName, sheetData })
     } else {

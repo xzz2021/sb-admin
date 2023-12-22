@@ -13,6 +13,6 @@ export const getItemLog = (params: any) => {
   return request.get({ url: 'api/itemlog', params })
 }
 
-export const getMoneyLog = () => {
-  return request.get({ url: 'api/moneylog' })
+export const getMoneyLog = (params: any) => {
+  return request.get({ url: 'api/moneylog', params })
 }

@@ -1,126 +1,239 @@
 <script setup lang="ts">
-import { Ref, onMounted, reactive, ref } from 'vue'
+import { reactive, unref } from 'vue'
 import { Table, TableColumn } from '@/components/Table'
 import { getMoneyLog } from '@/api/log'
-import { searchEnumitem } from '@/api/datascan'
-// import { useDatascanStore } from '@/store/modules/datascan'
-import { ElButton } from 'element-plus'
+import { Search } from '@/components/Search'
+import { useTableXzz } from '@/hooks/web/useTableXzz'
+import { FormSchema } from '@/components/Form'
 import { formatToDateTime } from '@/utils/dateUtil'
-const columns = reactive<TableColumn[]>([
+import { useSearch } from '@/hooks/web/useSearch'
+
+const tableColumns = reactive<TableColumn[]>([
   {
     field: 'ID',
     label: '序号',
+    width: 60,
+    align: 'center'
+  },
+  {
+    field: 'GroupID',
+    label: '区服ID',
+    width: 70,
+    align: 'center'
+  },
+  {
+    field: 'AreaID',
+    label: '分组ID',
+    width: 70,
+    align: 'center'
+  },
+  {
+    field: 'SourceID',
+    label: '操作人物ID',
+    width: 80,
+    align: 'center'
+  },
+  {
+    field: 'TargetID',
+    label: '目标人物ID',
+    minWidth: 120
+  },
+  {
+    field: 'Param',
+    label: '参数',
     minWidth: 60
+  },
+  {
+    field: 'Action',
+    label: '动作类型',
+    minWidth: 100
+  },
+  {
+    field: 'Reason',
+    label: '操作类型',
+    minWidth: 120
+  },
+  {
+    field: 'MoneyType',
+    label: '货币类型',
+    width: 100,
+    align: 'center'
+  },
+  {
+    field: 'MoneyCount',
+    label: '数量'
   },
   {
     field: 'LogTime',
     label: '日志时间',
     minWidth: 180
-  },
+  }
+])
+
+const { tableRegister, tableState, tableMethods } = useTableXzz({
+  fetchDataApi: async () => {
+    // 条件 查询
+    const conditions = {
+      pageIndex: unref(currentPage),
+      pageSize: unref(pageSize),
+      ...unref(searchParams)
+    }
+    //  后端 获取表格 列表  数据
+    const res = await getData(conditions)
+    // 这里的数据 返回给hook  统一处理
+    return {
+      list: res?.list || [],
+      total: res?.total || 0
+    }
+  }
+})
+
+const {
+  dataList,
+  loading,
+  total,
+  currentPage,
+  pageSize,
+  commonSearchSchema,
+  searchParams,
+  allEnumArr
+} = tableState
+const { getList, getEnumValue, getEnumApi, setSearchParams } = tableMethods
+
+// interface keyValue {
+//   key: string
+//   value: string
+// }
+
+const { searchRegister, searchMethods } = useSearch()
+const { setSchema } = searchMethods
+
+// const moneyTypeEnumObj: Ref<keyValue[]> = ref([])
+
+// 向后端请求 需要 的 枚举数据    同时  生成 匹配枚举值的 新列表
+const getData = async (conditions) => {
+  const needEnum: string[] = ['Reason', 'MoneyType', 'Action']
+  const enumArr: { itemName: string; data: any[] }[] = await getEnumApi('money', needEnum)
+  allEnumArr.value = enumArr
+  const tempdata = enumArr.filter((item) => item.itemName == 'MoneyType')
+  let optionData: any[] = []
+  if (tempdata) {
+    optionData = tempdata[0].data.map((item) => {
+      return {
+        label: item.value,
+        value: item.key
+      }
+    })
+  }
+  setSchema([
+    {
+      field: 'MoneyType',
+      path: 'componentProps.options',
+      // value: () => {
+      //   // const options = optionData.map((item) => {
+      //   //   return {
+      //   //     label: item.value,
+      //   //     value: item.key
+      //   //   }
+      //   // })
+      //   // return options
+      //   return [{ label: 'MoneyType', value: 'MoneyType' }]
+      // }
+      value: optionData
+    }
+  ])
+  const res = await getMoneyLog(conditions)
+  if (res && res.data && res.data?.list.length > 0) {
+    const list = res.data.list.map((item) => {
+      item.LogTime = formatToDateTime(item.LogTime)
+      for (let i = 0; i < enumArr.length; i++) {
+        const curItem = enumArr[i]['itemName']
+        item[curItem] = getEnumValue(enumArr[i]['data'], item[curItem]) + '-' + item[curItem]
+      }
+      return item
+    })
+    return { list, total: res.data.total }
+  }
+}
+
+// ==============搜索 逻辑================
+const searchSchema1 = reactive<FormSchema[]>([
   {
     field: 'GroupID',
-    label: '区服ID'
+    label: '区服ID',
+    component: 'Input'
   },
   {
     field: 'AreaID',
-    label: '分组ID'
+    label: '分组ID',
+    component: 'Input'
   },
   {
     field: 'SourceID',
-    label: '操作人物ID'
+    label: '操作人物ID',
+    component: 'Input'
   },
   {
     field: 'TargetID',
-    label: '目标人物ID'
+    label: '目标人物ID',
+    component: 'Input'
   },
   {
     field: 'Param',
-    label: '参数'
+    label: '参数',
+    component: 'Input'
   },
   {
     field: 'Action',
     label: '动作类型',
-    minWidth: 80
+    component: 'Input'
   },
   {
     field: 'Reason',
     label: '操作类型',
-    minWidth: 80
+    component: 'Input'
   },
   {
     field: 'MoneyType',
-    label: '货币类型'
+    label: '货币类型',
+    component: 'Select'
   },
   {
-    field: 'MoneyCount',
-    label: '数量'
+    field: 'ItemCount',
+    label: '数量',
+    component: 'Input'
   }
 ])
-const getEnumValue = (enumType: any[], value: string): string => {
-  const enumItem = enumType.find((item) => item.key === value)
-  return enumItem ? enumItem.value : value
-}
 
-//  向后端请求 需要 的 枚举数据
-const getEnumApi = async () => {
-  const needEnum: string[] = ['Reason', 'MoneyType', 'Action']
-  let searchArr: string[] = needEnum.map((item) => `money_${item}`)
-  let enumArr: any[] = []
-  const res = await searchEnumitem(searchArr)
-  if (res && res.data && res.data.length > 0) {
-    enumArr = res?.data.map((item) => {
-      return {
-        itemName: item.enumName.split('_')[1],
-        data: item.itemJson
-      }
-    })
-  }
-  return enumArr
-}
-const loading: Ref<boolean> = ref(true)
-const getData = async () => {
-  let enumArr: { itemName: string; data: any[] }[] = await getEnumApi()
-  try {
-    loading.value = true
-    const res = await getMoneyLog()
-    if (res.data && res.data.length > 0) {
-      const list = res.data.map((item) => {
-        item.LogTime = formatToDateTime(item.LogTime)
-        for (let i = 0; i < enumArr.length; i++) {
-          const curItem = enumArr[i]['itemName']
-          item[curItem] = getEnumValue(enumArr[i]['data'], item[curItem])
-        }
-        return item
-      })
-      moneyData.value = list
-    }
-  } catch (error) {
-  } finally {
-    loading.value = false
-  }
-}
-
-// const datascanStore = useDatascanStore()
-onMounted(async () => {
-  getData()
-  //  通过 存储数据到本地  节省 网络请求 开支
-  // const storeData = datascanStore.getMoneylog
-  // storeData.length == 0 ? getData() : (moneyData.value = datascanStore.getMoneylog)
-})
-
-let moneyData: Ref<any[]> = ref([])
+//  合并公共搜索项
+let searchSchema = reactive<FormSchema[]>([])
+searchSchema = [...searchSchema1, ...commonSearchSchema]
 
 //  用于 keep-alive 保持组件 缓存   则不需要pinia进行存储
 defineOptions({
-  // 这里页面名称需与路由名称 一致  // 避免 eslint 告警  后续 一律 使用驼峰形式
   // eslint-disable-next-line vue/component-definition-name-casing
   name: 'Tabletwo-xzz'
 })
 </script>
 
 <template>
+  <!-- 要注意的是  如果 使用的是模板代码  二次封装的组件   需要 单独引入一下 -->
+  <Search
+    :schema="searchSchema"
+    @reset="setSearchParams"
+    @search="setSearchParams"
+    @register="searchRegister"
+  />
   <el-text class="mx-1" type="danger">数据未同步?</el-text>
-  <el-button type="primary" plain @click="getData" text>点我更新</el-button>
-  <!-- <el-divider /> -->
-  <Table :columns="columns" :data="moneyData" :loading="loading" />
+  <el-button type="primary" plain @click="getList" text>点我更新</el-button>
+  <Table
+    v-model:pageSize="pageSize"
+    :columns="tableColumns"
+    :data="dataList"
+    :loading="loading"
+    :pagination="{
+      total
+    }"
+    @register="tableRegister"
+  />
 </template>
