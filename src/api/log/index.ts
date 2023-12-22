@@ -9,8 +9,8 @@ import request from '@/axios'
 //   return request.post({ url: '/mock/user/login', data })
 // }
 
-export const getItemLog = () => {
-  return request.get({ url: 'api/itemlog' })
+export const getItemLog = (params: any) => {
+  return request.get({ url: 'api/itemlog', params })
 }
 
 export const getMoneyLog = () => {

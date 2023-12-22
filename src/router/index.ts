@@ -12,8 +12,8 @@ export const constantRouterMap: AppRouteRecordRaw[] = [
   {
     path: '/',
     component: Layout,
-    redirect: '/dashboard/workplace',
-    // redirect: '/dashboard-xzz/Workplace-xzz',
+    // redirect: '/dashboard/workplace',
+    redirect: '/dashboard-xzz/Workplace-xzz', //  这里 处理  未登录前的   默认跳转
     name: 'Root',
     meta: {
       hidden: true

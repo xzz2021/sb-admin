@@ -5,14 +5,17 @@ import { getMoneyLog } from '@/api/log'
 import { searchEnumitem } from '@/api/datascan'
 // import { useDatascanStore } from '@/store/modules/datascan'
 import { ElButton } from 'element-plus'
+import { formatToDateTime } from '@/utils/dateUtil'
 const columns = reactive<TableColumn[]>([
   {
     field: 'ID',
-    label: '序号'
+    label: '序号',
+    minWidth: 60
   },
   {
     field: 'LogTime',
-    label: '日志时间'
+    label: '日志时间',
+    minWidth: 180
   },
   {
     field: 'GroupID',
@@ -36,11 +39,13 @@ const columns = reactive<TableColumn[]>([
   },
   {
     field: 'Action',
-    label: '动作类型'
+    label: '动作类型',
+    minWidth: 80
   },
   {
     field: 'Reason',
-    label: '操作类型'
+    label: '操作类型',
+    minWidth: 80
   },
   {
     field: 'MoneyType',
@@ -72,19 +77,26 @@ const getEnumApi = async () => {
   }
   return enumArr
 }
+const loading: Ref<boolean> = ref(true)
 const getData = async () => {
   let enumArr: { itemName: string; data: any[] }[] = await getEnumApi()
-
-  const res = await getMoneyLog()
-  if (res.data && res.data.length > 0) {
-    const list = res.data.map((item) => {
-      for (let i = 0; i < enumArr.length; i++) {
-        const curItem = enumArr[i]['itemName']
-        item[curItem] = getEnumValue(enumArr[i]['data'], item[curItem])
-      }
-      return item
-    })
-    moneyData.value = list
+  try {
+    loading.value = true
+    const res = await getMoneyLog()
+    if (res.data && res.data.length > 0) {
+      const list = res.data.map((item) => {
+        item.LogTime = formatToDateTime(item.LogTime)
+        for (let i = 0; i < enumArr.length; i++) {
+          const curItem = enumArr[i]['itemName']
+          item[curItem] = getEnumValue(enumArr[i]['data'], item[curItem])
+        }
+        return item
+      })
+      moneyData.value = list
+    }
+  } catch (error) {
+  } finally {
+    loading.value = false
   }
 }
 
@@ -110,5 +122,5 @@ defineOptions({
   <el-text class="mx-1" type="danger">数据未同步?</el-text>
   <el-button type="primary" plain @click="getData" text>点我更新</el-button>
   <!-- <el-divider /> -->
-  <Table :columns="columns" :data="moneyData" />
+  <Table :columns="columns" :data="moneyData" :loading="loading" />
 </template>
