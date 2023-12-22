@@ -3,26 +3,70 @@ import { useI18n } from '@/hooks/web/useI18n'
 
 const { t } = useI18n()
 
+let base = +new Date(2023, 12, 20, 0, 0, 0)
+const fiveMinutes = 300 * 1000
+const data = [[base, Math.random() * 300]]
+for (let i = 1; i < 289; i++) {
+  const now = new Date((base += fiveMinutes))
+  data.push([+now, Math.round((Math.random() + 0.2) * 20 + data[i - 1][1])])
+}
+export const onlinePlayersOptions: EChartsOption | any = {
+  tooltip: {
+    trigger: 'axis',
+    position: function (pt) {
+      return [pt[0], '10%']
+    }
+  },
+  title: {
+    left: 'center',
+    text: '在线玩家'
+  },
+  toolbox: {
+    feature: {
+      dataZoom: {
+        yAxisIndex: 'none'
+      },
+      restore: {},
+      saveAsImage: {}
+    }
+  },
+  xAxis: {
+    type: 'time',
+    boundaryGap: false
+  },
+  yAxis: {
+    type: 'value',
+    boundaryGap: [0, '100%']
+  },
+  dataZoom: [
+    {
+      type: 'inside',
+      start: 0,
+      end: 20
+    },
+    {
+      start: 0,
+      end: 20
+    }
+  ],
+  series: [
+    {
+      name: '在线数量',
+      type: 'line',
+      smooth: true,
+      symbol: 'none',
+      areaStyle: {},
+      data: data
+    }
+  ]
+}
 export const lineOptions: EChartsOption = {
   title: {
-    text: t('analysis.monthlySales'),
+    text: '在线玩家',
     left: 'center'
   },
   xAxis: {
-    data: [
-      t('analysis.january'),
-      t('analysis.february'),
-      t('analysis.march'),
-      t('analysis.april'),
-      t('analysis.may'),
-      t('analysis.june'),
-      t('analysis.july'),
-      t('analysis.august'),
-      t('analysis.september'),
-      t('analysis.october'),
-      t('analysis.november'),
-      t('analysis.december')
-    ],
+    data: ['0:00', '4:00', '8:00', '12:00', '16:00', '20:00', '24:00'],
     boundaryGap: false,
     axisTick: {
       show: false
@@ -47,10 +91,10 @@ export const lineOptions: EChartsOption = {
       show: false
     }
   },
-  legend: {
-    data: [t('analysis.estimate'), t('analysis.actual')],
-    top: 50
-  },
+  // legend: {
+  //   data: [t('analysis.estimate'), t('analysis.actual')],
+  //   top: 50
+  // },
   series: [
     {
       name: t('analysis.estimate'),
@@ -59,15 +103,6 @@ export const lineOptions: EChartsOption = {
       data: [100, 120, 161, 134, 105, 160, 165, 114, 163, 185, 118, 123],
       animationDuration: 2800,
       animationEasing: 'cubicInOut'
-    },
-    {
-      name: t('analysis.actual'),
-      smooth: true,
-      type: 'line',
-      itemStyle: {},
-      data: [120, 82, 91, 154, 162, 140, 145, 250, 134, 56, 99, 123],
-      animationDuration: 2800,
-      animationEasing: 'quadraticOut'
     }
   ]
 }
