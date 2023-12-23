@@ -1,21 +1,21 @@
 import { EChartsOption } from 'echarts'
 import { useI18n } from '@/hooks/web/useI18n'
-import { get12Hours } from '@/api/home'
+// import { get12Hours } from '@/api/home'
 
 const { t } = useI18n()
 
-let data = []
-try {
-  //  默认 获取  12小时之前的 数据
-  const res = await get12Hours()
-  if (res && res.data) {
-    const latest12hoursData = res.data
-    const echartData = latest12hoursData.map((item) => {
-      return [item.SaveTime * 1000, item.OnlieRoleCount]
-    })
-    data = echartData
-  }
-} catch (error) {}
+const data = []
+// try {
+//   //  默认 获取  12小时之前的 数据
+//   const res = await get12Hours()
+//   if (res && res.data) {
+//     const latest12hoursData = res.data
+//     const echartData = latest12hoursData.map((item) => {
+//       return [item.SaveTime * 1000, item.OnlieRoleCount]
+//     })
+//     data = echartData
+//   }
+// } catch (error) {}
 export const onlinePlayersOptions: EChartsOption | any = {
   tooltip: {
     trigger: 'axis',
