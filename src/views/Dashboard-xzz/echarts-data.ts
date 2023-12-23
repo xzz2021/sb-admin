@@ -1,25 +1,41 @@
 import { EChartsOption } from 'echarts'
 import { useI18n } from '@/hooks/web/useI18n'
+import { get12Hours } from '@/api/home'
 
 const { t } = useI18n()
 
-let base = +new Date(2023, 12, 20, 0, 0, 0)
-const fiveMinutes = 300 * 1000
-const data = [[base, Math.random() * 300]]
-for (let i = 1; i < 289; i++) {
-  const now = new Date((base += fiveMinutes))
-  data.push([+now, Math.round((Math.random() + 0.2) * 20 + data[i - 1][1])])
-}
+let data = []
+// let base = +new Date(2023, 12, 20, 0, 0, 0)
+// const fiveMinutes = 300 * 1000
+// const data = [[base, Math.random() * 300]]
+// for (let i = 1; i < 289; i++) {
+//   const now = new Date((base += fiveMinutes))
+//   data.push([+now, Math.round((Math.random() + 0.2) * 20 + data[i - 1][1])])
+// }
+
+try {
+  //  默认 获取  12小时之前的 数据
+  const res = await get12Hours()
+  if (res && res.data) {
+    const latest12hoursData = res.data
+    const echartData = latest12hoursData.map((item) => {
+      return [item.SaveTime * 1000, item.OnlieRoleCount]
+    })
+    data = echartData
+  }
+} catch (error) {}
 export const onlinePlayersOptions: EChartsOption | any = {
   tooltip: {
     trigger: 'axis',
     position: function (pt) {
       return [pt[0], '10%']
-    }
+    },
+    confine: true //  解决 浮层 展示 被遮挡 问题
+    // appendToBody: true
   },
   title: {
     left: 'center',
-    text: '在线玩家'
+    text: '在线人数'
   },
   toolbox: {
     feature: {
@@ -58,7 +74,12 @@ export const onlinePlayersOptions: EChartsOption | any = {
       areaStyle: {},
       data: data
     }
-  ]
+  ],
+  grid: {
+    left: 100,
+    right: 160,
+    containLabel: true
+  }
 }
 export const lineOptions: EChartsOption = {
   title: {

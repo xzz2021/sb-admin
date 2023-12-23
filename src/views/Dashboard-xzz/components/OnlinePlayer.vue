@@ -2,7 +2,8 @@
 import { onlinePlayersOptions } from '@/views/Dashboard-xzz/echarts-data'
 import { Ref, ref } from 'vue'
 import { Echart } from '../../../components/Echart'
-import { onMounted } from 'vue'
+import { onMounted, watch } from 'vue'
+import { getSpecifyDate } from '../../../api/home/index'
 import * as echarts from 'echarts'
 import {
   TitleComponent,
@@ -14,6 +15,9 @@ import {
 import { LineChart } from 'echarts/charts'
 import { UniversalTransition } from 'echarts/features'
 import { CanvasRenderer } from 'echarts/renderers'
+import { ElMessage } from 'element-plus'
+import { reactive } from 'vue'
+import { EChartsOption } from 'echarts/types/dist/shared'
 echarts.use([
   TitleComponent,
   ToolboxComponent,
@@ -28,14 +32,35 @@ echarts.use([
 const loading = ref(false)
 
 let selectDate: Ref<any> = ref('')
+let optionsData: EChartsOption | any = reactive(onlinePlayersOptions)
 const disabledDate = (time: Date) => {
   return time.getTime() > Date.now()
 }
-onMounted(() => {
-  selectDate.value = new Date()
-  let myChart = echarts.init(document.getElementById('onlinePlayerChart'))
-  onlinePlayersOptions && myChart.setOption(onlinePlayersOptions)
-})
+
+watch(
+  () => selectDate.value,
+  async (dateVal) => {
+    const specifyUnix = +new Date(dateVal) / 1000
+    // return
+    if (dateVal == null) return
+    try {
+      let res = await getSpecifyDate({ unixtime: specifyUnix })
+      if (res && res.data && res.data.length > 0) {
+        const specifyDateData = res.data
+        const echartData = specifyDateData.map((item) => {
+          return [item.SaveTime * 1000, item.OnlieRoleCount]
+        })
+        optionsData.series[0].data = echartData
+      } else {
+        ElMessage({
+          type: 'error',
+          message: '当前选择的日期没有数据!'
+        })
+      }
+    } catch (error) {}
+  }
+)
+onMounted(async () => {})
 
 const shortcuts = [
   {
@@ -78,8 +103,8 @@ const shortcuts = [
           :disabled-date="disabledDate"
           :shortcuts="shortcuts"
         />
-        <div id="onlinePlayerChart"></div>
-        <Echart :options="onlinePlayersOptions" :height="350" />
+        <!-- <div id="onlinePlayerChart"></div> -->
+        <Echart :options="optionsData" :height="350" />
       </ElSkeleton>
     </ElCard>
   </ElCol>
