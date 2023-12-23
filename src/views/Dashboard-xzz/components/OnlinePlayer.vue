@@ -1,38 +1,17 @@
 <script setup lang="tsx">
-import { onlinePlayersOptions } from '@/views/Dashboard-xzz/echarts-data'
 import { Ref, ref } from 'vue'
 import { Echart } from '../../../components/Echart'
 import { onMounted, watch } from 'vue'
 import { getSpecifyDate } from '../../../api/home/index'
-import * as echarts from 'echarts'
-import {
-  TitleComponent,
-  ToolboxComponent,
-  TooltipComponent,
-  GridComponent,
-  DataZoomComponent
-} from 'echarts/components'
-import { LineChart } from 'echarts/charts'
-import { UniversalTransition } from 'echarts/features'
-import { CanvasRenderer } from 'echarts/renderers'
 import { ElMessage } from 'element-plus'
-import { reactive } from 'vue'
-import { EChartsOption } from 'echarts/types/dist/shared'
-echarts.use([
-  TitleComponent,
-  ToolboxComponent,
-  TooltipComponent,
-  GridComponent,
-  DataZoomComponent,
-  LineChart,
-  CanvasRenderer,
-  UniversalTransition
-])
+import { useTimeEchart } from '@/hooks/web/useTimeEchart'
+
+const { echartState } = useTimeEchart('aa')
+const { optionsData, currentPlayers } = echartState
 
 const loading = ref(false)
 
 let selectDate: Ref<any> = ref('')
-let optionsData: EChartsOption | any = reactive(onlinePlayersOptions)
 const disabledDate = (time: Date) => {
   return time.getTime() > Date.now()
 }
@@ -91,7 +70,7 @@ const shortcuts = [
     <ElCard shadow="never">
       <template #header>
         <div class="flex justify-between">
-          <span>当前在线人数: 126</span>
+          <span>当前在线人数: {{ currentPlayers }}</span>
           <ElLink type="primary" :underline="false">更多</ElLink>
         </div>
       </template>
