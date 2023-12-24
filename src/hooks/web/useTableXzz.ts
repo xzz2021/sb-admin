@@ -244,7 +244,6 @@ export const useTableXzz = (config: UseTableConfig) => {
                 ? unref(currentPage) - 1
                 : unref(currentPage)
               : unref(currentPage)
-
           currentPage.value = current
           methods.getList()
         }

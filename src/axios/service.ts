@@ -32,10 +32,15 @@ axiosInstance.interceptors.response.use(
   },
   (error: AxiosError | any) => {
     console.log('err: ' + error) // for debug
-    ElMessage.error(error?.response?.data?.message || '后端服务器异常,请告知管理员!')
+    const statusCode = error?.response?.data?.statusCode
+    let message = error?.response?.data?.message
+    //  后端返回403 说明没有接口权限
+    if (statusCode && statusCode == 403) {
+      message = '当前用户没有此接口请求权限!'
+    }
 
     //  后端返回401 说明Unauthorized, 所以主动退出登录
-    if (error?.response?.data?.statusCode == 401) {
+    if (statusCode && statusCode == 401) {
       /*
       {
         "message": "Unauthorized",
@@ -45,6 +50,7 @@ axiosInstance.interceptors.response.use(
       const userStore = useUserStoreWithOut()
       userStore.logout()
     }
+    ElMessage.error(message || '后端服务器异常,请告知管理员!')
     return Promise.reject(error.response?.data)
   }
 )

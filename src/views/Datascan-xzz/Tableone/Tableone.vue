@@ -99,7 +99,7 @@ const {
   searchParams,
   allEnumArr
 } = tableState
-const { getList, getEnumValue, getEnumApi, setSearchParams } = tableMethods
+const { getEnumValue, getEnumApi, setSearchParams } = tableMethods
 
 interface keyValue {
   key: string
@@ -197,10 +197,9 @@ defineOptions({
 <template>
   <!-- 要注意的是  如果 使用的是模板代码  二次封装的组件   需要 单独引入一下 -->
   <Search :schema="searchSchema" @reset="setSearchParams" @search="setSearchParams" />
-  <el-text class="mx-1" type="danger">数据未同步?</el-text>
-  <el-button type="primary" plain @click="getList" text>点我更新</el-button>
   <Table
     v-model:pageSize="pageSize"
+    v-model:current-page="currentPage"
     :columns="tableColumns"
     :data="dataList"
     :loading="loading"

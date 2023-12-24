@@ -41,7 +41,11 @@ const defaultResponseInterceptors = (response: AxiosResponse) => {
     return response.data
     return response.data.data || response.data
   } else {
+    // if (response?.data?.statusCode == 403) {
+    //   ElMessage.error('当前用户没有此接口数据请求权限!')
+    // } else {
     ElMessage.error(response?.data?.message)
+    // }
     if (response?.data?.code === 401) {
       const userStore = useUserStoreWithOut()
       userStore.logout()
