@@ -19,6 +19,14 @@ export const constantRouterMap: AppRouteRecordRaw[] = [
       hidden: true
     }
   },
+  // {
+  //   path: '/:catchAll(.*)',
+  //   name: 'asyncNotFind',
+  //   component: () => import('@/views/Error/404.vue'),
+  //   meta: {
+  //     title: '异步路由未发现'
+  //   }
+  // },
   {
     path: '/redirect',
     component: Layout,

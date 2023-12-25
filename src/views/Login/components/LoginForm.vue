@@ -4,7 +4,7 @@ import { Form, FormSchema } from '@/components/Form'
 import { useI18n } from '@/hooks/web/useI18n'
 import { ElButton, ElCheckbox, ElInput, ElLink } from 'element-plus'
 import { useForm } from '@/hooks/web/useForm'
-import { loginApi, getTestRoleApi, getRoleMenuApi } from '@/api/login'
+import { loginApi, getRoleMenuApi } from '@/api/login'
 import { useAppStore } from '@/store/modules/app'
 import { usePermissionStore } from '@/store/modules/permission'
 import { useRouter } from 'vue-router'
@@ -251,7 +251,8 @@ const signIn = async () => {
           userStore.setUserInfo(res.data.userInfo)
           userStore.setTokenKey(res.data.tokenKey)
           // 是否使用动态路由
-          if (appStore.getDynamicRouter) {
+          // if (appStore.getDynamicRouter) {
+          if (true) {
             getRole()
           } else {
             await permissionStore.generateRoutes('static').catch(() => {})
@@ -304,18 +305,10 @@ const signIn = async () => {
 // }
 // 根据用户角色信息 获取  菜单
 const getRole = async () => {
-  const res =
-    appStore.getDynamicRouter && appStore.getServerDynamicRouter
-      ? // 其实这里后端可以通过token解析角色数组,不传参也是可以的
-        await getRoleMenuApi()
-      : await getTestRoleApi()
+  const res = await getRoleMenuApi()
+  // console.log('🚀 ~ file: LoginForm.vue:302 ~ getRole ~ res:', res)
   if (res && res.data) {
-    // console.log('🚀 ~ file: LoginForm.vue:302 ~ getRole ~ res:', res)
     //将meta.title赋值给菜单自身title, 以符合数据格式框架要求
-    // 这里是从后端拿到扁平的菜单数据
-    //  需要转换成带children的嵌套数据格式
-    // let nestedArr = formatToTree(backendMenuAndBtnArr, undefined)
-    // let newData = [...backendMenuAndBtnArr, ...adminList]
     // const routers = res.data || []
     const routers = res.data || []
     userStore.setRoleRouters(routers)
@@ -324,6 +317,7 @@ const getRole = async () => {
       : await permissionStore.generateRoutes('frontEnd', routers).catch(() => {})
 
     permissionStore.getAddRouters.forEach((route) => {
+      //   这里 貌似  可以自动 解析 扁平路由????????????????????????????????????????
       addRoute(route as RouteRecordRaw) // 动态添加可访问路由表
     })
     permissionStore.setIsAddRouters(true)
