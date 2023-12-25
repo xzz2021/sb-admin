@@ -133,6 +133,11 @@ onMounted(() => {
 // onMounted(async () => {
 //   userStore.logout()
 // })
+//  用于 keep-alive 保持组件 缓存   则不需要pinia进行存储
+defineOptions({
+  // eslint-disable-next-line vue/component-definition-name-casing
+  name: 'Workplace-xzz'
+})
 </script>
 
 <template>

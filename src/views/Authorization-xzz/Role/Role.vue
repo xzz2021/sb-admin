@@ -5,8 +5,6 @@ import { useTable } from '@/hooks/web/useTable'
 import { useI18n } from '@/hooks/web/useI18n'
 import { Table, TableColumn } from '@/components/Table'
 import { ElButton, ElMessage, ElTag } from 'element-plus'
-// import { Search } from '@/components/Search'
-// import { FormSchema } from '@/components/Form'
 import { ContentWrap } from '@/components/ContentWrap'
 import Write from './components/Write.vue'
 import Detail from './components/Detail.vue'
@@ -17,9 +15,15 @@ const { t } = useI18n()
 const { tableRegister, tableState, tableMethods } = useTable({
   fetchDataApi: async () => {
     const res = await getRoleListApi()
+    if (!res || !res.data) return { list: [], total: 0 }
+    const newRes = res.data.slice(1)
+    const newRes2 = newRes.map((item) => {
+      item.menusArr = JSON.parse(item.menusArr)
+      return item
+    })
     return {
-      list: res.data || [],
-      total: res.data.length || 0
+      list: newRes2 || [],
+      total: newRes2.length || 0
     }
   }
 })
@@ -67,27 +71,18 @@ const tableColumns = reactive<TableColumn[]>([
     slots: {
       default: (data: any) => {
         const row = data.row
+        // if (row?.roleName == '超级管理员') {
+        //   return <> </>
+        // } else {
         return (
           <>
-            <ElButton
-              type="primary"
-              onClick={() => action(row, 'edit')}
-              v-show={row?.role?.roleName != '超级管理员'}
-            >
+            <ElButton type="primary" onClick={() => action(row, 'edit')}>
               {t('exampleDemo.edit')}
             </ElButton>
-            <ElButton
-              type="success"
-              onClick={() => action(row, 'detail')}
-              v-show={row?.role?.roleName != '超级管理员'}
-            >
+            <ElButton type="success" onClick={() => action(row, 'detail')}>
               {t('exampleDemo.detail')}
             </ElButton>
-            <ElButton
-              type="danger"
-              onClick={() => deleteRow(row)}
-              v-show={row?.role?.roleName != '超级管理员'}
-            >
+            <ElButton type="danger" onClick={() => deleteRow(row)}>
               {t('exampleDemo.del')}
             </ElButton>
           </>
@@ -95,6 +90,7 @@ const tableColumns = reactive<TableColumn[]>([
       }
     }
   }
+  // }
 ])
 
 // const searchSchema = reactive<FormSchema[]>([
@@ -120,12 +116,11 @@ const actionType = ref('')
 const writeRef = ref<ComponentRef<typeof Write>>()
 
 const saveLoading = ref(false)
-
-const action = (row: any, type: string) => {
-  // console.log('🚀 ~ file: Role.vue:114 ~ action ~ row:', row)
+const action = async (row: any, type: string) => {
   //  这里时当前角色菜单权限数据   用于  回显
-  row.menusArr = JSON.parse(row.menusArr)
+
   dialogTitle.value = t(type === 'edit' ? 'exampleDemo.edit' : 'exampleDemo.detail')
+
   actionType.value = type
   currentRow.value = row
   dialogVisible.value = true
@@ -153,7 +148,7 @@ const save = async () => {
 const deleteRow = async (row: any) => {
   toggleSaveBtn(true)
   const res = await deleteRoleApi(row.id)
-  console.log('🚀 ~ file: Role.vue:141 ~ deleteRow ~ res:', res)
+  // console.log('🚀 ~ file: Role.vue:141 ~ deleteRow ~ res:', res)
   try {
     if (res?.data?.affected == 1) {
       ElMessage({

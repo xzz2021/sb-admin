@@ -3,15 +3,14 @@ import { PropType, ref, unref, nextTick } from 'vue'
 import { Descriptions, DescriptionsSchema } from '@/components/Descriptions'
 import { ElTag, ElTree } from 'element-plus'
 import { findIndex } from '@/utils'
+// import { getMenuListApiByRole } from '@/api/menu'
 // import { getMenuListApi } from '@/api/menu'
-
-defineProps({
+const props = defineProps({
   currentRow: {
     type: Object as PropType<any>,
     default: () => undefined
   }
 })
-
 const filterPermissionName = (value: string) => {
   const index = findIndex(unref(currentTreeData)?.permissionList || [], (item) => {
     return item.value === value
@@ -32,16 +31,21 @@ const nodeClick = (treeData: any) => {
 
 const treeData = ref<any[]>([])
 const getMenuList = async () => {
-  const res = await getMenuListApiByRole()
+  // console.log('🚀 ~ file: Detail.vue:34 ~ === getMenuList ~ async:')
+  // const res = await getMenuListApiByRole()
   //  新增角色 走这里  获取当前角色 能分配的 菜单
-  console.log('🚀 ~ file: Detail.vue:36 ~ getMenuList ~ res:', res)
-  if (res) {
-    treeData.value = res.data.list
-    await nextTick()
-  }
-}
-getMenuList()
+  //  新增角色 走这里  获取当前角色 所拥有的?????????? 菜单
+  // console.log('🚀 ~ file: Detail.vue:36 ~ getMenuList ~ res:', res)
+  // if (res) {
+  // console.log('🚀 ~ file: Detail.vue:43 ~ getMenuList ~ currentRow:', props.currentRow)
+  // treeData.value = res.data
 
+  treeData.value = props.currentRow.menusArr
+  await nextTick()
+  // }
+}
+
+getMenuList() // 需要每次 点击 时  由父组件 触发此方法    ????   实测 不需要  因为 每次 点击  时重新 挂载????
 const detailSchema = ref<DescriptionsSchema[]>([
   {
     field: 'roleName',

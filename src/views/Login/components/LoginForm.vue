@@ -247,7 +247,7 @@ const signIn = async () => {
       try {
         const res = await loginApi(formData)
         // const { userInfo, tokenKey } = res.data
-        if (res) {
+        if (res && res.data) {
           userStore.setUserInfo(res.data.userInfo)
           userStore.setTokenKey(res.data.tokenKey)
           // 是否使用动态路由

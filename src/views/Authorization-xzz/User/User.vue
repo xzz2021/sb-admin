@@ -19,6 +19,7 @@ import Detail from './components/Detail.vue'
 import { Dialog } from '@/components/Dialog'
 import { getRoleListIdApi } from '@/api/role'
 import { CrudSchema, useCrudSchemas } from '@/hooks/web/useCrudSchemas'
+import { formatToDateTime } from '@/utils/dateUtil'
 
 const { t } = useI18n()
 
@@ -33,10 +34,17 @@ const { tableRegister, tableState, tableMethods } = useTable({
       pageSize: unref(pageSize),
       ...unref(searchParams)
     })
-    const total = res?.data?.length
+    let { list = [], total = 0 } = res?.data
+    if (list.length > 0) {
+      const newData = res?.data?.list.map((item) => {
+        item.createtime = formatToDateTime(item.createtime)
+        return item
+      })
+      list = newData
+    }
     return {
-      list: res.data || [],
-      total: total || 0
+      list,
+      total
     }
   },
   fetchDelApi: async () => {
@@ -195,8 +203,8 @@ const crudSchemas = reactive<CrudSchema[]>([
         // 新增 角色 表单  获取  角色 选择下拉项
         //  此处 只获取角色 id 及 角色  名称  用于 下拉  并返回  id用于更新用户信息
         const res = await getRoleListIdApi()
-        // return res.data.role
-        return res.data?.map((v) => ({
+        const newArr = res.data.slice(1) //  移除 超级管理员 权限
+        return newArr.map((v) => ({
           label: v.roleName,
           value: v.id // 提交表单时  下拉选项 所 返回的值
         }))
@@ -227,7 +235,8 @@ const crudSchemas = reactive<CrudSchema[]>([
         // 新增 角色 表单  获取  角色 选择下拉项
         const res = await getRoleListIdApi()
         // return res.data.role
-        return res.data?.map((v) => ({
+        const rolesArr = res.data
+        return rolesArr.map((v) => ({
           label: v.roleName,
           value: v.id // 提交表单时  下拉选项 所 返回的值
         }))
@@ -297,6 +306,7 @@ const { allSchemas } = useCrudSchemas(crudSchemas)
 
 const searchParams = ref({})
 const setSearchParams = (params: any) => {
+  console.log('🚀 ~ file: User.vue:309 ~ setSearchParams ~ params:', params)
   currentPage.value = 1
   searchParams.value = params
   getList()
@@ -358,7 +368,6 @@ const delData = async (row?: DepartmentUserItem) => {
     : elTableExpose?.getSelectionRows().map((v: DepartmentUserItem) => v.id) || []
   delLoading.value = true
 
-  console.log('🚀 ~ file: User.vue:362 ~ awaitdelList ~ ids:', ids.value)
   await delList(unref(ids).length).finally(() => {
     delLoading.value = false
   })

@@ -68,7 +68,7 @@ const { tableRegister, tableState, tableMethods } = useTable({
       pageSize: unref(pageSize)
       // ...unref(searchParams)
     })
-    console.log('🚀 ~ file: Department.vue:67 ~ fetchDataApi: ~ res:', res)
+    // console.log('🚀 ~ file: Department.vue:67 ~ fetchDataApi: ~ res:', res)
     // 返回带有嵌套数据的数结构
     return {
       list: res.data,
