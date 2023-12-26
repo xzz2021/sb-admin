@@ -36,7 +36,7 @@ interface RuleForm {
 const formSize = ref('default')
 const ruleFormRef = ref<FormInstance>()
 const ruleForm = reactive<RuleForm>({
-  content: '下发200个元宝给玩家88966',
+  content: '',
   applyRemark: ''
 })
 

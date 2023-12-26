@@ -137,53 +137,53 @@ const dataList: Ref<any[]> = ref([])
 // }
 
 // ==============搜索 逻辑================
-const searchSchema1 = reactive<FormSchema[]>([
-  {
-    field: 'GroupID',
-    label: '区服ID',
-    component: 'Input'
-  },
-  {
-    field: 'AreaID',
-    label: '分组ID',
-    component: 'Input'
-  },
-  {
-    field: 'RoleID',
-    label: '角色ID',
-    component: 'Input'
-  },
-  {
-    field: 'ActionType',
-    label: '动作类型',
-    component: 'Input'
-  },
-  {
-    field: 'Guid',
-    label: '二进制索引',
-    component: 'Input'
-  },
-  {
-    field: 'TemplateID',
-    label: '物品',
-    component: 'Input'
-  },
-  {
-    field: 'ItemCount',
-    label: '数量',
-    component: 'Input'
-  },
-  {
-    field: 'Reason',
-    label: '操作类型',
-    component: 'Input'
-  },
-  {
-    field: 'UserDefinedID',
-    label: '定义ID',
-    component: 'Input'
-  }
-])
+// const searchSchema1 = reactive<FormSchema[]>([
+//   {
+//     field: 'GroupID',
+//     label: '区服ID',
+//     component: 'Input'
+//   },
+//   {
+//     field: 'AreaID',
+//     label: '分组ID',
+//     component: 'Input'
+//   },
+//   {
+//     field: 'RoleID',
+//     label: '角色ID',
+//     component: 'Input'
+//   },
+//   {
+//     field: 'ActionType',
+//     label: '动作类型',
+//     component: 'Input'
+//   },
+//   {
+//     field: 'Guid',
+//     label: '二进制索引',
+//     component: 'Input'
+//   },
+//   {
+//     field: 'TemplateID',
+//     label: '物品',
+//     component: 'Input'
+//   },
+//   {
+//     field: 'ItemCount',
+//     label: '数量',
+//     component: 'Input'
+//   },
+//   {
+//     field: 'Reason',
+//     label: '操作类型',
+//     component: 'Input'
+//   },
+//   {
+//     field: 'UserDefinedID',
+//     label: '定义ID',
+//     component: 'Input'
+//   }
+// ])
 
 //  合并公共搜索项
 // let searchSchema = reactive<FormSchema[]>([])

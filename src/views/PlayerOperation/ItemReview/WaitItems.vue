@@ -6,7 +6,7 @@ import { Ref, onMounted, reactive, ref, unref } from 'vue'
 // import { formatToDateTime } from '@/utils/dateUtil'
 import { Table, TableColumn } from '../../../components/Table'
 import { FormSchema } from '../../../components/Form'
-import { getAllItems } from '../../../api/playeroperation'
+import { getAllItems, updateApplyApi } from '../../../api/playeroperation'
 import { ElButton, ElMessage, ElTag } from 'element-plus'
 
 const tableColumns = reactive<TableColumn[]>([
@@ -56,22 +56,22 @@ const tableColumns = reactive<TableColumn[]>([
     label: '审批意见'
     // minWidth: 100
   },
-  {
-    field: 'reviewer',
-    label: '审批人'
-    // minWidth: 120
-  },
+  // {
+  //   field: 'reviewer',
+  //   label: '审批人'
+  //   // minWidth: 120
+  // },
   {
     field: 'createtime',
     label: '申请时间'
     // minWidth: 140
   },
-  {
-    field: 'updatetime',
-    label: '审批时间',
-    // width: 160,
-    align: 'center'
-  },
+  // {
+  //   field: 'updatetime',
+  //   label: '审批时间',
+  //   // width: 160,
+  //   align: 'center'
+  // },
   {
     field: 'action',
     label: '操作',
@@ -94,8 +94,18 @@ const tableColumns = reactive<TableColumn[]>([
   }
 ])
 const action = async (row: any, type: string) => {
-  //  这里时当前角色菜单权限数据   用于  回显
+  const newData = row
+  newData.reviewStatus = type == 'refused' ? false : true
+  try {
+    let result = await updateApplyApi(newData)
+    console.log('🚀 ~ file: WaitItems.vue:100 ~ action ~ result:', result)
+    if (result && result.data) {
+      getData()
+    } else {
+    }
+  } catch (error) {}
 }
+
 const getData = async () => {
   const res = await getAllItems({ reviewStatus: null })
   console.log('🚀 ~ file: WaitItems.vue:67 ~ getData ~ res:', res)
@@ -161,53 +171,53 @@ const dataList: Ref<any[]> = ref([])
 // }
 
 // ==============搜索 逻辑================
-const searchSchema1 = reactive<FormSchema[]>([
-  {
-    field: 'GroupID',
-    label: '区服ID',
-    component: 'Input'
-  },
-  {
-    field: 'AreaID',
-    label: '分组ID',
-    component: 'Input'
-  },
-  {
-    field: 'RoleID',
-    label: '角色ID',
-    component: 'Input'
-  },
-  {
-    field: 'ActionType',
-    label: '动作类型',
-    component: 'Input'
-  },
-  {
-    field: 'Guid',
-    label: '二进制索引',
-    component: 'Input'
-  },
-  {
-    field: 'TemplateID',
-    label: '物品',
-    component: 'Input'
-  },
-  {
-    field: 'ItemCount',
-    label: '数量',
-    component: 'Input'
-  },
-  {
-    field: 'Reason',
-    label: '操作类型',
-    component: 'Input'
-  },
-  {
-    field: 'UserDefinedID',
-    label: '定义ID',
-    component: 'Input'
-  }
-])
+// const searchSchema1 = reactive<FormSchema[]>([
+//   {
+//     field: 'GroupID',
+//     label: '区服ID',
+//     component: 'Input'
+//   },
+//   {
+//     field: 'AreaID',
+//     label: '分组ID',
+//     component: 'Input'
+//   },
+//   {
+//     field: 'RoleID',
+//     label: '角色ID',
+//     component: 'Input'
+//   },
+//   {
+//     field: 'ActionType',
+//     label: '动作类型',
+//     component: 'Input'
+//   },
+//   {
+//     field: 'Guid',
+//     label: '二进制索引',
+//     component: 'Input'
+//   },
+//   {
+//     field: 'TemplateID',
+//     label: '物品',
+//     component: 'Input'
+//   },
+//   {
+//     field: 'ItemCount',
+//     label: '数量',
+//     component: 'Input'
+//   },
+//   {
+//     field: 'Reason',
+//     label: '操作类型',
+//     component: 'Input'
+//   },
+//   {
+//     field: 'UserDefinedID',
+//     label: '定义ID',
+//     component: 'Input'
+//   }
+// ])
 
 //  合并公共搜索项
 // let searchSchema = reactive<FormSchema[]>([])
