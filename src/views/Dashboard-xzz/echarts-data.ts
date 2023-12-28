@@ -207,11 +207,11 @@ export const radarOption: EChartsOption = {
   radar: {
     // shape: 'circle',
     indicator: [
-      { name: t('workplace.quote'), max: 65 },
-      { name: t('workplace.contribution'), max: 160 },
-      { name: t('workplace.hot'), max: 300 },
-      { name: t('workplace.yield'), max: 130 },
-      { name: t('workplace.follow'), max: 100 }
+      { name: t('workplace.quote') },
+      { name: t('workplace.contribution') },
+      { name: t('workplace.hot') },
+      { name: t('workplace.yield') },
+      { name: t('workplace.follow') }
     ]
   },
   series: [

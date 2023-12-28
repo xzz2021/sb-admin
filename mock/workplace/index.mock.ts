@@ -156,12 +156,19 @@ export default [
     body: () => {
       return {
         code: SUCCESS_CODE,
+        // data: [
+        //   { name: 'workplace.quote', max: 65, personal: 42, team: 50 },
+        //   { name: 'workplace.contribution', max: 160, personal: 30, team: 140 },
+        //   { name: 'workplace.hot', max: 300, personal: 20, team: 28 },
+        //   { name: 'workplace.yield', max: 130, personal: 35, team: 35 },
+        //   { name: 'workplace.follow', max: 100, personal: 80, team: 90 }
+        // ]
         data: [
-          { name: 'workplace.quote', max: 65, personal: 42, team: 50 },
-          { name: 'workplace.contribution', max: 160, personal: 30, team: 140 },
-          { name: 'workplace.hot', max: 300, personal: 20, team: 28 },
-          { name: 'workplace.yield', max: 130, personal: 35, team: 35 },
-          { name: 'workplace.follow', max: 100, personal: 80, team: 90 }
+          { name: 'workplace.quote', personal: 42, team: 50 },
+          { name: 'workplace.contribution', personal: 30, team: 140 },
+          { name: 'workplace.hot', personal: 20, team: 28 },
+          { name: 'workplace.yield', personal: 35, team: 35 },
+          { name: 'workplace.follow', personal: 80, team: 90 }
         ]
       }
     }
