@@ -57,3 +57,8 @@ export const isTokenExpired = (): Promise<IResponse> => {
 export const tttApi = (): Promise<IResponse> => {
   return request.get({ url: 'api/test' })
 }
+
+// 上传头像 接口
+export const uploadAvatorApi = (data: UserType, headers: any): Promise<IResponse<any>> => {
+  return request.post({ url: 'api/userinfo/upload', data, headers })
+}

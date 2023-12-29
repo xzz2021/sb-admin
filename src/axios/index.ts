@@ -3,6 +3,7 @@ import { CONTENT_TYPE } from '@/constants'
 import { useUserStoreWithOut } from '@/store/modules/user'
 
 const request = (option: AxiosConfig) => {
+  console.log('🚀 ~ file: index.ts:6 ~ request ~ option:', option)
   const { method, params, data, headers, responseType, id } = option
   let url = option.url as string
   if (method == 'delete') url = url + id

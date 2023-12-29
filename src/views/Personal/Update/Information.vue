@@ -70,9 +70,4 @@ const submitForm = async (formEl: FormInstance | undefined) => {
     }
   })
 }
-
-const resetForm = (formEl: FormInstance | undefined) => {
-  if (!formEl) return
-  formEl.resetFields()
-}
 </script>
