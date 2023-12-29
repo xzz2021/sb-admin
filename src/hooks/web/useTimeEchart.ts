@@ -93,7 +93,7 @@ export const useTimeEchart = (_config: any) => {
     }
   }
   const optionsData: EChartsOption | any = reactive(onlinePlayersOptions)
-  const currentPlayers: Ref<number> = ref(null)
+  const currentPlayers: Ref<number> = ref(0)
 
   //   watch(
   //     () => currentPage.value,

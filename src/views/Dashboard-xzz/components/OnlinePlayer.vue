@@ -7,7 +7,7 @@ import { ElMessage } from 'element-plus'
 import { useTimeEchart } from '@/hooks/web/useTimeEchart'
 
 const { echartState } = useTimeEchart('aa')
-const { optionsData, currentPlayers } = echartState
+const { optionsData } = echartState
 
 const loading = ref(false)
 
@@ -66,15 +66,15 @@ const shortcuts = [
 </script>
 
 <template>
-  <ElCol :xl="16" :lg="16" :md="24" :sm="24" :xs="24" class="mb-20px">
-    <ElCard shadow="never">
-      <template #header>
+  <ElCol :span="24" class="mb-20px">
+    <ElCard shadow="hover">
+      <!-- <template #header>
         <div class="flex justify-between">
           <span>当前在线人数: {{ currentPlayers }}</span>
           <ElLink type="primary" :underline="false">更多</ElLink>
         </div>
-      </template>
-      <ElSkeleton :loading="loading" animated>
+      </template> -->
+      <ElSkeleton :loading="loading" animated :rows="4">
         <el-date-picker
           v-model="selectDate"
           type="date"

@@ -1,16 +1,16 @@
 <script setup lang="ts">
-// import { useTimeAgo } from '../../hooks/web/useTimeAgo'
+import { useTimeAgo } from '../../hooks/web/useTimeAgo'
 import { ElRow, ElCol, ElSkeleton, ElCard, ElLink } from 'element-plus'
 import { useI18n } from '../../hooks/web/useI18n'
 import { ref, reactive } from 'vue'
 import { CountTo } from '../../components/CountTo'
-// import { formatTime } from '../../utils'
+import { formatTime } from '../../utils'
 // import { lineOptions } from '@/views/Dashboard-xzz/echarts-data'
 
 import { Echart } from '../../components/Echart'
 import { EChartsOption } from 'echarts'
 import { radarOption } from './echarts-data'
-// import { Highlight } from '../../components/Highlight'
+import { Highlight } from '../../components/Highlight'
 import {
   getCountApi,
   getProjectApi,
@@ -26,7 +26,6 @@ import { onMounted } from 'vue'
 import { UserType } from '@/api/login/types'
 import { Ref } from 'vue'
 import { Dynamic } from '@/api/dashboard copy/workplace/types'
-import OnlinePlayer from './components/OnlinePlayer.vue'
 
 // import { useUserStore } from '@/store/modules/user'
 
@@ -165,7 +164,7 @@ defineOptions({
           <ElCol :xl="12" :lg="12" :md="12" :sm="24" :xs="24">
             <div class="flex h-70px items-center justify-end lt-sm:mt-20px">
               <div class="px-8px text-right">
-                <div class="text-14px text-gray-400 mb-20px"> 在线人数 </div>
+                <div class="text-14px text-gray-400 mb-20px">{{ t('workplace.project') }}</div>
                 <CountTo
                   class="text-20px"
                   :start-val="0"
@@ -173,7 +172,7 @@ defineOptions({
                   :duration="2600"
                 />
               </div>
-              <!-- <ElDivider direction="vertical" />
+              <ElDivider direction="vertical" />
               <div class="px-8px text-right">
                 <div class="text-14px text-gray-400 mb-20px">{{ t('workplace.toDo') }}</div>
                 <CountTo
@@ -192,7 +191,7 @@ defineOptions({
                   :end-val="totalSate.access"
                   :duration="2600"
                 />
-              </div> -->
+              </div>
             </div>
           </ElCol>
         </ElRow>
@@ -201,8 +200,7 @@ defineOptions({
   </div>
 
   <ElRow class="mt-20px" :gutter="20" justify="space-between">
-    <OnlinePlayer />
-    <!-- <ElCol :xl="16" :lg="16" :md="24" :sm="24" :xs="24" class="mb-20px">
+    <ElCol :xl="16" :lg="16" :md="24" :sm="24" :xs="24" class="mb-20px">
       <ElCard shadow="never">
         <template #header>
           <div class="flex justify-between">
@@ -267,7 +265,7 @@ defineOptions({
           </div>
         </ElSkeleton>
       </ElCard>
-    </ElCol> -->
+    </ElCol>
     <ElCol :xl="8" :lg="8" :md="24" :sm="24" :xs="24" class="mb-20px">
       <ElCard shadow="never">
         <template #header>
