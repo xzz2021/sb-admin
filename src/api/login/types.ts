@@ -11,6 +11,7 @@ export interface UserType {
   nickname: string
   code?: string
   sqlMessage?: string
+  avator: string
 }
 
 export interface UserRegisterType {

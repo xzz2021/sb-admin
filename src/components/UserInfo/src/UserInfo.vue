@@ -7,6 +7,7 @@ import { ref, computed } from 'vue'
 import LockPage from './components/LockPage.vue'
 import { useLockStore } from '@/store/modules/lock'
 import { useUserStore } from '@/store/modules/user'
+import avatarURL from '../../../assets/imgs/avatar.jpg'
 
 const userStore = useUserStore()
 
@@ -40,7 +41,7 @@ const lockScreen = () => {
   <ElDropdown class="custom-hover" :class="prefixCls" trigger="click">
     <div class="flex items-center">
       <img
-        src="@/assets/imgs/avatar.jpg"
+        :src="userStore?.userInfo?.avator ? userStore?.userInfo?.avator : avatarURL"
         alt=""
         class="w-[calc(var(--logo-height)-25px)] rounded-[50%]"
       />

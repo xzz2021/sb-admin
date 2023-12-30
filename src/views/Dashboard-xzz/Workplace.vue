@@ -26,6 +26,7 @@ import { onMounted } from 'vue'
 import { UserType } from '@/api/login/types'
 import { Ref } from 'vue'
 import { Dynamic } from '@/api/dashboard copy/workplace/types'
+import avatarURL from '@/assets/imgs/avatar.jpg'
 
 // import { useUserStore } from '@/store/modules/user'
 
@@ -147,7 +148,7 @@ defineOptions({
           <ElCol :xl="12" :lg="12" :md="12" :sm="24" :xs="24">
             <div class="flex items-center">
               <img
-                src="@/assets/imgs/avatar.jpg"
+                :src="userStore?.userInfo?.avator ? userStore?.userInfo?.avator : avatarURL"
                 alt=""
                 class="w-70px h-70px rounded-[50%] mr-20px"
               />
