@@ -6,7 +6,7 @@ import { ref, unref, nextTick, watch, reactive } from 'vue'
 import { ElButton, ElTree, ElInput, ElDivider } from 'element-plus'
 import {
   getDepartmentApi,
-  getUserByIdApi,
+  getUserByIdApi000,
   saveUserApi,
   deleteUserByIdApi,
   getDepartmentApi000
@@ -25,7 +25,7 @@ const { t } = useI18n()
 const { tableRegister, tableState, tableMethods } = useTable({
   fetchDataApi: async () => {
     const { pageSize, currentPage } = tableState
-    const res = await getUserByIdApi({
+    const res = await getUserByIdApi000({
       id: unref(currentNodeKey),
       pageIndex: unref(currentPage),
       pageSize: unref(pageSize),

@@ -306,7 +306,6 @@ const { allSchemas } = useCrudSchemas(crudSchemas)
 
 const searchParams = ref({})
 const setSearchParams = (params: any) => {
-  console.log('🚀 ~ file: User.vue:309 ~ setSearchParams ~ params:', params)
   currentPage.value = 1
   searchParams.value = params
   getList()
@@ -319,9 +318,11 @@ const departmentList = ref<DepartmentItem[]>([])
 const fetchDepartment = async () => {
   const res = await getDepartmentApi()
   departmentList.value = res.data
-  currentNodeKey.value = (res.data && res.data[0]?.children && res.data[0].children[0].id) || ''
+  // console.log('🚀 ~ file: User.vue:321 ~ fetchDepartment ~ res.data:', res.data)
+  // currentNodeKey.value = (res.data && res.data[0]?.children && res.data[0].children[0].id) || ''
+  // currentNodeKey.value = (res.data && res.data[0].id) || ''
   await nextTick()
-  unref(treeEl)?.setCurrentKey(currentNodeKey.value)
+  // unref(treeEl)?.setCurrentKey(currentNodeKey.value)
 }
 fetchDepartment()
 

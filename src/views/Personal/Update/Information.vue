@@ -1,6 +1,6 @@
 <template>
   <div style="min-width: 200px; max-width: 460px">
-    <el-card class="box-card">
+    <el-card class="box-card" style="height: 500px">
       <template #header>
         <div class="card-header">
           <span>个人信息</span>
@@ -93,3 +93,9 @@ const submitForm = async (formEl: FormInstance | undefined) => {
   })
 }
 </script>
+
+<style scoped>
+:deep(.el-form-item--default) {
+  margin-bottom: 30px;
+}
+</style>

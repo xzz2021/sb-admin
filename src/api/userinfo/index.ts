@@ -9,3 +9,7 @@ export const uploadAvatorApi = (data: FormData, headers: any): Promise<IResponse
 export const updateUserinfoApi = (data: Partial<UserType>): Promise<IResponse<any>> => {
   return request.post({ url: 'api/userinfo/update', data })
 }
+
+export const updateAvatorApi = (data: Partial<UserType>): Promise<IResponse<any>> => {
+  return request.post({ url: 'api/userinfo/updateAvator', data })
+}

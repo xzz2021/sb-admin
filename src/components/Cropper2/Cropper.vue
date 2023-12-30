@@ -50,9 +50,9 @@
 import { Ref, ref } from 'vue'
 import 'cropperjs/dist/cropper.css'
 import Cropper from 'cropperjs'
-import { uploadAvatorApi } from '../../api/userinfo/index'
+import { updateAvatorApi, uploadAvatorApi } from '../../api/userinfo/index'
 import { useUserStore } from '@/store/modules/user'
-import type { UploadInstance, UploadProps, UploadRawFile } from 'element-plus'
+import { ElMessage, type UploadInstance, type UploadProps, type UploadRawFile } from 'element-plus'
 // import { Ref } from 'vue'
 
 const userStore = useUserStore()
@@ -132,6 +132,16 @@ const GetData = () => {
             const userinfo = userStore.getUserInfo!
             userinfo.avator = avator ? 'http://127.0.1:3000/' + avator : ''
             userStore.setUserInfo(userinfo)
+            try {
+              const res = await updateAvatorApi({
+                username: userinfo.username,
+                avator: userinfo.avator
+              })
+              if (res && res.data && res.data.affected == 1) {
+                //说明更新成功
+                ElMessage.success('头像更新成功')
+              }
+            } catch (error) {}
             // console.log(
             //   '🚀 ~ file: Cropper.vue:127 ~ .toBlob ~ userStore.getUserInfo:',
             //   userStore.getUserInfo
@@ -174,7 +184,7 @@ const openDialog = () => {
 const clearDialog = async () => {
   dialogVisible.value = false
   const wait = async (seconds) => new Promise((resolve) => setTimeout(resolve, seconds * 1000))
-  await wait(1.5)
+  await wait(1)
   currentPicName.value = ''
 }
 defineExpose({ openDialog })
