@@ -18,7 +18,7 @@
           <el-input v-model="ruleForm.nickname" />
         </el-form-item>
         <el-form-item label="密码" prop="password">
-          <el-input v-model="ruleForm.password" placeholder="留空表示不更改密码" />
+          <el-input v-model="ruleForm.password" placeholder="留空表示不更改密码" clearable />
         </el-form-item>
         <el-form-item>
           <el-button type="primary" @click="submitForm(ruleFormRef)"> 确认 </el-button>
@@ -37,6 +37,7 @@ import AvatorUpload from './AvatorUpload.vue'
 import { useUserStore } from '@/store/modules/user'
 import { onMounted } from 'vue'
 import { updateUserinfoApi } from '@/api/userinfo'
+import { useValidator } from '@/hooks/web/useValidator'
 
 const userStore = useUserStore()
 
@@ -59,16 +60,11 @@ const ruleForm = reactive<RuleForm>({
   nickname: '',
   password: ''
 })
+const { required, lengthRange } = useValidator()
 
 const rules = reactive<FormRules<RuleForm>>({
-  nickname: [
-    { required: true, message: '请输入昵称', trigger: 'blur' },
-    { min: 1, max: 10, message: '昵称太长了,请改个简单点!', trigger: 'blur' }
-  ]
-  // password: [
-  //   { required: true, message: '请输入密码', trigger: 'blur' },
-  //   { min: 3, max: 5, message: 'Length should be 3 to 5', trigger: 'blur' }
-  // ]
+  nickname: [required(), lengthRange({ min: 1, max: 20, message: '昵称太长了,请改个简单点!' })],
+  password: [lengthRange({ min: 6, max: 30, message: '密码长度需要在6到30位之间!' })]
 })
 
 const submitForm = async (formEl: FormInstance | undefined) => {

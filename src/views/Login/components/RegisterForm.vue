@@ -15,7 +15,7 @@ const { getFormData, getElFormExpose } = formMethods
 
 const { t } = useI18n()
 
-const { required } = useValidator()
+const { required, lengthRange } = useValidator()
 
 const schema = reactive<FormSchema[]>([
   {
@@ -152,8 +152,8 @@ const checkPwd = async (_rule: any, value: any, callback: any) => {
 }
 
 const rules: FormRules = {
-  username: [required()],
-  password: [required()],
+  username: [required(), lengthRange({ min: 6, max: 16, message: '用户名长度需要在6到16位之间!' })],
+  password: [lengthRange({ min: 6, max: 30, message: '密码长度需要在6到30位之间!' })],
   check_password: [{ asyncValidator: checkPwd, trigger: 'blur' }],
   code: [required()]
 }
@@ -173,7 +173,7 @@ const loginRegister = async () => {
       // if (password != check_password) return ElMessage.error(t('common.isEqual'))
       try {
         loading.value = true
-        if (formData.code != '999') return ElMessage.error('验证码错误，请稍后再试！')
+        if (formData.code != '999') return ElMessage.error('验证码错误，请联系管理员！')
         // ElMessage.success('注册成功！')
         // return
         const res = await registerApi(formData)

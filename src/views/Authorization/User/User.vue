@@ -210,6 +210,10 @@ const departmentList = ref<DepartmentItem[]>([])
 const fetchDepartment = async () => {
   const res = await getDepartmentApi000()
   departmentList.value = res.data.list
+  console.log(
+    '🚀 ~ file: User.vue:213 ~ fetchDepartment ~ departmentList.value:',
+    departmentList.value
+  )
   currentNodeKey.value =
     (res.data.list[0] && res.data.list[0]?.children && res.data.list[0].children[0].id) || ''
   await nextTick()
@@ -266,9 +270,11 @@ const delData = async (row?: DepartmentUserItem) => {
 }
 
 const action = (row: DepartmentUserItem, type: string) => {
+  console.log('🚀 ~ file: User.vue:269 ~ action ~ row:', row)
   dialogTitle.value = t(type === 'edit' ? 'exampleDemo.edit' : 'exampleDemo.detail')
   actionType.value = type
   currentRow.value = { ...row, department: unref(treeEl)?.getCurrentNode() || {} }
+  console.log('🚀 ~ file: User.vue:273 ~ action ~ currentRow.value :', currentRow.value)
   dialogVisible.value = true
 }
 

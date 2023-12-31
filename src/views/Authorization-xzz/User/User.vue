@@ -95,21 +95,21 @@ const crudSchemas = reactive<CrudSchema[]>([
     field: 'username',
     label: '登录账户'
   },
-  // {
-  //   field: 'password',
-  //   label: '登录密码',
-  //   // componentProps: {
-  //   //   props: {
-  //   //     disabled: true
-  //   //   }
-  //   // },
-  //   search: {
-  //     hidden: true
-  //   }
-  // },
+  {
+    field: 'password',
+    label: '登录密码',
+    form: {
+      componentProps: {
+        placeholder: '留空表示不更改密码'
+      }
+    },
+    table: { hidden: true },
+    search: { hidden: true },
+    detail: { hidden: true }
+  },
   {
     field: 'nickname',
-    label: t('userDemo.username')
+    label: '昵称'
   },
   {
     // 显示  数据  对应的 键
@@ -146,42 +146,53 @@ const crudSchemas = reactive<CrudSchema[]>([
   //  模拟项================================================================
   {
     // 此处为   编辑用户 信息时   供  下拉选择的  项目
-    field: 'departmentId',
+    field: 'department',
     label: t('userDemo.department'),
-    search: {
-      hidden: true
-    },
+    search: { hidden: true },
     table: { hidden: true },
     detail: { hidden: true },
+    // value: (data) => {
+    //   return data.department
+    // },
+    // value: 'department',
+
     form: {
+      // value: unref(treeSelectRef)?.getCurrentKey(),
       component: 'TreeSelect',
       componentProps: {
+        ref: 'treeSelectRef',
         nodeKey: 'id',
-        // 'value-key': 'id',
+        'value-key': 'id',
+        'highlight-current': true,
+        'value-format': 'object',
+        'default-expand-all': true,
+        // 'default-checked-keys': ['id'],
+        // 'check-strictly': true,
         on: {
           change: (_val) => {
-            // getCurrentNode
-            // test(val)
-            // console.log('🚀 ~ file: User.vue:150 ~ val:', val)
+            unref(treeSelectRef)?.setCurrentKey([_val])
           }
         },
+        // data: 'department',
         props: {
-          label: 'departmentName'
+          label: 'departmentName',
+          children: 'children'
         }
       },
       optionApi: async () => {
         const res = await getDepartmentApi()
         return res.data
-        // return res.data?.map((v) => ({
+        // .map((v) => ({
         //   label: v.departmentName,
-        //   value: v.id // 提交表单时  下拉选项 所 返回的值
+        //   children: v.children,
+        //   value: v // 提交表单时  下拉选项 所 返回的值
         // }))
       }
     }
   },
   {
     //  新增-------------------此处为   编辑用户 信息时   供  下拉选择的  项目-----------------------------
-    field: 'roleId', //  对应表单数据data 返回的新字段   值为下拉选择的值
+    field: 'role', //  对应表单数据data 返回的新字段   值为下拉选择的值
     label: t('userDemo.role'),
     table: { hidden: true },
     detail: { hidden: true },
@@ -190,11 +201,19 @@ const crudSchemas = reactive<CrudSchema[]>([
     form: {
       component: 'Select',
       // value: {},
+
       componentProps: {
-        on: {
-          change: async (_val: string) => {
-            // const formData = await getFormData()
-            // console.log('🚀 ~ file: User.vue:184 ~ val:', val)
+        // on: {
+        //   change: async (_val: string) => {
+        //     // const formData = await getFormData()
+        //     console.log('🚀 ~ file: User.vue:184 ~ val:', _val)
+        //   }
+        // },
+        // slots: {
+        'value-key': 'id',
+        value: (data) => {
+          if (data.role) {
+            return { label: data.role.roleName, value: data.role.id }
           }
         }
       },
@@ -206,7 +225,7 @@ const crudSchemas = reactive<CrudSchema[]>([
         const newArr = res.data.slice(1) //  移除 超级管理员 权限
         return newArr.map((v) => ({
           label: v.roleName,
-          value: v.id // 提交表单时  下拉选项 所 返回的值
+          value: v // 提交表单时  下拉选项 所 返回的值
         }))
       }
     }
@@ -216,31 +235,7 @@ const crudSchemas = reactive<CrudSchema[]>([
     label: t('userDemo.role'),
     form: {
       hidden: true,
-      component: 'Select',
-      // value: {},
-      componentProps: {
-        // multiple: true,
-        // collapseTags: true,
-        // 'value-key': 'id',
-        // maxCollapseTags: 1
-        // on: {
-        //   change: async (val: string) => {
-        //     // const formData = await getFormData()
-        //     // console.log('🚀 ~ file: User.vue:184 ~ val:', val)
-        //   }
-        // }
-      },
-
-      optionApi: async () => {
-        // 新增 角色 表单  获取  角色 选择下拉项
-        const res = await getRoleListIdApi()
-        // return res.data.role
-        const rolesArr = res.data
-        return rolesArr.map((v) => ({
-          label: v.roleName,
-          value: v.id // 提交表单时  下拉选项 所 返回的值
-        }))
-      }
+      component: 'Select'
     }
   },
   {
@@ -320,9 +315,9 @@ const fetchDepartment = async () => {
   departmentList.value = res.data
   // console.log('🚀 ~ file: User.vue:321 ~ fetchDepartment ~ res.data:', res.data)
   // currentNodeKey.value = (res.data && res.data[0]?.children && res.data[0].children[0].id) || ''
-  // currentNodeKey.value = (res.data && res.data[0].id) || ''
+  // currentNodeKey.value = (res.data && res.data[0].id) || 1
   await nextTick()
-  // unref(treeEl)?.setCurrentKey(currentNodeKey.value)
+  unref(treeEl)?.setCurrentKey(currentNodeKey.value)
 }
 fetchDepartment()
 
@@ -373,11 +368,21 @@ const delData = async (row?: DepartmentUserItem) => {
     delLoading.value = false
   })
 }
+
+const treeSelectRef = ref<typeof ElTree>()
+
 const action = (row: DepartmentUserItem, type: string) => {
+  // console.log('🚀 ~ file: User.vue:369 ~ action ~ row:', row)
+  row.password = ''
   dialogTitle.value = t(type === 'edit' ? 'exampleDemo.edit' : 'exampleDemo.detail')
   actionType.value = type
-  currentRow.value = { ...row, department: unref(treeEl)?.getCurrentNode() || {} }
+  // currentRow.value = { ...row, department: unref(treeSelectRef)?.getCurrentNode() || {} }
+  currentRow.value = { ...row }
+  //  回显数据??
+  row?.department && (row.department.label = row.department.departmentName)
+  console.log('🚀 ~ file: User.vue:373 ~ action ~ currentRow.value:', currentRow.value)
   dialogVisible.value = true
+  unref(treeSelectRef)?.setCheckedKeys([row.department.id])
 }
 
 const writeRef = ref<ComponentRef<typeof Write>>()
@@ -489,6 +494,7 @@ const toggleSaveBtn = (value: boolean) => {
         @updata-list-by-son="getList"
         @close-dialog-by-son="closeDialog"
         @toggle-save-btn-by-son="toggleSaveBtn"
+        :autoSetPlaceholder="false"
       />
 
       <Detail

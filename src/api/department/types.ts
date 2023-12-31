@@ -41,6 +41,7 @@ export interface DepartmentUserItem {
   createTime: string
   role: any
   department: any
+  password: string
 }
 
 export interface DepartmentUserResponse {
