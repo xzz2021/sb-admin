@@ -5,7 +5,7 @@ import { useI18n } from '@/hooks/web/useI18n'
 import { ElButton, ElCheckbox, ElInput, ElLink } from 'element-plus'
 import { useForm } from '@/hooks/web/useForm'
 import { loginApi, getRoleMenuApi } from '@/api/login'
-import { useAppStore } from '@/store/modules/app'
+// import { useAppStore } from '@/store/modules/app'
 import { usePermissionStore } from '@/store/modules/permission'
 import { useRouter } from 'vue-router'
 import type { RouteLocationNormalizedLoaded, RouteRecordRaw } from 'vue-router'
@@ -21,7 +21,7 @@ const { required } = useValidator()
 
 const emit = defineEmits(['to-register'])
 
-const appStore = useAppStore()
+// const appStore = useAppStore()
 
 const userStore = useUserStore()
 
@@ -250,18 +250,7 @@ const signIn = async () => {
         if (res && res.data) {
           userStore.setUserInfo(res.data.userInfo)
           userStore.setTokenKey(res.data.tokenKey)
-          // 是否使用动态路由
-          // if (appStore.getDynamicRouter) {
-          if (true) {
-            getRole()
-          } else {
-            await permissionStore.generateRoutes('static').catch(() => {})
-            permissionStore.getAddRouters.forEach((route) => {
-              addRoute(route as RouteRecordRaw) // 动态添加可访问路由表
-            })
-            permissionStore.setIsAddRouters(true)
-            push({ path: redirect.value || permissionStore.addRouters[0].path })
-          }
+          getRole()
         }
       } finally {
         // 是否存储 记住用户名
@@ -312,9 +301,8 @@ const getRole = async () => {
     // const routers = res.data || []
     const routers = res.data || []
     userStore.setRoleRouters(routers)
-    appStore.getDynamicRouter && appStore.getServerDynamicRouter
-      ? await permissionStore.generateRoutes('server', routers).catch(() => {})
-      : await permissionStore.generateRoutes('frontEnd', routers).catch(() => {})
+    //生成  服务端路由
+    await permissionStore.generateRoutes('server', routers).catch(() => {})
 
     permissionStore.getAddRouters.forEach((route) => {
       //   这里 貌似  可以自动 解析 扁平路由????????????????????????????????????????

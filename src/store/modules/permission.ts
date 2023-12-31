@@ -15,6 +15,33 @@ export interface PermissionState {
   menuTabRouters: AppRouteRecordRaw[]
 }
 
+// const hasPermission = (route) => {
+//   if (route.meta && route.meta.permission) {
+//     // 如果 有 view 查看参数  说明有权限查看
+//     return route.meta.permission.some((item) => item.includes('view'))
+//   } else {
+//     return false
+//   }
+// }
+
+//  过滤 是否 有查看 路由的 权限 只返回有查看权限的路由
+// const filterAsyncRoutes = (routes, roles) => {
+//   const res = []
+//   routes.forEach((route) => {
+//     // 复制一份
+//     const tmp = { ...route }
+//     // 如果用户有访问权限则加入结果路由表
+//     if (hasPermission(roles, tmp)) {
+//       // 如果存在子路由则递归过滤之
+//       if (tmp.children) {
+//         tmp.children = filterAsyncRoutes(tmp.children, roles)
+//       }
+//       res.push(tmp)
+//     }
+//   })
+//   return res
+// }
+
 export const usePermissionStore = defineStore('permission', {
   state: (): PermissionState => ({
     routers: [],

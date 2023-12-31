@@ -201,6 +201,8 @@ const submit = async () => {
       return checkedKeys.includes(item.id)
     })
     formData.menusArr = data || []
+    // console.log('🚀 ~ file: Write.vue:204 ~ submit ~ formData:', formData)
+    // return
     // return
     // 把扁平化的菜单数据发给后端,  菜单关联的权限['edit', 'add'] 是存在item.meta.permission数组里
     // const treeRefData = treeRef.value?.getCheckedNodes(false, true)

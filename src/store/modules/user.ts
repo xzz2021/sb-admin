@@ -10,7 +10,7 @@ import router from '@/router'
 interface UserState {
   userInfo?: UserType
   tokenKey: string
-  token: string
+  // token: string
   avator: string
   rememberUser: string
   roleRouters?: string[] | AppCustomRouteRecordRaw[]
@@ -20,8 +20,8 @@ export const useUserStore = defineStore('user', {
   state: (): UserState => {
     return {
       userInfo: undefined,
-      tokenKey: 'Authorization',
-      token: '',
+      tokenKey: '',
+      // token: '',
       roleRouters: undefined,
       rememberUser: '',
       avator: ''
@@ -34,9 +34,9 @@ export const useUserStore = defineStore('user', {
     getRememberUser(): string {
       return this.rememberUser
     },
-    getToken(): string {
-      return this.token
-    },
+    // getToken(): string {
+    //   return this.token
+    // },
     getUserInfo(): UserType | undefined {
       return this.userInfo
     },
@@ -51,9 +51,9 @@ export const useUserStore = defineStore('user', {
     setRememberUser(rememberUser: string) {
       this.rememberUser = rememberUser
     },
-    setToken(token: string) {
-      this.token = token
-    },
+    // setToken(token: string) {
+    //   this.token = token
+    // },
     setUserInfo(userInfo?: UserType) {
       this.userInfo = userInfo
     },
@@ -78,7 +78,7 @@ export const useUserStore = defineStore('user', {
     reset() {
       const tagsViewStore = useTagsViewStore()
       tagsViewStore.delAllViews()
-      this.setToken('')
+      this.setTokenKey('')
       this.setUserInfo(undefined)
       this.setRoleRouters([])
       router.replace('/login')

@@ -1,13 +1,13 @@
 import service from './service'
 import { CONTENT_TYPE } from '@/constants'
-import { useUserStoreWithOut } from '@/store/modules/user'
+// import { useUserStoreWithOut } from '@/store/modules/user'
 
 const request = (option: AxiosConfig) => {
   // console.log('🚀 ~ file: index.ts:6 ~ request ~ option:', option)
   const { method, params, data, headers, responseType, id } = option
   let url = option.url as string
   if (method == 'delete') url = url + id
-  const userStore = useUserStoreWithOut()
+  // const userStore = useUserStoreWithOut()
   return service.request({
     url: url,
     method,
@@ -16,7 +16,7 @@ const request = (option: AxiosConfig) => {
     responseType: responseType,
     headers: {
       'Content-Type': CONTENT_TYPE,
-      [userStore.getTokenKey ?? 'Authorization']: userStore.getToken ?? '',
+      // [userStore.getTokenKey ?? 'Authorization']: 'Bearer ' + userStore.getTokenKey ?? '',
       ...headers
     }
   })

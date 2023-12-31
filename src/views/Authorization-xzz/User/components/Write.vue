@@ -28,7 +28,7 @@ const rules = reactive({
   department: [required()],
   // roleId: [required()],
   password: [lengthRange({ min: 6, max: 30, message: '密码长度需要在6到30位之间!' })],
-  nickname: [required(), lengthRange({ min: 6, max: 20, message: '昵称长度需要在6到20位之间!' })],
+  nickname: [required(), lengthRange({ min: 2, max: 20, message: '昵称长度需要在6到20位之间!' })],
   role: [required()]
 })
 

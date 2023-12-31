@@ -11,7 +11,7 @@ import { registerApi } from '@/api/login'
 const emit = defineEmits(['to-login'])
 
 const { formRegister, formMethods } = useForm()
-const { getFormData, getElFormExpose } = formMethods
+const { getFormData, getElFormExpose, getFormExpose } = formMethods
 
 const { t } = useI18n()
 
@@ -169,16 +169,13 @@ const loginRegister = async () => {
   formRef?.validate(async (valid: boolean) => {
     if (valid) {
       const formData = await getFormData<UserRegisterType>()
-      // let { password, check_password } = formData
-      // if (password != check_password) return ElMessage.error(t('common.isEqual'))
+      if (formData.code != '999') return ElMessage.error('验证码错误，请联系管理员！')
       try {
         loading.value = true
-        if (formData.code != '999') return ElMessage.error('验证码错误，请联系管理员！')
-        // ElMessage.success('注册成功！')
-        // return
         const res = await registerApi(formData)
-        if (res && !res.data.code) {
+        if (res && res.data) {
           ElMessage.success('注册成功！')
+          formRef?.resetFields()
           toLogin()
         } else if (res.data.code == 'ER_DUP_ENTRY') {
           ElMessage.error(`注册失败, 原因: 用户名已存在,请更换!`)

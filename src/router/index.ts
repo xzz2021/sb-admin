@@ -8,23 +8,35 @@ import { NO_RESET_WHITE_LIST } from '@/constants'
 const { t } = useI18n()
 
 export const constantRouterMap: AppRouteRecordRaw[] = [
-  // 这里是菜单元数据 ,需要和后端比对 一致才能用 ???  不需要!!!
+  // 这里是 常量路由  不需要路由权限判断
+
   {
     path: '/',
     component: Layout,
     // redirect: '/dashboard/workplace',
-    redirect: '/dashboard-xzz/Workplace-xzz', //  这里 处理  未登录前的   默认跳转
+    redirect: '/dashboard-xzz/workplace', //  这里 处理  未登录前的   默认跳转
     name: 'Root',
     meta: {
       hidden: true
     }
   },
-  // {
-  //   path: '/:catchAll(.*)',
-  //   name: 'asyncNotFind',
+  //   {
+  //   path: window.location.pathname,
+  //   name: 'asyncNotFindTempRoute',
   //   component: () => import('@/views/Error/404.vue'),
   //   meta: {
-  //     title: '异步路由未发现'
+  //     title: '异步路由未发现',
+  //     hidden: true
+  //   }
+  // },
+
+  // {
+  //   name: '404404',
+  //   path: '/:pathMatch(.*)*',
+  //   component: () => import('@/views/Error/404.vue'),
+  //   meta: {
+  //     title: '异步路由未发现',
+  //     hidden: true
   //   }
   // },
   {
@@ -57,130 +69,26 @@ export const constantRouterMap: AppRouteRecordRaw[] = [
   {
     path: '/404',
     component: () => import('@/views/Error/404.vue'),
-    name: 'NoFind',
+    name: '未找到',
     meta: {
       hidden: true,
       title: '404',
+      noTagsView: true
+    }
+  },
+  {
+    path: '/403',
+    component: () => import('@/views/Error/403.vue'),
+    name: '没有权限',
+    meta: {
+      hidden: true,
+      title: '403',
       noTagsView: true
     }
   }
 ]
 
 export const asyncRouterMap: AppRouteRecordRaw[] = [
-  // {
-  //   path: '/dashboard-xzz',
-  //   component: Layout,
-  //   redirect: '/dashboard-xzz/workplace',
-  //   name: 'Dashboard-xzz',
-  //   meta: {
-  //     title: t('router.dashboard'),
-  //     icon: 'ant-design:dashboard-filled',
-  //     alwaysShow: true
-  //   },
-  //   children: [
-  //     // {
-  //     //   path: 'analysis',
-  //     //   component: () => import('@/views/Dashboard/Analysis.vue'),
-  //     //   name: 'Analysis',
-  //     //   meta: {
-  //     //     title: t('router.analysis'),
-  //     //     noCache: true,
-  //     //     affix: true
-  //     //   }
-  //     // },
-  //     {
-  //       path: 'workplace-xzz',
-  //       component: () => import('@/views/Dashboard-xzz/Workplace.vue'),
-  //       name: 'Workplace-xzz',
-  //       meta: {
-  //         title: t('router.workplace'),
-  //         noCache: true
-  //       }
-  //     }
-  //   ]
-  // },
-  // {
-  //   path: '/external-link',
-  //   component: Layout,
-  //   meta: {},
-  //   name: 'ExternalLink',
-  //   children: [
-  //     {
-  //       path: 'https://element-plus-admin-doc.cn/',
-  //       name: 'DocumentLink',
-  //       meta: {
-  //         title: t('router.document'),
-  //         icon: 'clarity:document-solid'
-  //       }
-  //     }
-  //   ]
-  // },
-  // {
-  //   path: '/datascan-xzz',
-  //   component: Layout,
-  //   redirect: '/datascan/tableone-xzz',
-  //   name: 'Datascan-xzz',
-  //   meta: {
-  //     title: '数据面板',
-  //     icon: 'eos-icons:role-binding',
-  //     alwaysShow: false
-  //   },
-  //   children: [
-  //     {
-  //       path: 'tableone-xzz',
-  //       component: () => import('@/views/Datascan-xzz/Tableone/Tableone.vue'),
-  //       name: 'Tableone-xzz',
-  //       meta: {
-  //         title: '表格一'
-  //       }
-  //     }
-  //   ]
-  // },
-  // {
-  //   path: '/authorization-xzz',
-  //   component: Layout,
-  //   redirect: '/authorization/user-xzz',
-  //   name: 'Authorization-xzz',
-  //   meta: {
-  //     title: t('router.authorization'),
-  //     icon: 'eos-icons:role-binding',
-  //     alwaysShow: true
-  //   },
-  //   children: [
-  //     // {
-  //     //   path: 'department-xzz',
-  //     //   component: () => import('@/views/Authorization-xzz/Department/Department.vue'),
-  //     //   name: 'Department-xzz',
-  //     //   meta: {
-  //     //     title: t('router.department')
-  //     //   }
-  //     // },
-  //     {
-  //       path: 'user-xzz',
-  //       component: () => import('@/views/Authorization-xzz/User/User.vue'),
-  //       name: 'User-xzz',
-  //       meta: {
-  //         title: t('router.user')
-  //       }
-  //     },
-  //     {
-  //       path: 'menu-xzz',
-  //       component: () => import('@/views/Authorization-xzz/Menu/Menu.vue'),
-  //       name: 'Menu-xzz',
-  //       meta: {
-  //         title: t('router.menuManagement')
-  //       }
-  //     },
-  //     {
-  //       path: 'role-xzz',
-  //       component: () => import('@/views/Authorization-xzz/Role/Role.vue'),
-  //       name: 'Role-xzz',
-  //       meta: {
-  //         title: t('router.role')
-  //       }
-  //     }
-  //   ]
-  // },
   {
     path: '/guide',
     component: Layout,
