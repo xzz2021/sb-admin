@@ -11,7 +11,7 @@ import { registerApi } from '@/api/login'
 const emit = defineEmits(['to-login'])
 
 const { formRegister, formMethods } = useForm()
-const { getFormData, getElFormExpose, getFormExpose } = formMethods
+const { getFormData, getElFormExpose } = formMethods
 
 const { t } = useI18n()
 
@@ -173,7 +173,7 @@ const loginRegister = async () => {
       try {
         loading.value = true
         const res = await registerApi(formData)
-        if (res && res.data) {
+        if (res && res?.data?.username) {
           ElMessage.success('注册成功！')
           formRef?.resetFields()
           toLogin()

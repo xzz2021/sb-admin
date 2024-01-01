@@ -198,6 +198,14 @@ const formSchema = reactive<FormSchema[]>([
     component: 'Input'
   },
   {
+    field: 'redirect',
+    label: '路由跳转',
+    component: 'Input',
+    componentProps: {
+      placeholder: '此处定义目录路由默认跳转路径'
+    }
+  },
+  {
     field: 'status',
     label: t('menu.status'),
     component: 'Select',
@@ -301,7 +309,7 @@ const redirect = ref<string>('')
 const userStore = useUserStore()
 const updateMenu = async () => {
   // 修改菜单 后更新 当前菜单 路由
-  console.log('🚀 ~ file: LoginForm.vue:300 ~ ===============getRolegetRolegetRolegetRole:')
+  // console.log('🚀 ~ file: LoginForm.vue:300 ~ ===============getRolegetRolegetRolegetRole:')
   const res = await getRoleMenuApi()
   if (res && res.data) {
     const routers = res.data || []
@@ -337,7 +345,7 @@ const submit = async () => {
       const res = await addMenuApi(formData)
 
       // return
-      if (res) {
+      if (res && res.data) {
         ElMessage({
           message: t('common.addSuccess'),
           type: 'success'

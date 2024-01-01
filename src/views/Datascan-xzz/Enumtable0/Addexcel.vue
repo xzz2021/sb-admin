@@ -53,7 +53,7 @@ const { t } = useI18n()
 
 const tableList: Ref<any[]> = ref([])
 const change = (_value: string) => {
-  console.log('🚀 ~ file: Addexcel.vue:55 ~ change ~ _value:', _value)
+  // console.log('🚀 ~ file: Addexcel.vue:55 ~ change ~ _value:', _value)
   return {}
 }
 

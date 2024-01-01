@@ -1,4 +1,4 @@
-<script setup lang="ts">
+<script setup lang="tsx">
 import { Ref, reactive, ref, unref } from 'vue'
 import { Table, TableColumn } from '@/components/Table'
 import { getItemLog } from '@/api/log'
@@ -6,6 +6,7 @@ import { Search } from '@/components/Search'
 import { useTableXzz } from '@/hooks/web/useTableXzz'
 import { FormSchema } from '@/components/Form'
 import { formatToDateTime } from '@/utils/dateUtil'
+// import { ElSelect, ElOption } from 'element-plus'
 
 const tableColumns = reactive<TableColumn[]>([
   {
@@ -99,7 +100,7 @@ const {
   searchParams,
   allEnumArr
 } = tableState
-const { getEnumValue, getEnumApi, setSearchParams } = tableMethods
+const { getEnumValue, setSearchParams, getAllEnumArr, getEachOptions } = tableMethods
 
 interface keyValue {
   key: string
@@ -111,8 +112,8 @@ const armorData: Ref<keyValue[]> = ref([])
 // 向后端请求 需要 的 枚举数据    同时  生成 匹配枚举值的 新列表
 const getData = async (conditions) => {
   const needEnum: string[] = ['Reason', 'TemplateID', 'ActionType', 'armor']
-  const enumArr: { itemName: string; data: any[] }[] = await getEnumApi('item', needEnum)
-  allEnumArr.value = enumArr
+  allEnumArr.value.length || (allEnumArr.value = await getAllEnumArr('item', needEnum))
+  const enumArr = allEnumArr.value
   const tempData = enumArr.filter((item) => item.itemName == 'armor')
   armorData.value = tempData[0].data
   const res = await getItemLog(conditions)
@@ -134,6 +135,36 @@ const getData = async (conditions) => {
   }
 }
 
+// const remoteMethod = (query: string) => {
+//   if (query) {
+//       options.value = list.value.filter((item) => {
+//         return item.label.toLowerCase().includes(query.toLowerCase())
+//       }
+//   } else {
+//     options.value = []
+//   }
+// }
+// const allOptions: Ref<any> = ref([])
+// const getAllOptions = (enumArr) => {
+//   const optionItem = enumArr.find((item) => item.itemName == 'ActionType')
+//   allOptions.value = optionItem?.data.map((item) => {
+//     return {
+//       // label: item.value + '-' + item.key,
+//       label: item.value,
+//       value: item.value
+//     }
+//   })
+// }
+
+// const getEachOptions = (type) => {
+//   const options = allEnumArr.value.find((item) => item.itemName == type)
+//   return options?.data.map((item, _index) => {
+//     return {
+//       label: item.value + '-' + item.key,
+//       value: item.value
+//     }
+//   })
+// }
 // ==============搜索 逻辑================
 const searchSchema1 = reactive<FormSchema[]>([
   {
@@ -151,10 +182,80 @@ const searchSchema1 = reactive<FormSchema[]>([
     label: '角色ID',
     component: 'Input'
   },
+  // {
+  //   field: 'ActionType',
+  //   label: '动作类型',
+  //   component: 'Select',
+  //   componentProps: {
+  //     // placeholder: '请输入关键词进行搜索',
+  //     // filterable: true,
+  //     // remote: true
+  //     on: {
+  //       change: (_val) => {
+  //         console.log('🚀 ~ file: Tableone.vue:199 ~ _val:', _val)
+  //         // const instance = getCurrentInstance()
+  //         // const $forceUpdate = () => queuePostFlushCb(instance?.update)
+  //         // $forceUpdate()
+  //       }
+  //     }
+  //   },
+  //   formItemProps: {
+  //     slots: {
+  //       default: (_data: any) => {
+  //         // console.log('🚀 ~ file: Tableone.vue:181 ~ data:', data)
+  //         return (
+  //           <>
+  //             <ElSelect
+  //               filterable
+  //               remote
+  //               model-value={selectedVal}
+  //               reserve-keyword
+  //               placeholder="请输入关键词进行搜索"
+  //               remote-method={(query) => {
+  //                 if (query) {
+  //                   currentOptions.value = allOptions.value.filter((item) => {
+  //                     if (/\p{Script=Han}/u.test(query)) {
+  //                       // 判断是否包含中文
+  //                       return item.label.includes(query)
+  //                     } else {
+  //                       return item.label.toLowerCase().includes(query.toLowerCase())
+  //                     }
+  //                   })
+  //                 } else {
+  //                   currentOptions.value = []
+  //                 }
+  //               }}
+  //             >
+  //               {currentOptions.value.map((element, index2) => {
+  //                 return <ElOption label={element.label} value={element.value} key={index2} />
+  //               })}
+  //             </ElSelect>
+  //           </>
+  //         )
+  //       }
+  //     }
+  //   }
+  //   // optionApi: () => {
+  //   //   const options = allEnumArr.value.find((item) => item.itemName == 'ActionType')
+  //   //   return options?.data.map((item, index) => {
+  //   //     return {
+  //   //       label: item.value,
+  //   //       value: item.value,
+  //   //       key: index
+  //   //     }
+  //   //   })
+  //   // }
+  // },
   {
     field: 'ActionType',
     label: '动作类型',
-    component: 'Input'
+    component: 'Select',
+    componentProps: {
+      placeholder: '可以输入关键词进行搜索',
+      filterable: true
+      // remote: true
+    },
+    optionApi: () => getEachOptions('ActionType')
   },
   {
     field: 'Guid',
@@ -164,7 +265,13 @@ const searchSchema1 = reactive<FormSchema[]>([
   {
     field: 'TemplateID',
     label: '物品',
-    component: 'Input'
+    component: 'Select',
+    componentProps: {
+      placeholder: '可以输入关键词进行搜索',
+      filterable: true
+      // remote: true
+    },
+    optionApi: () => getEachOptions('TemplateID')
   },
   {
     field: 'ItemCount',
@@ -174,7 +281,13 @@ const searchSchema1 = reactive<FormSchema[]>([
   {
     field: 'Reason',
     label: '操作类型',
-    component: 'Input'
+    component: 'Select',
+    componentProps: {
+      placeholder: '可以输入关键词进行搜索',
+      filterable: true
+      // remote: true
+    },
+    optionApi: () => getEachOptions('Reason')
   },
   {
     field: 'UserDefinedID',

@@ -98,50 +98,15 @@ const {
   searchParams,
   allEnumArr
 } = tableState
-const { getEnumValue, getEnumApi, setSearchParams } = tableMethods
+const { getEnumValue, getAllEnumArr, setSearchParams, getEachOptions } = tableMethods
 
-// interface keyValue {
-//   key: string
-//   value: string
-// }
-
-const { searchRegister, searchMethods } = useSearch()
-const { setSchema } = searchMethods
-
-// const moneyTypeEnumObj: Ref<keyValue[]> = ref([])
+const { searchRegister } = useSearch()
 
 // 向后端请求 需要 的 枚举数据    同时  生成 匹配枚举值的 新列表
 const getData = async (conditions) => {
   const needEnum: string[] = ['Reason', 'MoneyType', 'Action']
-  const enumArr: { itemName: string; data: any[] }[] = await getEnumApi('money', needEnum)
-  allEnumArr.value = enumArr
-  const tempdata = enumArr.filter((item) => item.itemName == 'MoneyType')
-  let optionData: any[] = []
-  if (tempdata) {
-    optionData = tempdata[0].data.map((item) => {
-      return {
-        label: item.value,
-        value: item.key
-      }
-    })
-  }
-  setSchema([
-    {
-      field: 'MoneyType',
-      path: 'componentProps.options',
-      // value: () => {
-      //   // const options = optionData.map((item) => {
-      //   //   return {
-      //   //     label: item.value,
-      //   //     value: item.key
-      //   //   }
-      //   // })
-      //   // return options
-      //   return [{ label: 'MoneyType', value: 'MoneyType' }]
-      // }
-      value: optionData
-    }
-  ])
+  allEnumArr.value.length || (allEnumArr.value = await getAllEnumArr('money', needEnum))
+  const enumArr = allEnumArr.value
   const res = await getMoneyLog(conditions)
   if (res && res.data && res.data?.list.length > 0) {
     const list = res.data.list.map((item) => {
@@ -186,17 +151,35 @@ const searchSchema1 = reactive<FormSchema[]>([
   {
     field: 'Action',
     label: '动作类型',
-    component: 'Input'
+    component: 'Select',
+    componentProps: {
+      placeholder: '可以输入关键词进行搜索',
+      filterable: true
+      // remote: true
+    },
+    optionApi: () => getEachOptions('Action')
   },
   {
     field: 'Reason',
     label: '操作类型',
-    component: 'Input'
+    component: 'Select',
+    componentProps: {
+      placeholder: '可以输入关键词进行搜索',
+      filterable: true
+      // remote: true
+    },
+    optionApi: () => getEachOptions('Reason')
   },
   {
     field: 'MoneyType',
     label: '货币类型',
-    component: 'Select'
+    component: 'Select',
+    componentProps: {
+      placeholder: '可以输入关键词进行搜索',
+      filterable: true
+      // remote: true
+    },
+    optionApi: () => getEachOptions('MoneyType')
   },
   {
     field: 'ItemCount',

@@ -28,6 +28,6 @@ onMounted(async () => {
 <template>
   <div>
     <Error @error-click="errorClick" />
-    <div @click="clearInfo">清空信息</div>
+    <div @click="clearInfo" style="color: white">清空信息</div>
   </div>
 </template>

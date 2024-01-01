@@ -97,7 +97,7 @@ export const useTableXzz = (config: UseTableConfig) => {
 
   const searchParams = ref({})
 
-  const allEnumArr: Ref<any[]> = ref([])
+  const allEnumArr: Ref<{ data: any[]; itemName: string }[]> = ref([])
 
   watch(
     () => currentPage.value,
@@ -304,6 +304,25 @@ export const useTableXzz = (config: UseTableConfig) => {
         searchParams.value = data
       }
       methods.getList()
+    },
+    //  获取当前项目所需的 所有 枚举值
+    getAllEnumArr: async (logtype: string, needEnum: string[]) => {
+      // const needEnum: string[] = ['Reason', 'TemplateID', 'ActionType', 'armor']
+      const enumArr: { itemName: string; data: any[] }[] = await methods.getEnumApi(
+        logtype,
+        needEnum
+      )
+      return enumArr
+    },
+    //  分别获取对应的下拉 搜索options
+    getEachOptions: (type) => {
+      const options = allEnumArr.value.find((item) => item.itemName == type)
+      return options?.data.map((item, _index) => {
+        return {
+          label: item.value + '-' + item.key,
+          value: item.value
+        }
+      })
     }
   }
 
