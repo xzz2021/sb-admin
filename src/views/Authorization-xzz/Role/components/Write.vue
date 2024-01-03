@@ -5,10 +5,10 @@ import { PropType, reactive, watch, ref, unref, nextTick } from 'vue'
 import { useValidator } from '@/hooks/web/useValidator'
 import { useI18n } from '@/hooks/web/useI18n'
 import { ElTree, ElCheckboxGroup, ElCheckbox, ElMessage } from 'element-plus'
-import { getAllMenuListApiSelf } from '@/api/menu'
-import { filter, eachTree } from '@/utils/tree'
+import { getAllMenuListApi } from '@/api/menu'
+import { eachTree } from '@/utils/tree'
 import { findIndex } from '@/utils'
-import { addRoleApi } from '@/api/role'
+import { addRoleApi2 } from '@/api/role'
 
 const { t } = useI18n()
 
@@ -101,8 +101,10 @@ const formSchema = ref<FormSchema[]>([
 ])
 
 const currentTreeData = ref()
-const nodeClick = (treeData: any) => {
+const nodeClick = (treeData: any, _node: any) => {
   currentTreeData.value = treeData
+  // const parentNodeId = node.parent ? node.parent.data.id : null
+  // console.log('🚀 ~ file: Write.vue:107 ~ nodeClick ~ parentNodeId:', parentNodeId)
 }
 
 const rules = reactive({
@@ -135,10 +137,8 @@ const formatToTree = (arr: any[], pid: number | undefined) => {
 
 const treeData = ref([])
 const getMenuList = async () => {
-  //  通过用户角色  请求 菜单 数据
-  const res = await getAllMenuListApiSelf({})
-  console.log('🚀 ~ file: Write.vue:141 ~ getMenuList ~ res:', res)
-
+  //  通过用户角色  请求 菜单 数据???  直接获取所有菜单列表 用于 勾选  分配
+  const res = await getAllMenuListApi()
   if (res) {
     // const newData = formatToTree(res.data, undefined)
     treeData.value = res.data
@@ -155,11 +155,11 @@ const getMenuList = async () => {
       const index = findIndex(checked, (item) => {
         return item.id === v.id
       })
-      // if (index > -1) {
-      //   const meta = { ...(v.meta || {}) }
-      //   meta.permission = checked[index].permission
-      //   v.meta = meta
-      // }
+      if (index > -1) {
+        const meta = { ...(v.meta || {}) }
+        meta.permission = checked[index].permission
+        v.meta = meta
+      }
     })
     for (const item of checked) {
       unref(treeRef)?.setChecked(item.id, true, false)
@@ -180,6 +180,16 @@ interface Emits {
 //  触发父组件  更新角色列表功能   也可以采用前端 假push, 节省网络请求
 // const emit = defineEmits(['updataListBySon', 'closeDialogBySon', 'toggleSaveBtnBySon'])
 let emit = defineEmits<Emits>()
+interface MetaPermissionType {
+  menuId: number
+  permission: string[]
+}
+interface RoleMenus {
+  id: number
+  meta: { permission: string[]; [value: string]: any }
+  children: any
+  [value: string]: any
+}
 
 const submit = async () => {
   const elForm = await getElFormExpose()
@@ -189,18 +199,29 @@ const submit = async () => {
   if (valid) {
     emit('toggleSaveBtnBySon', true)
 
-    //  获取当前用户
-    // const userStore = useUserStore()
-    // const aaa = userStore.getUserInfo
-
-    // emit('toggleSaveBtnBySon', 'true')
     const formData = await getFormData()
 
-    const checkedKeys = unref(treeRef)?.getCheckedKeys() || []
-    const data = filter(unref(treeData), (item: any) => {
-      return checkedKeys.includes(item.id)
+    // const checkedKeys = unref(treeRef)?.getCheckedKeys(true) || []
+    //  这里能拿到所有选中节点 及其父节点
+    const checkedNodes: RoleMenus[] = unref(treeRef)?.getCheckedNodes(false, true) || []
+    const menusArr2 = checkedNodes.map((item) => {
+      delete item.children
+      return item
     })
-    formData.menusArr = data || []
+    //  遍历 获取  所有菜单id 以及对应的permission
+    const metaPermission: MetaPermissionType[] = []
+    menusArr2.map((item) => {
+      if (item.meta && item.meta?.permission.length > 0) {
+        metaPermission.push({ menuId: item.id, permission: item.meta.permission })
+      }
+    })
+    // const data = filter(unref(treeData), (item: any) => {
+    //   return checkedKeys.includes(item.id)
+    // })
+    formData.menusArr2 = menusArr2 || []
+    formData.metaPermission = metaPermission
+    console.log('🚀 ~ file: Write.vue:209 ~ submit ~ formData:', formData)
+    // return
     // console.log('🚀 ~ file: Write.vue:204 ~ submit ~ formData:', formData)
     // return
     // return
@@ -230,7 +251,7 @@ const submit = async () => {
     // formData.menusArr = newdata
     // return
     try {
-      const res = await addRoleApi(formData)
+      const res = await addRoleApi2(formData)
       if (res) {
         ElMessage({
           message: t('common.addSuccess'),

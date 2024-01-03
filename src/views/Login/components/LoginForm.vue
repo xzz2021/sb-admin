@@ -295,7 +295,6 @@ const signIn = async () => {
 // 根据用户角色信息 获取  菜单
 const getRole = async () => {
   const res = await getRoleMenuApi()
-  // console.log('🚀 ~ file: LoginForm.vue:302 ~ getRole ~ res:', res)
   if (res && res.data) {
     //将meta.title赋值给菜单自身title, 以符合数据格式框架要求
     // const routers = res.data || []
@@ -306,6 +305,7 @@ const getRole = async () => {
 
     permissionStore.getAddRouters.forEach((route) => {
       //   这里 貌似  可以自动 解析 扁平路由????????????????????????????????????????
+      //   其实是后端返回了嵌套数据
       addRoute(route as RouteRecordRaw) // 动态添加可访问路由表
     })
     permissionStore.setIsAddRouters(true)

@@ -380,7 +380,7 @@ const action = (row: DepartmentUserItem, type: string) => {
   currentRow.value = { ...row }
   //  回显数据??
   row?.department && (row.department.label = row.department.departmentName)
-  console.log('🚀 ~ file: User.vue:373 ~ action ~ currentRow.value:', currentRow.value)
+  // console.log('🚀 ~ file: User.vue:373 ~ action ~ currentRow.value:', currentRow.value)
   dialogVisible.value = true
   unref(treeSelectRef)?.setCheckedKeys([row.department.id])
 }

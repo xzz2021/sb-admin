@@ -1,6 +1,6 @@
 <script setup lang="tsx">
 import { reactive, ref, unref } from 'vue'
-import { deleteRoleApi, getRoleListApi } from '@/api/role'
+import { deleteRoleApi, getRoleListApi2 } from '@/api/role'
 import { useTable } from '@/hooks/web/useTable'
 import { useI18n } from '@/hooks/web/useI18n'
 import { Table, TableColumn } from '@/components/Table'
@@ -14,11 +14,13 @@ const { t } = useI18n()
 
 const { tableRegister, tableState, tableMethods } = useTable({
   fetchDataApi: async () => {
-    const res = await getRoleListApi()
+    const res = await getRoleListApi2()
     if (!res || !res.data) return { list: [], total: 0 }
     const newRes = res.data.slice(1)
+    console.log('🚀 ~ file: Role.vue:20 ~ fetchDataApi: ~ newRes:', newRes)
     const newRes2 = newRes.map((item) => {
-      item.menusArr = JSON.parse(item.menusArr)
+      // 解析各角色  对应的  菜单及权限 数组 还原带children的json数据
+      item.menusArr = item.menusArr2
       return item
     })
     return {

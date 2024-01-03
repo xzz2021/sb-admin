@@ -30,8 +30,8 @@ export const getAllMenuListApi = () => {
   return request.get({ url: '/api/menu/getAllMenu' })
 }
 
-export const getAllMenuListApiSelf = (params: any) => {
-  return request.get({ url: '/api/menu/getAllMenu', params })
+export const getAllMenuAndPermission = () => {
+  return request.get({ url: '/api/menu/getAllMenuAndPermission' })
 }
 
 export const addMenuApi = (data: any) => {
