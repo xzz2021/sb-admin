@@ -15,17 +15,14 @@ const { t } = useI18n()
 const { tableRegister, tableState, tableMethods } = useTable({
   fetchDataApi: async () => {
     const res = await getRoleListApi2()
-    if (!res || !res.data) return { list: [], total: 0 }
-    const newRes = res.data.slice(1)
-    console.log('🚀 ~ file: Role.vue:20 ~ fetchDataApi: ~ newRes:', newRes)
-    const newRes2 = newRes.map((item) => {
-      // 解析各角色  对应的  菜单及权限 数组 还原带children的json数据
-      item.menusArr = item.menusArr2
-      return item
-    })
+    // const newRes2 = newRes.map((item) => {
+    //   // 解析各角色  对应的  菜单及权限 数组 还原带children的json数据
+    //   item.menusArr = item.menusArr2
+    //   return item
+    // })
     return {
-      list: newRes2 || [],
-      total: newRes2.length || 0
+      list: res?.data || [],
+      total: res?.data.length || 0
     }
   }
 })
@@ -95,20 +92,6 @@ const tableColumns = reactive<TableColumn[]>([
   // }
 ])
 
-// const searchSchema = reactive<FormSchema[]>([
-//   {
-//     field: 'roleName',
-//     label: t('role.roleName'),
-//     component: 'Input'
-//   }
-// ])
-
-// const searchParams = ref({})
-// const setSearchParams = (data: any) => {
-//   searchParams.value = data
-//   getList()
-// }
-
 const dialogVisible = ref(false)
 const dialogTitle = ref('')
 
@@ -120,9 +103,7 @@ const writeRef = ref<ComponentRef<typeof Write>>()
 const saveLoading = ref(false)
 const action = async (row: any, type: string) => {
   //  这里时当前角色菜单权限数据   用于  回显
-
   dialogTitle.value = t(type === 'edit' ? 'exampleDemo.edit' : 'exampleDemo.detail')
-
   actionType.value = type
   currentRow.value = row
   dialogVisible.value = true

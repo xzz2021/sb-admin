@@ -6,7 +6,9 @@ import { Search } from '@/components/Search'
 import { useTableXzz } from '@/hooks/web/useTableXzz'
 import { FormSchema } from '@/components/Form'
 import { formatToDateTime } from '@/utils/dateUtil'
+import tableToExcel from '@/api/table/tableToExcel'
 // import { ElSelect, ElOption } from 'element-plus'
+import * as XLSX from 'xlsx/xlsx.mjs'
 
 const tableColumns = reactive<TableColumn[]>([
   {
@@ -129,6 +131,7 @@ const getData = async (conditions) => {
           item[curItem] = tempName
         }
       }
+      delete item.armor //  删除值为 undefined 的 armor键
       return item
     })
     return { list, total: res.data.total }
@@ -300,6 +303,48 @@ const searchSchema1 = reactive<FormSchema[]>([
 let searchSchema = reactive<FormSchema[]>([])
 searchSchema = [...searchSchema1, ...commonSearchSchema]
 
+const downloadExcel = async () => {
+  if (dataList.value.length > 0) {
+    const commentList = dataList.value
+    const excelName = '物品日志'
+    const head: any = []
+    searchSchema.map((item) => {
+      head.push({ title: item.label, key: item.field, type: 'text', width: 130, height: 130 })
+    })
+    await tableToExcel(head, commentList, excelName)
+  }
+}
+
+const downloadExcel2 = async () => {
+  const commentList: { [value: string]: string }[] = dataList.value.map((item) => {
+    delete item.ID
+    return item
+  })
+  const excelName = '物品日志'
+  const jsonWorkSheet = XLSX.utils.json_to_sheet(commentList)
+
+  // 指定表头
+  const head: any = []
+  //  指定列宽
+  const labelWidthArr: { wch: number }[] = []
+  for (const [_key, value] of Object.entries(commentList[0])) {
+    searchSchema.map((item) => {
+      _key == item.field && head.push(item.label)
+    })
+    const labelWidth = typeof value == 'string' ? value.length + 8 : 8
+    labelWidthArr.push({ wch: labelWidth })
+  }
+  jsonWorkSheet['!cols'] = labelWidthArr
+  XLSX.utils.sheet_add_aoa(jsonWorkSheet, [head], { origin: 'A1' })
+
+  const workBook = {
+    SheetNames: ['sheet1'],
+    Sheets: {
+      ['sheet1']: jsonWorkSheet
+    }
+  }
+  return XLSX.writeFile(workBook, excelName + '.xlsx')
+}
 //  用于 keep-alive 保持组件 缓存   则不需要pinia进行存储
 defineOptions({
   // eslint-disable-next-line vue/component-definition-name-casing
@@ -310,6 +355,12 @@ defineOptions({
 <template>
   <!-- 要注意的是  如果 使用的是模板代码  二次封装的组件   需要 单独引入一下 -->
   <Search :schema="searchSchema" @reset="setSearchParams" @search="setSearchParams" />
+
+  <div style="margin-bottom: 10px">
+    <ElButton type="danger" @click="downloadExcel">前端导出excel</ElButton>
+    <ElButton type="danger" @click="downloadExcel2">依赖库导出excel</ElButton>
+  </div>
+
   <Table
     v-model:pageSize="pageSize"
     v-model:current-page="currentPage"

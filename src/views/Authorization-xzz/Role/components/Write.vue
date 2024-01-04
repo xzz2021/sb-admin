@@ -140,12 +140,11 @@ const getMenuList = async () => {
   //  通过用户角色  请求 菜单 数据???  直接获取所有菜单列表 用于 勾选  分配
   const res = await getAllMenuListApi()
   if (res) {
-    // const newData = formatToTree(res.data, undefined)
     treeData.value = res.data
     if (!props.currentRow) return
     await nextTick()
     const checked: any[] = []
-    eachTree(props.currentRow.menusArr, (v) => {
+    eachTree(props.currentRow.menusArr2, (v) => {
       checked.push({
         id: v.id,
         permission: v.meta?.permission || []
