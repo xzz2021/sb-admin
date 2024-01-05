@@ -1,12 +1,14 @@
 import { defineStore } from 'pinia'
 import { asyncRouterMap, constantRouterMap } from '@/router'
 import {
-  generateRoutesByFrontEnd,
+  // generateRoutesByFrontEnd,
   generateRoutesByServer,
-  flatMultiLevelRoutes
+  flatMultiLevelRoutes,
+  formatToTree
 } from '@/utils/routerHelper'
 import { store } from '../index'
 import { cloneDeep } from 'lodash-es'
+import { useUserStore } from './user'
 
 export interface sortMenuType {
   id?: number
@@ -76,9 +78,18 @@ export const usePermissionStore = defineStore('permission', {
   actions: {
     generateRoutes(
       type: 'server' | 'frontEnd' | 'static',
-      routers?: AppCustomRouteRecordRaw[] | string[]
+      rawRouters: AppCustomRouteRecordRaw[]
     ): Promise<unknown> {
+      const userStore = useUserStore()
+      const userinfo = userStore.getUserInfo
+      let routers: AppCustomRouteRecordRaw[] = []
       //  将来后端返回平面数据   可以在这里做一次次级菜单 嵌套处理  然后交给后续 进行 组件引入处理
+      if (userinfo?.role?.roleName === '超级管理员') {
+        //  如果是超级管理员  后端直接返回的就是嵌套数据
+        routers = rawRouters
+      } else {
+        routers = formatToTree(rawRouters as AppCustomRouteRecordRaw[], undefined)
+      }
       return new Promise<void>((resolve) => {
         let routerMap: AppRouteRecordRaw[] = []
         if (type === 'server') {
@@ -86,7 +97,7 @@ export const usePermissionStore = defineStore('permission', {
           routerMap = generateRoutesByServer(routers as AppCustomRouteRecordRaw[])
         } else if (type === 'frontEnd') {
           // 模拟前端过滤菜单
-          routerMap = generateRoutesByFrontEnd(cloneDeep(asyncRouterMap), routers as string[])
+          // routerMap = generateRoutesByFrontEnd(cloneDeep(asyncRouterMap), routers as string[])
         } else {
           // 直接读取静态路由表
           routerMap = cloneDeep(asyncRouterMap)

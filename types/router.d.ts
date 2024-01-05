@@ -68,7 +68,7 @@ declare global {
     sort?: number // 给顶层组件 添加 数字  用以 排序
   }
 
-  declare interface AppCustomRouteRecordRaw
+  export declare interface AppCustomRouteRecordRaw
     extends Omit<RouteRecordRaw, 'meta' | 'component' | 'children'> {
     name: string
     meta: RouteMetaCustom
@@ -77,5 +77,7 @@ declare global {
     redirect: string
     sort?: number // 给顶层组件 添加 数字  用以 排序
     children?: AppCustomRouteRecordRaw[]
+    parentId?: number
+    id: number
   }
 }

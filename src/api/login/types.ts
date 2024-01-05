@@ -6,7 +6,7 @@ export interface UserLoginType {
 export interface UserType {
   username: string
   password: string
-  role: string
+  role: { roleName: string }
   roleId: string
   nickname: string
   code?: string

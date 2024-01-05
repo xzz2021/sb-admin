@@ -7,7 +7,7 @@ import type {
 } from 'vue-router'
 import { isUrl } from '@/utils/is'
 import { omit, cloneDeep } from 'lodash-es'
-
+// import type { AppCustomRouteRecordRaw } from '../../types/router'
 const modules = import.meta.glob('../views/**/*.{vue,tsx}')
 
 /* Layout */
@@ -195,4 +195,22 @@ const addToChildren = (
       addToChildren(routes, child.children, routeModule)
     }
   }
+}
+
+//  后端平面路由  生成带children的 嵌套路由  数据
+export const formatToTree = (
+  ary: AppCustomRouteRecordRaw[],
+  pid: number | undefined
+): AppCustomRouteRecordRaw[] => {
+  return ary
+    .filter((item) =>
+      // 如果没有父id（第一次递归的时候）将所有父级查询出来
+      // 这里认为 item.parentId === 1 就是最顶层 需要根据业务调整
+      pid === undefined ? item.parentId === null : item.parentId === pid
+    )
+    .map((item2) => {
+      // 通过父节点ID查询所有子节点
+      item2.children = formatToTree(ary, item2.id)
+      return item2
+    })
 }
