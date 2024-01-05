@@ -42,7 +42,11 @@ router.beforeEach(async (to, from, next) => {
         return
       }
 
+      // 每次 刷新页面  会走这里
+
       // 开发者可根据实际情况进行修改
+      //  获得当前角色 所拥有的菜单  目前 由后端返回嵌套数据
+      // 理论上应该是返回平面数据的  然后由生成路由作 嵌套处理
       const roleRouters = userStore.getRoleRouters || []
 
       // 是否使用动态路由

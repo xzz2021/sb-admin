@@ -24,8 +24,7 @@ export const getMenuListApi000 = () => {
 //   return request.get({ url: '/api/role/getMenu' })
 // }
 
-// 直接拿到 菜单  表格  列举出来  所有的 菜单项   不考虑用户角色
-
+// 直接拿到 菜单  表格  列举出来  所有的 菜单项   不考虑用户角色   后端返回 嵌套 好的 数据
 export const getAllMenuListApi = () => {
   return request.get({ url: '/api/menu/getAllMenu' })
 }

@@ -78,6 +78,7 @@ export const usePermissionStore = defineStore('permission', {
       type: 'server' | 'frontEnd' | 'static',
       routers?: AppCustomRouteRecordRaw[] | string[]
     ): Promise<unknown> {
+      //  将来后端返回平面数据   可以在这里做一次次级菜单 嵌套处理  然后交给后续 进行 组件引入处理
       return new Promise<void>((resolve) => {
         let routerMap: AppRouteRecordRaw[] = []
         if (type === 'server') {

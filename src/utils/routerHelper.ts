@@ -114,7 +114,6 @@ export const generateRoutesByServer = (routes: AppCustomRouteRecordRaw[]): AppRo
           component === '#' ? Layout : component.includes('##') ? getParentLayout() : comModule
       }
     }
-    // recursive child routes
     if (route.children) {
       data.children = generateRoutesByServer(route.children)
     }
@@ -126,6 +125,7 @@ export const generateRoutesByServer = (routes: AppCustomRouteRecordRaw[]): AppRo
 export const pathResolve = (parentPath: string, path: string) => {
   if (isUrl(path)) return path
   const childPath = path.startsWith('/') || !path ? path : `/${path}`
+  // const childPath = path.startsWith('/') ? path : `/${path}`
   return `${parentPath}${childPath}`.replace(/\/\//g, '/').trim()
 }
 

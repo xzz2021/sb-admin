@@ -8,10 +8,7 @@ import { addMenuApi, getAllMenuListApi } from '@/api/menu'
 import { ElTag, ElButton, ElMessage } from 'element-plus'
 import AddButtonPermission from './AddButtonPermission.vue'
 import { useUserStore } from '@/store/modules/user'
-import { usePermissionStore } from '@/store/modules/permission'
-import { RouteRecordRaw, useRouter } from 'vue-router'
 import { getRoleMenuApi } from '@/api/login'
-// import { useEmittXzz } from '@/hooks/event/useEmittXzz'
 
 const { t } = useI18n()
 
@@ -300,25 +297,15 @@ interface Emits {
 
 const { formRegister, formMethods } = useForm()
 const { setValues, getFormData, getElFormExpose, setSchema } = formMethods
-const permissionStore = usePermissionStore()
-const { addRoute, push } = useRouter()
-const redirect = ref<string>('')
 
 const userStore = useUserStore()
 const updateMenu = async () => {
   // 修改菜单 后更新 当前菜单 路由
-  // console.log('🚀 ~ file: LoginForm.vue:300 ~ ===============getRolegetRolegetRolegetRole:')
   const res = await getRoleMenuApi()
   if (res && res.data) {
     const routers = res.data || []
+    // 更新 设定路由  让用户 手动 刷新页面 避免每次更改刷新
     userStore.setRoleRouters(routers)
-    await permissionStore.generateRoutes('server', routers).catch(() => {})
-    permissionStore.getAddRouters.forEach((route) => {
-      addRoute(route as RouteRecordRaw) // 动态添加可访问路由表
-    })
-    permissionStore.setIsAddRouters(true)
-    // 获取完角色路由表, 自动跳转
-    push({ path: redirect.value || permissionStore.addRouters[0].path })
   } else {
     //  当未获取到路由时
     // 停留在当前页面  提示获取路由失败

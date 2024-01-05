@@ -12,7 +12,7 @@ import { ContentWrap } from '@/components/ContentWrap'
 import Write from './components/Write.vue'
 import Detail from './components/Detail.vue'
 import { Dialog } from '@/components/Dialog'
-// import SortMenu from './components/SortMenu.vue'
+import SortMenu from './components/SortMenu.vue'
 
 const { t } = useI18n()
 
@@ -20,7 +20,6 @@ const { t } = useI18n()
 const { tableRegister, tableState, tableMethods } = useTable({
   fetchDataApi: async () => {
     const res = await getAllMenuListApi()
-    // console.log('🚀 ~ file: Menu.vue:22 ~ fetchDataApi: ~ res:', res)
     return {
       list: res.data || []
     }
@@ -161,7 +160,6 @@ const action = (row: any, type: string) => {
 }
 
 const deleteAction = async (row: any) => {
-  console.log('🚀 ~ file: Menu.vue:163 ~ deleteAction ~ row:', row)
   try {
     const res = await deleteMenuApi(row.id)
     // return
@@ -222,7 +220,7 @@ const toggleSaveBtn = (value: boolean) => {
     <!-- <Search :schema="searchSchema" @reset="setSearchParams" @search="setSearchParams" /> -->
     <div class="mb-10px">
       <ElButton type="primary" @click="AddAction">{{ t('exampleDemo.add') }}</ElButton>
-      <!-- <SortMenu /> -->
+      <SortMenu />
     </div>
     <Table
       :columns="tableColumns"
