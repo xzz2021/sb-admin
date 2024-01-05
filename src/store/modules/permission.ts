@@ -8,11 +8,17 @@ import {
 import { store } from '../index'
 import { cloneDeep } from 'lodash-es'
 
+export interface sortMenuType {
+  id?: number
+  title?: string
+  sort?: number
+}
 export interface PermissionState {
   routers: AppRouteRecordRaw[]
   addRouters: AppRouteRecordRaw[]
   isAddRouters: boolean
   menuTabRouters: AppRouteRecordRaw[]
+  sortMenu: sortMenuType[] // 提取 简化的 菜单数组  用于排序
 }
 
 // const hasPermission = (route) => {
@@ -47,11 +53,15 @@ export const usePermissionStore = defineStore('permission', {
     routers: [],
     addRouters: [],
     isAddRouters: false,
-    menuTabRouters: []
+    menuTabRouters: [],
+    sortMenu: []
   }),
   getters: {
     getRouters(): AppRouteRecordRaw[] {
       return this.routers
+    },
+    getSortMenu(): sortMenuType[] {
+      return this.sortMenu
     },
     getAddRouters(): AppRouteRecordRaw[] {
       return flatMultiLevelRoutes(cloneDeep(this.addRouters))
@@ -80,6 +90,25 @@ export const usePermissionStore = defineStore('permission', {
           // 直接读取静态路由表
           routerMap = cloneDeep(asyncRouterMap)
         }
+        //  上面已经生成完成 嵌套结构路由
+        //  下面  提取 简化的 菜单数组  用于 进行排序
+        const newSortMenus = routerMap.map((item) => {
+          return {
+            id: item.id,
+            title: item.meta.title,
+            sort: item.sort
+          }
+        })
+        this.sortMenu = newSortMenus
+
+        //  根据sort进行排序
+        routerMap.sort(function (a, b) {
+          if (a.sort && b.sort) {
+            return a?.sort - b?.sort
+          } else {
+            return 1 // 如果值不存在  直接按原有顺序 返回
+          }
+        })
         // 动态路由，404一定要放到最后面
         this.addRouters = routerMap.concat([
           {

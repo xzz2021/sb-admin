@@ -58,12 +58,14 @@ type Component<T = any> =
 
 declare global {
   declare interface AppRouteRecordRaw extends Omit<RouteRecordRaw, 'meta' | 'children'> {
+    id?: number
     name: string
     meta: RouteMetaCustom
     component?: Component | string
     children?: AppRouteRecordRaw[]
     props?: Recordable
     fullPath?: string
+    sort?: number // 给顶层组件 添加 数字  用以 排序
   }
 
   declare interface AppCustomRouteRecordRaw
@@ -73,6 +75,7 @@ declare global {
     component: string
     path: string
     redirect: string
+    sort?: number // 给顶层组件 添加 数字  用以 排序
     children?: AppCustomRouteRecordRaw[]
   }
 }

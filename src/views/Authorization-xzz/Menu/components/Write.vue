@@ -57,7 +57,6 @@ const formSchema = reactive<FormSchema[]>([
       on: {
         change: async (val: number) => {
           const formData = await getFormData()
-          console.log('🚀 ~ file: Write.vue:55 ~ change: ~ formData:', formData)
           if (val === 1) {
             setSchema([
               {
@@ -153,7 +152,6 @@ const formSchema = reactive<FormSchema[]>([
     optionApi: async () => {
       const res = await getAllMenuListApi()
       //  新增菜单 走这里    应当可以 获取 所有的
-      console.log('🚀 ~ file: Write.vue:150 ~ optionApi: ~ res:', res)
       return res.data || []
     }
   },
@@ -333,18 +331,12 @@ const submit = async () => {
   const valid = await elForm?.validate().catch((err) => {
     console.log(err)
   })
-
-  // const { emitter } = useEmittXzz()
-
   if (valid) {
     emit('toggleSaveBtnBySon', true)
     const formData = await getFormData()
     formData.meta.title && (formData.title = formData.meta.title)
-    // return
     try {
       const res = await addMenuApi(formData)
-
-      // return
       if (res && res.data) {
         ElMessage({
           message: t('common.addSuccess'),

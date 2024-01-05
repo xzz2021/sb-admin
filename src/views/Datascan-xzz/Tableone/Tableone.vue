@@ -137,37 +137,6 @@ const getData = async (conditions) => {
     return { list, total: res.data.total }
   }
 }
-
-// const remoteMethod = (query: string) => {
-//   if (query) {
-//       options.value = list.value.filter((item) => {
-//         return item.label.toLowerCase().includes(query.toLowerCase())
-//       }
-//   } else {
-//     options.value = []
-//   }
-// }
-// const allOptions: Ref<any> = ref([])
-// const getAllOptions = (enumArr) => {
-//   const optionItem = enumArr.find((item) => item.itemName == 'ActionType')
-//   allOptions.value = optionItem?.data.map((item) => {
-//     return {
-//       // label: item.value + '-' + item.key,
-//       label: item.value,
-//       value: item.value
-//     }
-//   })
-// }
-
-// const getEachOptions = (type) => {
-//   const options = allEnumArr.value.find((item) => item.itemName == type)
-//   return options?.data.map((item, _index) => {
-//     return {
-//       label: item.value + '-' + item.key,
-//       value: item.value
-//     }
-//   })
-// }
 // ==============搜索 逻辑================
 const searchSchema1 = reactive<FormSchema[]>([
   {

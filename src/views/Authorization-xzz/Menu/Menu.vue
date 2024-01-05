@@ -12,6 +12,7 @@ import { ContentWrap } from '@/components/ContentWrap'
 import Write from './components/Write.vue'
 import Detail from './components/Detail.vue'
 import { Dialog } from '@/components/Dialog'
+// import SortMenu from './components/SortMenu.vue'
 
 const { t } = useI18n()
 
@@ -221,6 +222,7 @@ const toggleSaveBtn = (value: boolean) => {
     <!-- <Search :schema="searchSchema" @reset="setSearchParams" @search="setSearchParams" /> -->
     <div class="mb-10px">
       <ElButton type="primary" @click="AddAction">{{ t('exampleDemo.add') }}</ElButton>
+      <!-- <SortMenu /> -->
     </div>
     <Table
       :columns="tableColumns"

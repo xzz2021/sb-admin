@@ -4,13 +4,7 @@ import { useI18n } from '@/hooks/web/useI18n'
 import { Table } from '@/components/Table'
 import { ref, unref, nextTick, watch, reactive } from 'vue'
 import { ElButton, ElTree, ElInput, ElDivider } from 'element-plus'
-import {
-  // getDepartmentApi,
-  getUserByIdApi,
-  saveUserApi,
-  deleteUserByIdApi,
-  getDepartmentApi
-} from '@/api/department'
+import { getUserByIdApi, saveUserApi, deleteUserByIdApi, getDepartmentApi } from '@/api/department'
 import type { DepartmentItem, DepartmentUserItem } from '@/api/department/types'
 import { useTable } from '@/hooks/web/useTable'
 import { Search } from '@/components/Search'
@@ -19,7 +13,6 @@ import Detail from './components/Detail.vue'
 import { Dialog } from '@/components/Dialog'
 import { getRoleListIdApi } from '@/api/role'
 import { CrudSchema, useCrudSchemas } from '@/hooks/web/useCrudSchemas'
-import { formatToDateTime } from '@/utils/dateUtil'
 
 const { t } = useI18n()
 
@@ -35,17 +28,7 @@ const { tableRegister, tableState, tableMethods } = useTable({
       ...unref(searchParams)
     })
     let { list = [], total = 0 } = res?.data
-    if (list.length > 0) {
-      const newData = res?.data?.list.map((item) => {
-        item.createtime = formatToDateTime(item.createtime)
-        return item
-      })
-      list = newData
-    }
-    return {
-      list,
-      total
-    }
+    return { list, total }
   },
   fetchDelApi: async () => {
     // 数据依然按数组  传递   后续可以直接开放 批量删除功能

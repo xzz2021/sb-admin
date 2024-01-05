@@ -56,7 +56,7 @@ const detailSchema = ref<DescriptionsSchema[]>([
     label: '状态',
     slots: {
       default: (data: any) => {
-        return renderTag(data.status == 'true' ? true : false)
+        return renderTag(data.status == 1 ? true : false)
       }
     }
   },

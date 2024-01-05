@@ -102,6 +102,7 @@ export const generateRoutesByServer = (routes: AppCustomRouteRecordRaw[]): AppRo
       redirect: route.redirect,
       meta: route.meta
     }
+    route.sort && (data.sort = route.sort)
     if (route.component) {
       const comModule = modules[`../${route.component}.vue`] || modules[`../${route.component}.tsx`]
       const component = route.component as string

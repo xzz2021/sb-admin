@@ -15,6 +15,7 @@ const { t } = useI18n()
 const { tableRegister, tableState, tableMethods } = useTable({
   fetchDataApi: async () => {
     const res = await getRoleListApi2()
+    console.log('🚀 ~ file: Role.vue:18 ~ fetchDataApi: ~ res:', res)
     // const newRes2 = newRes.map((item) => {
     //   // 解析各角色  对应的  菜单及权限 数组 还原带children的json数据
     //   item.menusArr = item.menusArr2

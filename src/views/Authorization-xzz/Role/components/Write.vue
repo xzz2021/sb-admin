@@ -144,7 +144,7 @@ const getMenuList = async () => {
     if (!props.currentRow) return
     await nextTick()
     const checked: any[] = []
-    eachTree(props.currentRow.menusArr2, (v) => {
+    eachTree(props.currentRow.menusArr, (v) => {
       checked.push({
         id: v.id,
         permission: v.meta?.permission || []
@@ -203,13 +203,13 @@ const submit = async () => {
     // const checkedKeys = unref(treeRef)?.getCheckedKeys(true) || []
     //  这里能拿到所有选中节点 及其父节点
     const checkedNodes: RoleMenus[] = unref(treeRef)?.getCheckedNodes(false, true) || []
-    const menusArr2 = checkedNodes.map((item) => {
+    const menusArr = checkedNodes.map((item) => {
       delete item.children
       return item
     })
     //  遍历 获取  所有菜单id 以及对应的permission
     const metaPermission: MetaPermissionType[] = []
-    menusArr2.map((item) => {
+    menusArr.map((item) => {
       if (item.meta && item.meta?.permission.length > 0) {
         metaPermission.push({ menuId: item.id, permission: item.meta.permission })
       }
@@ -217,38 +217,9 @@ const submit = async () => {
     // const data = filter(unref(treeData), (item: any) => {
     //   return checkedKeys.includes(item.id)
     // })
-    formData.menusArr2 = menusArr2 || []
+    formData.menusArr = menusArr || []
     formData.metaPermission = metaPermission
     console.log('🚀 ~ file: Write.vue:209 ~ submit ~ formData:', formData)
-    // return
-    // console.log('🚀 ~ file: Write.vue:204 ~ submit ~ formData:', formData)
-    // return
-    // return
-    // 把扁平化的菜单数据发给后端,  菜单关联的权限['edit', 'add'] 是存在item.meta.permission数组里
-    // const treeRefData = treeRef.value?.getCheckedNodes(false, true)
-    // if (treeRefData.length == 0) {
-    //   return ElMessage({
-    //     message: '未勾选菜单项,请选择对应菜单',
-    //     type: 'error'
-    //   })
-    // }
-    //  如果不是空 要做下判断  遍历其权限
-    // const newdata = treeRefData.map((item) => {
-    //   if (item.meta?.permission && item.meta?.permission.length > 0) {
-    //     const permissionArr = item.meta?.permission
-    //     const list = item.permissionList
-    //     item.newPermissionList = []
-    //     for (let i = 0; i < permissionArr.length; i++) {
-    //       const newItem = list.find((listItem) => listItem.value == permissionArr[i])
-    //       item.newPermissionList.push(newItem)
-    //     }
-    //     return item
-    //   }
-    //   return item
-    // })
-    // newdata.permissionList = newdata.newPermissionList
-    // formData.menusArr = newdata
-    // return
     try {
       const res = await addRoleApi2(formData)
       if (res) {
