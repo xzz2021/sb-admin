@@ -89,6 +89,21 @@ export const usePermissionStore = defineStore('permission', {
         routers = rawRouters
       } else {
         routers = formatToTree(rawRouters as AppCustomRouteRecordRaw[], undefined)
+        //  下面  提取 简化的 菜单数组  用于 进行排序
+        const newSortMenus = routers.map((item) => {
+          return {
+            id: item.id,
+            title: item.meta.title,
+            sort: item.sort
+          }
+        })
+        this.sortMenu = newSortMenus.sort(function (a, b) {
+          if (a.sort && b.sort) {
+            return a?.sort - b?.sort
+          } else {
+            return 1 // 如果值不存在  直接按原有顺序 返回
+          }
+        })
       }
       return new Promise<void>((resolve) => {
         let routerMap: AppRouteRecordRaw[] = []
@@ -103,15 +118,6 @@ export const usePermissionStore = defineStore('permission', {
           routerMap = cloneDeep(asyncRouterMap)
         }
         //  上面已经生成完成 嵌套结构路由
-        //  下面  提取 简化的 菜单数组  用于 进行排序
-        const newSortMenus = routerMap.map((item) => {
-          return {
-            id: item.id,
-            title: item.meta.title,
-            sort: item.sort
-          }
-        })
-        this.sortMenu = newSortMenus
 
         //  根据sort进行排序
         routerMap.sort(function (a, b) {

@@ -9,6 +9,7 @@ import { formatToDateTime } from '@/utils/dateUtil'
 import tableToExcel from '@/api/table/tableToExcel'
 // import { ElSelect, ElOption } from 'element-plus'
 import * as XLSX from 'xlsx/xlsx.mjs'
+import { ElMessage } from 'element-plus'
 
 const tableColumns = reactive<TableColumn[]>([
   {
@@ -281,38 +282,44 @@ const downloadExcel = async () => {
       head.push({ title: item.label, key: item.field, type: 'text', width: 130, height: 130 })
     })
     await tableToExcel(head, commentList, excelName)
+  } else {
+    ElMessage.error('当前表格没有数据')
   }
 }
 
 const downloadExcel2 = async () => {
-  const commentList: { [value: string]: string }[] = dataList.value.map((item) => {
-    delete item.ID
-    return item
-  })
-  const excelName = '物品日志'
-  const jsonWorkSheet = XLSX.utils.json_to_sheet(commentList)
-
-  // 指定表头
-  const head: any = []
-  //  指定列宽
-  const labelWidthArr: { wch: number }[] = []
-  for (const [_key, value] of Object.entries(commentList[0])) {
-    searchSchema.map((item) => {
-      _key == item.field && head.push(item.label)
+  if (dataList.value.length > 0) {
+    const commentList: { [value: string]: string }[] = dataList.value.map((item) => {
+      delete item.ID
+      return item
     })
-    const labelWidth = typeof value == 'string' ? value.length + 8 : 8
-    labelWidthArr.push({ wch: labelWidth })
-  }
-  jsonWorkSheet['!cols'] = labelWidthArr
-  XLSX.utils.sheet_add_aoa(jsonWorkSheet, [head], { origin: 'A1' })
+    const excelName = '物品日志'
+    const jsonWorkSheet = XLSX.utils.json_to_sheet(commentList)
 
-  const workBook = {
-    SheetNames: ['sheet1'],
-    Sheets: {
-      ['sheet1']: jsonWorkSheet
+    // 指定表头
+    const head: any = []
+    //  指定列宽
+    const labelWidthArr: { wch: number }[] = []
+    for (const [_key, value] of Object.entries(commentList[0])) {
+      searchSchema.map((item) => {
+        _key == item.field && head.push(item.label)
+      })
+      const labelWidth = typeof value == 'string' ? value.length + 8 : 8
+      labelWidthArr.push({ wch: labelWidth })
     }
+    jsonWorkSheet['!cols'] = labelWidthArr
+    XLSX.utils.sheet_add_aoa(jsonWorkSheet, [head], { origin: 'A1' })
+
+    const workBook = {
+      SheetNames: ['sheet1'],
+      Sheets: {
+        ['sheet1']: jsonWorkSheet
+      }
+    }
+    return XLSX.writeFile(workBook, excelName + '.xlsx')
+  } else {
+    ElMessage.error('当前表格没有数据')
   }
-  return XLSX.writeFile(workBook, excelName + '.xlsx')
 }
 //  用于 keep-alive 保持组件 缓存   则不需要pinia进行存储
 defineOptions({

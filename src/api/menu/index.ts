@@ -37,6 +37,10 @@ export const addMenuApi = (data: any) => {
   return request.post({ url: '/api/menu/add', data })
 }
 
+export const updateSortMenuApi = (data: any) => {
+  return request.post({ url: '/api/menu/updateSort', data })
+}
+
 export const deleteMenuApi = (id: number) => {
   return request.delete({ url: '/api/menu/delete', id })
 }

@@ -53,7 +53,7 @@ const confirm = async () => {
 </script>
 
 <template>
-  <ElDrawer v-model="modelValue" title="新增按钮权限">
+  <ElDrawer v-model="modelValue" title="新增权限">
     <template #default>
       <Form :rules="rules" @register="formRegister" :schema="formSchema" />
     </template>

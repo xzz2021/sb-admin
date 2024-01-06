@@ -120,7 +120,7 @@ export default defineComponent({
       default: () => undefined
     },
     rowKey: propTypes.string.def('id'),
-    emptyText: propTypes.string.def('No Data'),
+    emptyText: propTypes.string.def('没有数据'),
     defaultExpandAll: propTypes.bool.def(false),
     expandRowKeys: {
       type: Array as PropType<string[]>,

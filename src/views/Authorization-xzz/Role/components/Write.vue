@@ -219,7 +219,6 @@ const submit = async () => {
     // })
     formData.menusArr = menusArr || []
     formData.metaPermission = metaPermission
-    console.log('🚀 ~ file: Write.vue:209 ~ submit ~ formData:', formData)
     try {
       const res = await addRoleApi2(formData)
       if (res) {
