@@ -1,11 +1,11 @@
 <script setup lang="tsx">
+import { addMenuApi, getMenuIdAndTitleApi } from '@/api/menu'
 import { Form, FormSchema } from '@/components/Form'
 import { useForm } from '@/hooks/web/useForm'
-import { PropType, reactive, watch, ref, unref } from 'vue'
-import { useValidator } from '@/hooks/web/useValidator'
 import { useI18n } from '@/hooks/web/useI18n'
-import { addMenuApi, getAllMenuListApi } from '@/api/menu'
-import { ElTag, ElButton, ElMessage } from 'element-plus'
+import { useValidator } from '@/hooks/web/useValidator'
+import { ElButton, ElMessage, ElTag } from 'element-plus'
+import { PropType, reactive, ref, unref, watch } from 'vue'
 import AddButtonPermission from './AddButtonPermission.vue'
 // import { useUserStore } from '@/store/modules/user'
 // import { getRoleMenuApi } from '@/api/login'
@@ -149,7 +149,8 @@ const formSchema = reactive<FormSchema[]>([
       }
     },
     optionApi: async () => {
-      const res = await getAllMenuListApi()
+      //  用于下拉选择parentId   {id, title}
+      const res = await getMenuIdAndTitleApi()
       //  新增菜单 走这里    应当可以 获取 所有的
       return res.data || []
     }
@@ -317,7 +318,6 @@ const { setValues, getFormData, getElFormExpose, setSchema } = formMethods
 //  无法生成监听事件 因为dialog需要打开才会挂载
 // useEmitt({ name: 'updateMenu', callback: updateMenu })
 
-//  触发父组件  更新角色列表功能
 let emit = defineEmits<Emits>()
 const submit = async () => {
   const elForm = await getElFormExpose()

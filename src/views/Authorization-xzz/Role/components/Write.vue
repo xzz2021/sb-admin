@@ -1,14 +1,14 @@
 <script setup lang="tsx">
+import { getAllMenuListApi } from '@/api/menu'
+import { addRoleApi } from '@/api/role'
 import { Form, FormSchema } from '@/components/Form'
 import { useForm } from '@/hooks/web/useForm'
-import { PropType, reactive, watch, ref, unref, nextTick } from 'vue'
-import { useValidator } from '@/hooks/web/useValidator'
 import { useI18n } from '@/hooks/web/useI18n'
-import { ElTree, ElCheckboxGroup, ElCheckbox, ElMessage } from 'element-plus'
-import { getAllMenuListApi } from '@/api/menu'
-import { eachTree } from '@/utils/tree'
+import { useValidator } from '@/hooks/web/useValidator'
 import { findIndex } from '@/utils'
-import { addRoleApi2 } from '@/api/role'
+import { eachTree } from '@/utils/tree'
+import { ElCheckbox, ElCheckboxGroup, ElMessage, ElTree } from 'element-plus'
+import { PropType, nextTick, reactive, ref, unref, watch } from 'vue'
 
 const { t } = useI18n()
 
@@ -220,7 +220,7 @@ const submit = async () => {
     formData.menusArr = menusArr || []
     formData.metaPermission = metaPermission
     try {
-      const res = await addRoleApi2(formData)
+      const res = await addRoleApi(formData)
       if (res) {
         ElMessage({
           message: t('common.addSuccess'),

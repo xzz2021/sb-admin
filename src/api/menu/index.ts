@@ -29,6 +29,10 @@ export const getAllMenuListApi = () => {
   return request.get({ url: '/api/menu/getAllMenu' })
 }
 
+export const getMenuIdAndTitleApi = () => {
+  return request.get({ url: '/api/menu/getMenuIdAndTitle' })
+}
+
 export const getAllMenuAndPermission = () => {
   return request.get({ url: '/api/menu/getAllMenuAndPermission' })
 }

@@ -1,21 +1,20 @@
 <script setup lang="tsx">
-import { reactive, ref, unref } from 'vue'
-import { deleteRoleApi, getRoleListApi2 } from '@/api/role'
-import { useTable } from '@/hooks/web/useTable'
-import { useI18n } from '@/hooks/web/useI18n'
-import { Table, TableColumn } from '@/components/Table'
-import { ElButton, ElMessage, ElTag } from 'element-plus'
+import { deleteRoleApi, getRoleListApi } from '@/api/role'
 import { ContentWrap } from '@/components/ContentWrap'
-import Write from './components/Write.vue'
-import Detail from './components/Detail.vue'
 import { Dialog } from '@/components/Dialog'
+import { Table, TableColumn } from '@/components/Table'
+import { useI18n } from '@/hooks/web/useI18n'
+import { useTable } from '@/hooks/web/useTable'
+import { ElButton, ElMessage, ElTag } from 'element-plus'
+import { reactive, ref, unref } from 'vue'
+import Detail from './components/Detail.vue'
+import Write from './components/Write.vue'
 
 const { t } = useI18n()
 
 const { tableRegister, tableState, tableMethods } = useTable({
   fetchDataApi: async () => {
-    const res = await getRoleListApi2()
-    console.log('🚀 ~ file: Role.vue:18 ~ fetchDataApi: ~ res:', res)
+    const res = await getRoleListApi()
     // const newRes2 = newRes.map((item) => {
     //   // 解析各角色  对应的  菜单及权限 数组 还原带children的json数据
     //   item.menusArr = item.menusArr2
