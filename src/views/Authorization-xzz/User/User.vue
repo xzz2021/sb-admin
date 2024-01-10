@@ -1,18 +1,18 @@
 <script setup lang="tsx">
-import { ContentWrap } from '@/components/ContentWrap'
-import { useI18n } from '@/hooks/web/useI18n'
-import { Table } from '@/components/Table'
-import { ref, unref, nextTick, watch, reactive } from 'vue'
-import { ElButton, ElTree, ElInput, ElDivider } from 'element-plus'
-import { getUserByIdApi, saveUserApi, deleteUserByIdApi, getDepartmentApi } from '@/api/department'
+import { deleteUserByIdApi, getDepartmentApi, getUserByIdApi, saveUserApi } from '@/api/department'
 import type { DepartmentItem, DepartmentUserItem } from '@/api/department/types'
-import { useTable } from '@/hooks/web/useTable'
-import { Search } from '@/components/Search'
-import Write from './components/Write.vue'
-import Detail from './components/Detail.vue'
-import { Dialog } from '@/components/Dialog'
 import { getRoleListIdApi } from '@/api/role'
+import { ContentWrap } from '@/components/ContentWrap'
+import { Dialog } from '@/components/Dialog'
+import { Search } from '@/components/Search'
+import { Table } from '@/components/Table'
 import { CrudSchema, useCrudSchemas } from '@/hooks/web/useCrudSchemas'
+import { useI18n } from '@/hooks/web/useI18n'
+import { useTable } from '@/hooks/web/useTable'
+import { ElButton, ElDivider, ElInput, ElTree } from 'element-plus'
+import { nextTick, reactive, ref, unref, watch } from 'vue'
+import Detail from './components/Detail.vue'
+import Write from './components/Write.vue'
 
 const { t } = useI18n()
 
@@ -222,7 +222,7 @@ const crudSchemas = reactive<CrudSchema[]>([
     }
   },
   {
-    field: 'createtime',
+    field: 'createTime',
     label: t('userDemo.createTime'),
     form: {
       component: 'Input',

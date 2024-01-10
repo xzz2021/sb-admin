@@ -10,9 +10,9 @@ import request from '@/axios'
 // }
 
 export const getItemLog = (params: any) => {
-  return request.get({ url: 'api/itemlog', params })
+  return request.get({ url: 'api/gamelog/item', params })
 }
 
 export const getMoneyLog = (params: any) => {
-  return request.get({ url: 'api/moneylog', params })
+  return request.get({ url: 'api/gamelog/money', params })
 }

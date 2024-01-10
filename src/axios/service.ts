@@ -38,6 +38,9 @@ axiosInstance.interceptors.response.use(
     if (statusCode && statusCode == 403) {
       message = '当前用户没有此接口请求权限!'
     }
+    if (statusCode && statusCode == 404) {
+      message = '当前请求接口不存在或后端未开启!'
+    }
 
     //  后端返回401 说明Unauthorized, 所以主动退出登录
     if (statusCode && statusCode == 401) {
@@ -47,6 +50,7 @@ axiosInstance.interceptors.response.use(
         "statusCode": 401
       }
       */
+      message = '登录过期,请重新登录'
       const userStore = useUserStoreWithOut()
       userStore.logout()
     }

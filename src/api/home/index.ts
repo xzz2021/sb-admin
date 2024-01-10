@@ -10,9 +10,9 @@ import request from '@/axios'
 // }
 
 export const get12Hours = () => {
-  return request.get({ url: 'api/onlineplayer/12hours' })
+  return request.get({ url: 'api/gamelog/onlineplayer/12hours' })
 }
 
 export const getSpecifyDate = (params: { unixtime: number }) => {
-  return request.get({ url: 'api/onlineplayer/specifyDate', params })
+  return request.get({ url: 'api/gamelog/onlineplayer/specifyDate', params })
 }
