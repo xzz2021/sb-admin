@@ -34,7 +34,8 @@ const tableToExcel = async (column, data, excelName) => {
       }, '')
       tbody = `<tbody>${tbody}</tbody>`
 
-      let table = thead + tbody
+      const table = thead + tbody
+
       return table
 
       function getTextHtml(val) {
@@ -55,10 +56,10 @@ const tableToExcel = async (column, data, excelName) => {
     }
     //table 数据转换成base64格式的url
     function exceldataToURL(val) {
-      let table = val
+      const table = val
       //Worksheet名 工作簿名称111111111
-      let worksheet = 'Sheet1'
-      let uri = 'data:application/vnd.ms-excel;base64,'
+      const worksheet = 'Sheet1'
+      const uri = 'data:application/vnd.ms-excel;base64,'
 
       //下载的表格模板数据 //-------原理table标签内数据自动转换------把table变量按规定格式传输即可------------
       // const template = `
@@ -118,7 +119,7 @@ const tableToExcel = async (column, data, excelName) => {
       }
       //下载模板
       // window.location.href = uri + base64(template)  //此行可以直接激活下载
-      let href = uri + base64(template)
+      const href = uri + base64(template)
       return href
       //输出base64编码
     }
@@ -140,12 +141,12 @@ const tableToExcel = async (column, data, excelName) => {
     //   a.download = excelName
     //   a.click()
     // }
-    let tabledata = await tableToExceldata(column, data)
-    let url2 = await exceldataToURL(tabledata)
+    const tabledata = await tableToExceldata(column, data)
+    const url2 = await exceldataToURL(tabledata)
     // await blobDownload(tabledata, excelName)
     await urlDownload(url2, excelName)
     //返回数据size
-    let size = url2.length * (3 / 4) - 2
+    const size = url2.length * (3 / 4) - 2
     resolve(size)
   })
 
