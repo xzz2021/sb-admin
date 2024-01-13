@@ -1,10 +1,10 @@
 <script setup lang="tsx">
-import { deleteUserByIdApi, getDepartmentApi, getUserByIdApi, saveUserApi } from '@/api/department'
+import { deleteUserByIdApi, getDepartmentApi, getUserByIdApi } from '@/api/department'
 import type { DepartmentItem, DepartmentUserItem } from '@/api/department/types'
-import { getRoleListIdApi } from '@/api/role'
+// import { getRoleListIdApi } from '@/api/role'
 import { ContentWrap } from '@/components/ContentWrap'
 import { Dialog } from '@/components/Dialog'
-import { Search } from '@/components/Search'
+// import { Search } from '@/components/Search'
 import { Table } from '@/components/Table'
 import { CrudSchema, useCrudSchemas } from '@/hooks/web/useCrudSchemas'
 import { useI18n } from '@/hooks/web/useI18n'
@@ -13,6 +13,8 @@ import { ElButton, ElDivider, ElInput, ElTree } from 'element-plus'
 import { nextTick, reactive, ref, unref, watch } from 'vue'
 import Detail from './components/Detail.vue'
 import Write from './components/Write.vue'
+import Add from './components/Add.vue'
+import { cloneDeep } from 'lodash-es'
 
 const { t } = useI18n()
 
@@ -36,12 +38,10 @@ const { tableRegister, tableState, tableMethods } = useTable({
     return !!res
   }
 })
-const { total, loading, dataList, pageSize, currentPage } = tableState
-const { getList, getElTableExpose, delList } = tableMethods
+const { total, loading, dataList, pageSize, currentPage, roleSelectList, departmentList } =
+  tableState
+const { getList, getElTableExpose, delList, getRoleSelectList } = tableMethods
 
-// const test = (val) => {
-//   console.log('🚀 ~ file: User.vue:52 ~ test ~ val:', val)
-// }
 const crudSchemas = reactive<CrudSchema[]>([
   {
     field: 'selection',
@@ -84,6 +84,24 @@ const crudSchemas = reactive<CrudSchema[]>([
     form: {
       componentProps: {
         placeholder: '留空表示不更改密码'
+        // on: {
+        //   change: async (val: number) => {
+        //     const formData = await getFormData()
+        //     if (val && formData.type === 0) {
+        //       setValues({
+        //         component: '##'
+        //       })
+        //     } else if (!val && formData.type === 0) {
+        //       setValues({
+        //         component: '#'
+        //       })
+        //     } else if (formData.type === 1) {
+        //       setValues({
+        //         component: unref(cacheComponent) ?? ''
+        //       })
+        //     }
+        //   }actionType === 'detail'
+        // }
       }
     },
     table: { hidden: true },
@@ -163,13 +181,7 @@ const crudSchemas = reactive<CrudSchema[]>([
         }
       },
       optionApi: async () => {
-        const res = await getDepartmentApi()
-        return res.data
-        // .map((v) => ({
-        //   label: v.departmentName,
-        //   children: v.children,
-        //   value: v // 提交表单时  下拉选项 所 返回的值
-        // }))
+        return departmentList.value
       }
     }
   },
@@ -186,6 +198,7 @@ const crudSchemas = reactive<CrudSchema[]>([
       // value: {},
 
       componentProps: {
+        filterable: true,
         // on: {
         //   change: async (_val: string) => {
         //     // const formData = await getFormData()
@@ -204,12 +217,10 @@ const crudSchemas = reactive<CrudSchema[]>([
       optionApi: async () => {
         // 新增 角色 表单  获取  角色 选择下拉项
         //  此处 只获取角色 id 及 角色  名称  用于 下拉  并返回  id用于更新用户信息
-        const res = await getRoleListIdApi()
-        const newArr = res.data.slice(1) //  移除 超级管理员 权限
-        return newArr.map((v) => ({
-          label: v.roleName,
-          value: v // 提交表单时  下拉选项 所 返回的值
-        }))
+        if (roleSelectList.value.length == 0) {
+          await getRoleSelectList()
+        }
+        return roleSelectList.value
       }
     }
   },
@@ -219,6 +230,9 @@ const crudSchemas = reactive<CrudSchema[]>([
     form: {
       hidden: true,
       component: 'Select'
+    },
+    search: {
+      hidden: true
     }
   },
   {
@@ -283,16 +297,10 @@ const crudSchemas = reactive<CrudSchema[]>([
 const { allSchemas } = useCrudSchemas(crudSchemas)
 
 const searchParams = ref({})
-const setSearchParams = (params: any) => {
-  currentPage.value = 1
-  searchParams.value = params
-  getList()
-}
 
 const treeEl = ref<typeof ElTree>()
 
 const currentNodeKey = ref('')
-const departmentList = ref<DepartmentItem[]>([])
 const fetchDepartment = async () => {
   const res = await getDepartmentApi()
   departmentList.value = res.data
@@ -325,16 +333,21 @@ const filterNode = (value: string, data: DepartmentItem) => {
 }
 
 const dialogVisible = ref(false)
+const addDialogVisible = ref(false)
 const dialogTitle = ref('')
 
 const currentRow = ref<DepartmentUserItem>()
 const actionType = ref('')
 
 const AddAction = () => {
-  dialogTitle.value = t('exampleDemo.add')
-  currentRow.value = undefined
-  dialogVisible.value = true
-  actionType.value = ''
+  allSchemas.addFormSchema = cloneDeep(allSchemas.formSchema)
+  // 构造 一个 复制版的 编辑表单 项目  生成 新增表单数据
+  allSchemas.addFormSchema[1] = {
+    field: 'password',
+    label: '登录密码',
+    component: 'Input'
+  }
+  addDialogVisible.value = true
 }
 
 const delLoading = ref(false)
@@ -355,41 +368,43 @@ const delData = async (row?: DepartmentUserItem) => {
 const treeSelectRef = ref<typeof ElTree>()
 
 const action = (row: DepartmentUserItem, type: string) => {
-  // console.log('🚀 ~ file: User.vue:369 ~ action ~ row:', row)
   row.password = ''
   dialogTitle.value = t(type === 'edit' ? 'exampleDemo.edit' : 'exampleDemo.detail')
   actionType.value = type
-  // currentRow.value = { ...row, department: unref(treeSelectRef)?.getCurrentNode() || {} }
   currentRow.value = { ...row }
   //  回显数据??
   row?.department && (row.department.label = row.department.departmentName)
-  // console.log('🚀 ~ file: User.vue:373 ~ action ~ currentRow.value:', currentRow.value)
   dialogVisible.value = true
   unref(treeSelectRef)?.setCheckedKeys([row.department.id])
 }
 
 const writeRef = ref<ComponentRef<typeof Write>>()
 
-const saveLoading = ref(false)
-
 const save = async () => {
   const write = unref(writeRef)
-  const formData = await write?.submit()
-  if (formData) {
-    saveLoading.value = true
-    try {
-      const res = await saveUserApi(formData)
-      if (res) {
-        currentPage.value = 1
-        getList()
-      }
-    } catch (error) {
-      console.log(error)
-    } finally {
-      saveLoading.value = false
-      dialogVisible.value = false
-    }
-  }
+  await write?.submit()
+  // const formData = await write?.submit()
+  // if (formData) {
+  //   saveLoading.value = true
+  //   try {
+  //     const res = await saveUserApi(formData)
+  //     if (res) {
+  //       currentPage.value = 1
+  //       getList()
+  //     }
+  //   } catch (error) {
+  //     console.log(error)
+  //   } finally {
+  //     saveLoading.value = false
+  //     dialogVisible.value = false
+  //   }
+  // }
+}
+
+const addRef = ref<ComponentRef<typeof Add>>()
+const add = async () => {
+  const add = unref(addRef)
+  await add?.submit()
 }
 
 //  关闭面板
@@ -398,9 +413,16 @@ const closeDialog = () => {
 }
 
 // 切换保存按钮状态
+const saveLoading = ref(false)
 const toggleSaveBtn = (value: boolean) => {
   // saveLoading.value = value == 'true' ? true : false
   saveLoading.value = value
+}
+
+const addSaveLoading = ref(false)
+const toggleAddSaveBtn = (value: boolean) => {
+  // saveLoading.value = value == 'true' ? true : false
+  addSaveLoading.value = value
 }
 </script>
 
@@ -441,16 +463,14 @@ const toggleSaveBtn = (value: boolean) => {
       </ElTree>
     </ContentWrap>
     <ContentWrap class="flex-[3] ml-20px">
-      <Search
+      <!-- <Search
         :schema="allSchemas.searchSchema"
         @reset="setSearchParams"
         @search="setSearchParams"
-      />
+      /> -->
 
       <div class="mb-10px">
-        <ElButton type="primary" v-hasPermi="'all'" @click="AddAction">{{
-          t('exampleDemo.add')
-        }}</ElButton>
+        <ElButton type="primary" @click="AddAction">{{ t('exampleDemo.add') }}</ElButton>
         <ElButton :loading="delLoading" v-hasPermi="'all'" type="danger" @click="delData()">
           {{ t('exampleDemo.del') }}
         </ElButton>
@@ -496,6 +516,22 @@ const toggleSaveBtn = (value: boolean) => {
           {{ t('exampleDemo.save') }}
         </ElButton>
         <ElButton @click="dialogVisible = false">{{ t('dialogDemo.close') }}</ElButton>
+      </template>
+    </Dialog>
+
+    <Dialog v-model="addDialogVisible" title="新增用户">
+      <Add
+        ref="addRef"
+        @updata-list-by-son="getList"
+        @close-dialog-by-son="addDialogVisible = false"
+        @toggle-save-btn-by-son="toggleAddSaveBtn"
+        :form-schema="allSchemas.addFormSchema"
+      />
+      <template #footer>
+        <ElButton type="primary" @click="add" :loading="addSaveLoading">
+          {{ t('exampleDemo.save') }}
+        </ElButton>
+        <ElButton @click="addDialogVisible = false">{{ t('dialogDemo.close') }}</ElButton>
       </template>
     </Dialog>
   </div>

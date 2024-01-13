@@ -43,9 +43,17 @@ export const saveUserApi = (data: any) => {
   return request.post({ url: '/mock/department/user/save', data })
 }
 
+// export const addUserApi = (data: any) => {
+//   return request.post({ url: '/mock//user/add', data })
+// }
+
 //  用户管理中  编辑 修改已有 用户
 export const updateUserApi = (data: any) => {
   return request.post({ url: '/api/userinfo/updateUser', data })
+}
+
+export const addUserApi = (data: any) => {
+  return request.post({ url: '/api/userinfo/addUser', data })
 }
 
 export const saveDepartmentApi = (data: any) => {

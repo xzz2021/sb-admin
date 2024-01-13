@@ -19,8 +19,6 @@ import Write from './components/Write.vue'
 import Detail from './components/Detail.vue'
 import { CrudSchema, useCrudSchemas } from '@/hooks/web/useCrudSchemas'
 
-// const ids = ref<string[]>([])
-
 // 递归生成部门嵌套数组数据
 const getNestedArray: (arr: any[], pid: string) => any[] = (arr, pid = '1000') => {
   // 创建一个空数组来保存嵌套的父子关系
@@ -43,21 +41,6 @@ const getNestedArray: (arr: any[], pid: string) => any[] = (arr, pid = '1000') =
   // 返回嵌套的父子关系数组
   return nestedArr
 }
-
-// const formatToTree = (arr: any[], pid: number | undefined) => {
-//   arr.map((item) => (item.value = item.id))
-//   return arr
-//     .filter((item) =>
-//       // 如果没有父id（第一次递归的时候）将所有父级查询出来
-//       // 这里认为 item.parentId === 1 就是最顶层 需要根据业务调整
-//       pid === undefined ? item.parentId === null : item.parentId === pid
-//     )
-//     .map((item) => {
-//       // 通过父节点ID查询所有子节点
-//       item.children = formatToTree(arr, item.id)
-//       return item
-//     })
-// }
 
 const { tableRegister, tableState, tableMethods } = useTable({
   fetchDataApi: async () => {
@@ -87,12 +70,6 @@ const { getElTableExpose } = tableMethods
 const { loading, dataList, total, currentPage, pageSize } = tableState
 // const { getList, getElTableExpose, delList } = tableMethods
 const { getList } = tableMethods
-
-// const searchParams = ref({})
-// const setSearchParams = (params: any) => {
-//   searchParams.value = params
-//   getList()
-// }
 
 const { t } = useI18n()
 

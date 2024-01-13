@@ -2,7 +2,8 @@ import { useI18n } from '@/hooks/web/useI18n'
 import { Table, TableExpose, TableProps, TableSetProps, TableColumn } from '@/components/Table'
 import { ElTable, ElMessageBox, ElMessage } from 'element-plus'
 import { ref, watch, unref, nextTick, onMounted } from 'vue'
-import { trim } from './../../utils/index'
+import { getRoleListIdApi } from '@/api/role'
+import { DepartmentItem } from '@/api/department/types'
 
 const { t } = useI18n()
 
@@ -28,6 +29,10 @@ export const useTable = (config: UseTableConfig) => {
   const total = ref(0)
   const dataList = ref<any[]>([])
   const searchParams = ref({})
+  const roleSelectList = ref<{ label: string; value: string }[]>([])
+  // const departmentSelectList = ref<any[]>([])
+  const departmentList = ref<DepartmentItem[]>([])
+
   watch(
     () => currentPage.value,
     () => {
@@ -204,7 +209,22 @@ export const useTable = (config: UseTableConfig) => {
       })
       searchParams.value = data
       methods.getList()
+    },
+    // 缓存下拉列表选项, 避免每次打开都进行 网络请求
+
+    getRoleSelectList: async () => {
+      const res = await getRoleListIdApi()
+      const newArr = res.data.slice(1) //  移除 超级管理员 权限
+      roleSelectList.value = newArr.map((v) => ({
+        label: v.roleName,
+        value: v // 提交表单时  下拉选项 所 返回的值
+      }))
     }
+    // getDepartmentSelectList: async () => {
+    //   console.log('🚀 ~ file: useTa=====22222222=======t: ~ getRoleSelectList:')
+    //   const res = await getDepartmentApi()
+    //   departmentSelectList.value = res.data
+    // }
   }
 
   return {
@@ -216,7 +236,9 @@ export const useTable = (config: UseTableConfig) => {
       searchParams,
       total,
       dataList,
-      loading
+      loading,
+      roleSelectList,
+      departmentList
     }
   }
 }

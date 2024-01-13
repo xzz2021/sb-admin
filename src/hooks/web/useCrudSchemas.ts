@@ -37,6 +37,7 @@ interface AllSchemas {
   tableColumns: TableColumn[]
   formSchema: FormSchema[]
   detailSchema: DescriptionsSchema[]
+  addFormSchema?: FormSchema[]
 }
 
 // 过滤所有结构
