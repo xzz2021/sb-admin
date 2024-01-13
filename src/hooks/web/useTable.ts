@@ -2,6 +2,7 @@ import { useI18n } from '@/hooks/web/useI18n'
 import { Table, TableExpose, TableProps, TableSetProps, TableColumn } from '@/components/Table'
 import { ElTable, ElMessageBox, ElMessage } from 'element-plus'
 import { ref, watch, unref, nextTick, onMounted } from 'vue'
+import { trim } from './../../utils/index'
 
 const { t } = useI18n()
 
@@ -26,7 +27,7 @@ export const useTable = (config: UseTableConfig) => {
   const pageSize = ref(10)
   const total = ref(0)
   const dataList = ref<any[]>([])
-
+  const searchParams = ref({})
   watch(
     () => currentPage.value,
     () => {
@@ -196,6 +197,13 @@ export const useTable = (config: UseTableConfig) => {
           methods.getList()
         }
       })
+    },
+    setSearchParams: (data: any) => {
+      Object.keys(data).forEach(function (key) {
+        data[key] = data[key].trim().replace('\\', '')
+      })
+      searchParams.value = data
+      methods.getList()
     }
   }
 
@@ -205,6 +213,7 @@ export const useTable = (config: UseTableConfig) => {
     tableState: {
       currentPage,
       pageSize,
+      searchParams,
       total,
       dataList,
       loading
