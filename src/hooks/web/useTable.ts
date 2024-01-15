@@ -4,6 +4,7 @@ import { ElTable, ElMessageBox, ElMessage } from 'element-plus'
 import { ref, watch, unref, nextTick, onMounted } from 'vue'
 import { getRoleListIdApi } from '@/api/role'
 import { DepartmentItem } from '@/api/department/types'
+import { getAllMenuListApi } from '@/api/menu'
 
 const { t } = useI18n()
 
@@ -32,6 +33,7 @@ export const useTable = (config: UseTableConfig) => {
   const roleSelectList = ref<{ label: string; value: string }[]>([])
   // const departmentSelectList = ref<any[]>([])
   const departmentList = ref<DepartmentItem[]>([])
+  const allMenuList = ref([])
 
   watch(
     () => currentPage.value,
@@ -220,6 +222,7 @@ export const useTable = (config: UseTableConfig) => {
         value: v // 提交表单时  下拉选项 所 返回的值
       }))
     }
+
     // getDepartmentSelectList: async () => {
     //   console.log('🚀 ~ file: useTa=====22222222=======t: ~ getRoleSelectList:')
     //   const res = await getDepartmentApi()

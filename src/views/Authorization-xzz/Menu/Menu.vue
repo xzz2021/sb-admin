@@ -213,6 +213,11 @@ const closeDialog = () => {
 const toggleSaveBtn = (value: boolean) => {
   saveLoading.value = value
 }
+
+//  用于 keep-alive 保持组件 缓存   则不需要pinia进行存储
+defineOptions({
+  name: 'MenuXzz'
+})
 </script>
 
 <template>

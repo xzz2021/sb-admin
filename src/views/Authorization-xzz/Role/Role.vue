@@ -11,6 +11,8 @@ import Detail from './components/Detail.vue'
 import Write from './components/Write.vue'
 import { FormSchema } from '@/components/Form'
 import { Search } from '@/components/Search'
+import { getAllMenuListApi } from '@/api/menu'
+import { onMounted } from 'vue'
 
 const { t } = useI18n()
 
@@ -23,11 +25,6 @@ const { tableRegister, tableState, tableMethods } = useTable({
       ...unref(searchParams)
     }
     const res = await getRoleListApi(conditions)
-    // const newRes2 = newRes.map((item) => {
-    //   // 解析各角色  对应的  菜单及权限 数组 还原带children的json数据
-    //   item.menusArr = item.menusArr2
-    //   return item
-    // })
     return {
       list: res?.data?.list || [],
       total: res?.data?.total || 0
@@ -104,6 +101,15 @@ const dialogVisible = ref(false)
 const dialogTitle = ref('')
 
 const currentRow = ref()
+const menuList = ref([])
+const getMenuList = async () => {
+  // 获取菜单列表
+  const res = await getAllMenuListApi()
+  menuList.value = res?.data || []
+}
+onMounted(async () => {
+  menuList.value.length == 0 && (await getMenuList())
+})
 const actionType = ref('')
 
 const writeRef = ref<ComponentRef<typeof Write>>()
@@ -200,6 +206,12 @@ const searchSchema = reactive<FormSchema[]>([
     // }
   }
 ])
+
+//  用于 keep-alive 保持组件 缓存   则不需要pinia进行存储
+defineOptions({
+  // eslint-disable-next-line vue/component-definition-name-casing
+  name: 'Role-xzz'
+})
 </script>
 
 <template>
@@ -228,6 +240,7 @@ const searchSchema = reactive<FormSchema[]>([
       v-if="actionType !== 'detail'"
       ref="writeRef"
       :current-row="currentRow"
+      :menu-list="menuList"
       @updata-list-by-son="getList"
       @close-dialog-by-son="closeDialog"
       @toggle-save-btn-by-son="toggleSaveBtn"

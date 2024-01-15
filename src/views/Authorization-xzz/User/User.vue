@@ -333,7 +333,6 @@ const filterNode = (value: string, data: DepartmentItem) => {
 }
 
 const dialogVisible = ref(false)
-const addDialogVisible = ref(false)
 const dialogTitle = ref('')
 
 const currentRow = ref<DepartmentUserItem>()
@@ -347,7 +346,9 @@ const AddAction = () => {
     label: '登录密码',
     component: 'Input'
   }
-  addDialogVisible.value = true
+  actionType.value = 'add'
+  dialogTitle.value = '添加用户'
+  dialogVisible.value = true
 }
 
 const delLoading = ref(false)
@@ -490,7 +491,7 @@ const toggleAddSaveBtn = (value: boolean) => {
 
     <Dialog v-model="dialogVisible" :title="dialogTitle">
       <Write
-        v-if="actionType !== 'detail'"
+        v-if="actionType === 'edit'"
         ref="writeRef"
         :form-schema="allSchemas.formSchema"
         :current-row="currentRow"
@@ -505,33 +506,25 @@ const toggleAddSaveBtn = (value: boolean) => {
         :detail-schema="allSchemas.detailSchema"
         :current-row="currentRow"
       />
+      <Add
+        v-if="actionType === 'add'"
+        ref="addRef"
+        @updata-list-by-son="getList"
+        @close-dialog-by-son="closeDialog"
+        @toggle-save-btn-by-son="toggleAddSaveBtn"
+        :form-schema="allSchemas.addFormSchema"
+      />
 
       <template #footer>
         <ElButton
           v-if="actionType !== 'detail'"
           type="primary"
           :loading="saveLoading"
-          @click="save"
+          @click="actionType === 'add' ? add() : save()"
         >
           {{ t('exampleDemo.save') }}
         </ElButton>
         <ElButton @click="dialogVisible = false">{{ t('dialogDemo.close') }}</ElButton>
-      </template>
-    </Dialog>
-
-    <Dialog v-model="addDialogVisible" title="新增用户">
-      <Add
-        ref="addRef"
-        @updata-list-by-son="getList"
-        @close-dialog-by-son="addDialogVisible = false"
-        @toggle-save-btn-by-son="toggleAddSaveBtn"
-        :form-schema="allSchemas.addFormSchema"
-      />
-      <template #footer>
-        <ElButton type="primary" @click="add" :loading="addSaveLoading">
-          {{ t('exampleDemo.save') }}
-        </ElButton>
-        <ElButton @click="addDialogVisible = false">{{ t('dialogDemo.close') }}</ElButton>
       </template>
     </Dialog>
   </div>

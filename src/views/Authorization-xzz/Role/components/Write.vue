@@ -1,5 +1,5 @@
 <script setup lang="tsx">
-import { getAllMenuListApi } from '@/api/menu'
+// import { getAllMenuListApi } from '@/api/menu'
 import { addRoleApi } from '@/api/role'
 import { Form, FormSchema } from '@/components/Form'
 import { useForm } from '@/hooks/web/useForm'
@@ -18,6 +18,10 @@ const props = defineProps({
   currentRow: {
     type: Object as PropType<any>,
     default: () => null
+  },
+  menuList: {
+    type: Array as PropType<any[]>,
+    default: () => []
   }
 })
 
@@ -115,59 +119,56 @@ const rules = reactive({
 const { formRegister, formMethods } = useForm()
 const { setValues, getFormData, getElFormExpose } = formMethods
 
-const formatToTree = (arr: any[], pid: number | undefined) => {
-  arr.map((item) => {
-    item.value = item.id
-    // if (!item.title) {
-    //   item.title = ''
-    // }
-  })
-  return arr
-    .filter((item) =>
-      // 如果没有父id（第一次递归的时候）将所有父级查询出来
-      // 这里认为 item.parentId === 1 就是最顶层 需要根据业务调整
-      pid === undefined ? item.parentId === null : item.parentId === pid
-    )
-    .map((item) => {
-      // 通过父节点ID查询所有子节点
-      item.children = formatToTree(arr, item.id)
-      return item
-    })
-}
+// const formatToTree = (arr: any[], pid: number | undefined) => {
+//   arr.map((item) => {
+//     item.value = item.id
+//     // if (!item.title) {
+//     //   item.title = ''
+//     // }
+//   })
+//   return arr
+//     .filter((item) =>
+//       // 如果没有父id（第一次递归的时候）将所有父级查询出来
+//       // 这里认为 item.parentId === 1 就是最顶层 需要根据业务调整
+//       pid === undefined ? item.parentId === null : item.parentId === pid
+//     )
+//     .map((item) => {
+//       // 通过父节点ID查询所有子节点
+//       item.children = formatToTree(arr, item.id)
+//       return item
+//     })
+// }
 
-const treeData = ref([])
+const treeData = ref<any[]>([])
 const getMenuList = async () => {
   //  通过用户角色  请求 菜单 数据???  直接获取所有菜单列表 用于 勾选  分配
-  const res = await getAllMenuListApi()
-  if (res) {
-    treeData.value = res.data
-    if (!props.currentRow) return
-    await nextTick()
-    const checked: any[] = []
-    eachTree(props.currentRow.menusArr, (v) => {
-      checked.push({
-        id: v.id,
-        permission: v.meta?.permission || []
-      })
+  treeData.value = props.menuList
+  if (!props.currentRow) return
+  await nextTick()
+  const checked: any[] = []
+  eachTree(props.currentRow.menusArr, (v) => {
+    checked.push({
+      id: v.id,
+      permission: v.meta?.permission || []
     })
-    eachTree(treeData.value, (v) => {
-      const index = findIndex(checked, (item) => {
-        return item.id === v.id
-      })
-      if (index > -1) {
-        const meta = { ...(v.meta || {}) }
-        meta.permission = checked[index].permission
-        v.meta = meta
-      }
+  })
+  eachTree(treeData.value, (v) => {
+    const index = findIndex(checked, (item) => {
+      return item.id === v.id
     })
-    for (const item of checked) {
-      unref(treeRef)?.setChecked(item.id, true, false)
+    if (index > -1) {
+      const meta = { ...(v.meta || {}) }
+      meta.permission = checked[index].permission
+      v.meta = meta
     }
-    // unref(treeRef)?.setCheckedKeys(
-    //   checked.map((v) => v.id),
-    //   false
-    // )
+  })
+  for (const item of checked) {
+    unref(treeRef)?.setChecked(item.id, true, false)
   }
+  // unref(treeRef)?.setCheckedKeys(
+  //   checked.map((v) => v.id),
+  //   false
+  // )
 }
 getMenuList()
 

@@ -111,7 +111,7 @@ const crudSchemas = reactive<CrudSchema[]>([
     // 用于新增部门的上级部门 录入表单
     field: 'parentId',
     // label: t('tableDemo.index'),
-    label: '搜索部门',
+    label: '上级部门',
     table: {
       hidden: true,
       slots: {
@@ -143,17 +143,20 @@ const crudSchemas = reactive<CrudSchema[]>([
       },
       optionApi: async () => {
         //此处用于表单输入数据获取
-        const res = await getDepartmentApi()
-        return res.data
+        // const res = await getDepartmentApi()
+        // return res.data
         // const newList = formatToTree(res.data, undefined)
         // return newList
+        if (departmentList.value.length == 0) {
+          await getDepartmentList()
+        }
+        return departmentList.value
       }
     }
   },
   {
-    search: {
-      hidden: true
-    },
+    search: { hidden: true },
+    form: { hidden: true },
     field: 'departmentName',
     label: t('userDemo.departmentName'),
     table: {
@@ -162,51 +165,6 @@ const crudSchemas = reactive<CrudSchema[]>([
           return <>{data.row.departmentName}</>
         }
       }
-    },
-    // form: {
-    //   component: 'TreeSelect',
-    //   componentProps: {
-    //     nodeKey: 'id',
-    //     props: {
-    //       label: 'departmentName'
-    //     }
-    //   },
-    //   optionApi: async () => {
-    //     const res = await getDepartmentApi()
-    //     return res.data.list
-    //   }
-    // },
-    form: {
-      hidden: true,
-      component: 'TreeSelect',
-      componentProps: {
-        renderAfterExpand: true,
-        // nodeKey: 'id',
-        // showCheckbox: true,
-        checkStrictly: true,
-        checkOnClickNode: true,
-        props: {
-          label: 'departmentName'
-        }
-      },
-      optionApi: async () => {
-        //此处用于表单输入数据获取
-        const res = await getDepartmentApi()
-        const list: any[] = res.data
-        return list
-        let newList = getNestedArray(list, '1000')
-        return newList
-      }
-      /*
-        {
-    field: 'field76',
-    component: 'TreeSelect',
-    label: `${t('formDemo.default')}`,
-    componentProps: {
-      renderAfterExpand: false,
-      data: treeSelectData
-    }
-  },*/
     },
     detail: {
       slots: {
@@ -426,13 +384,6 @@ const delData = async (row: DepartmentItem | any) => {
 // const wait = async (seconds) => new Promise((resolve) => setTimeout(resolve, seconds * 1000))
 
 const action = async (row: any, type: string) => {
-  // if (row.pid == '1000') {
-  //   // console.log('🚀 ~ file: Department.vue:442 ~ action ~ writeRef?:', writeRef.value)
-  //   await wait(3)
-  //   console.log('🚀 ~ file: Department.vue:445 ~ action ~ writeRef:', writeRef)
-  //   return
-  //   return writeRef?.value?.checkPid()
-  // }
   dialogTitle.value = t(type === 'edit' ? 'exampleDemo.edit' : 'exampleDemo.detail')
   actionType.value = type
   currentRow.value = row
@@ -461,6 +412,13 @@ const save = async () => {
   }
 }
 
+const departmentList = ref<any[]>([])
+const getDepartmentList = async () => {
+  // 获取菜单列表
+  const res = await getDepartmentApi()
+  departmentList.value = res?.data || []
+}
+
 //  关闭面板
 const closeDialog = () => {
   dialogVisible.value = false
@@ -470,6 +428,12 @@ const closeDialog = () => {
 const toggleSaveBtn = (value: string) => {
   saveLoading.value = value == 'true' ? true : false
 }
+
+//  用于 keep-alive 保持组件 缓存   则不需要pinia进行存储
+defineOptions({
+  // eslint-disable-next-line vue/component-definition-name-casing
+  name: 'Department-xzz'
+})
 </script>
 
 <template>
