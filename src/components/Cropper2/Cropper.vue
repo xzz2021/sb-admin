@@ -60,6 +60,7 @@ const userStore = useUserStore()
 const CROPPER: Ref<Cropper | null> = ref(null) //创建一个cropper的全局对象
 
 // const cropSrc: Ref<string> = ref('')
+const PATH_URL = import.meta.env.VITE_API_BASE_PATH
 
 const currentPicName = ref('')
 const loadingImg = (file) => {
@@ -130,7 +131,7 @@ const GetData = () => {
           if (res && res.data && res.data.path) {
             const avator = res.data.path
             const userinfo = userStore.getUserInfo!
-            userinfo.avator = avator ? 'http://127.0.1:3000/' + avator : ''
+            userinfo.avator = avator ? PATH_URL + '/' + avator : ''
             userStore.setUserInfo(userinfo)
             try {
               const res = await updateAvatorApi({

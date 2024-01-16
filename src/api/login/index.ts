@@ -21,9 +21,9 @@ export const registerApi = (data: UserRegisterType): Promise<IResponse<UserType>
   return request.post({ url: 'api/userinfo/register', data })
 }
 
-export const loginOutApi = (): Promise<IResponse> => {
-  return request.get({ url: '/mock/user/loginOut' })
-}
+// export const loginOutApi = (): Promise<IResponse> => {
+//   return request.get({ url: '/mock/user/loginOut' })
+// }
 
 export const getUserListApi = ({ params }: AxiosConfig) => {
   return request.get<{
