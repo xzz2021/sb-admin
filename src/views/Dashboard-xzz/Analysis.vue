@@ -104,7 +104,6 @@ getAllApi()
   <PanelGroup />
   <ElRow :gutter="20" justify="space-between">
     <OnlinePlayer />
-
     <ElCol :xl="10" :lg="10" :md="24" :sm="24" :xs="24">
       <ElCard shadow="hover" class="mb-20px">
         <ElSkeleton :loading="loading" animated>

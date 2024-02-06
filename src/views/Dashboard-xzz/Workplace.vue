@@ -1,42 +1,27 @@
 <script setup lang="ts">
-import { useTimeAgo } from '../../hooks/web/useTimeAgo'
-import { ElRow, ElCol, ElSkeleton, ElCard, ElLink } from 'element-plus'
-import { useI18n } from '../../hooks/web/useI18n'
+import { useTimeAgo } from '@/hooks/web/useTimeAgo'
+import { ElRow, ElCol, ElSkeleton, ElCard, ElDivider, ElLink } from 'element-plus'
+import { useI18n } from '@/hooks/web/useI18n'
 import { ref, reactive } from 'vue'
-import { CountTo } from '../../components/CountTo'
-import { formatTime } from '../../utils'
-// import { lineOptions } from '@/views/Dashboard-xzz/echarts-data'
-
-import { Echart } from '../../components/Echart'
+import { CountTo } from '@/components/CountTo'
+import { formatTime } from '@/utils'
+import { Echart } from '@/components/Echart'
 import { EChartsOption } from 'echarts'
 import { radarOption } from './echarts-data'
-import { Highlight } from '../../components/Highlight'
+import { Highlight } from '@/components/Highlight'
 import {
   getCountApi,
   getProjectApi,
   getDynamicApi,
   getTeamApi,
   getRadarApi
-} from '../../api/dashboard/workplace'
-// import type { WorkplaceTotal, Project, Dynamic, Team } from '../../api/dashboard/workplace/types'
-import type { WorkplaceTotal, Project, Team } from '../../api/dashboard/workplace/types'
+} from '@/api/dashboard/workplace'
+import type { WorkplaceTotal, Project, Dynamic, Team } from '@/api/dashboard/workplace/types'
 import { set } from 'lodash-es'
 import { useUserStore } from '@/store/modules/user'
-import { onMounted } from 'vue'
+import { onMounted, Ref } from 'vue'
 import { UserType } from '@/api/login/types'
-import { Ref } from 'vue'
-import { Dynamic } from '@/api/dashboard copy/workplace/types'
 import avatarURL from '@/assets/imgs/avatar.jpg'
-
-// import { useUserStore } from '@/store/modules/user'
-
-// import { onMounted } from 'vue'
-// import { tttApi } from '@/api/login'
-
-// onMounted(async () => {
-//   const res = await tttApi()
-//   console.log('🚀 ~ file: Workplace.vue:25 ~ onMounted ~ res:', res)
-// })
 const loading = ref(true)
 
 // 获取统计数
@@ -63,7 +48,15 @@ const getProject = async () => {
   }
 }
 
+// 获取动态
 let dynamics = reactive<Dynamic[]>([])
+
+const getDynamic = async () => {
+  const res = await getDynamicApi().catch(() => {})
+  if (res) {
+    dynamics = Object.assign(dynamics, res.data)
+  }
+}
 
 // 获取团队
 let team = reactive<Team[]>([])
@@ -114,12 +107,7 @@ const getAllApi = async () => {
   await Promise.all([getCount(), getProject(), getDynamic(), getTeam(), getRadar()])
   loading.value = false
 }
-const getDynamic = async () => {
-  const res = await getDynamicApi().catch(() => {})
-  if (res) {
-    dynamics = Object.assign(dynamics, res.data)
-  }
-}
+
 getAllApi()
 
 const { t } = useI18n()
@@ -154,7 +142,7 @@ defineOptions({
               />
               <div>
                 <div class="text-20px">
-                  {{ t('workplace.goodMorning') }}，{{ nickname2 }}，{{ t('workplace.happyDay') }}
+                  {{ t('workplace.goodMorning') }},{{ nickname2 }},{{ t('workplace.happyDay') }}
                 </div>
                 <div class="mt-10px text-14px text-gray-500">
                   {{ t('workplace.toady') }}，20℃ - 32℃！

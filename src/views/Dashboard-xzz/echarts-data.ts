@@ -75,11 +75,24 @@ export const onlinePlayersOptions: EChartsOption | any = {
 }
 export const lineOptions: EChartsOption = {
   title: {
-    text: '在线玩家',
+    text: t('analysis.monthlySales'),
     left: 'center'
   },
   xAxis: {
-    data: ['0:00', '4:00', '8:00', '12:00', '16:00', '20:00', '24:00'],
+    data: [
+      t('analysis.january'),
+      t('analysis.february'),
+      t('analysis.march'),
+      t('analysis.april'),
+      t('analysis.may'),
+      t('analysis.june'),
+      t('analysis.july'),
+      t('analysis.august'),
+      t('analysis.september'),
+      t('analysis.october'),
+      t('analysis.november'),
+      t('analysis.december')
+    ],
     boundaryGap: false,
     axisTick: {
       show: false
@@ -116,6 +129,15 @@ export const lineOptions: EChartsOption = {
       data: [100, 120, 161, 134, 105, 160, 165, 114, 163, 185, 118, 123],
       animationDuration: 2800,
       animationEasing: 'cubicInOut'
+    },
+    {
+      name: t('analysis.actual'),
+      smooth: true,
+      type: 'line',
+      itemStyle: {},
+      data: [120, 82, 91, 154, 162, 140, 145, 250, 134, 56, 99, 123],
+      animationDuration: 2800,
+      animationEasing: 'quadraticOut'
     }
   ]
 }
@@ -207,11 +229,11 @@ export const radarOption: EChartsOption = {
   radar: {
     // shape: 'circle',
     indicator: [
-      { name: t('workplace.quote') },
-      { name: t('workplace.contribution') },
-      { name: t('workplace.hot') },
-      { name: t('workplace.yield') },
-      { name: t('workplace.follow') }
+      { name: t('workplace.quote'), max: 65 },
+      { name: t('workplace.contribution'), max: 160 },
+      { name: t('workplace.hot'), max: 300 },
+      { name: t('workplace.yield'), max: 130 },
+      { name: t('workplace.follow'), max: 100 }
     ]
   },
   series: [
