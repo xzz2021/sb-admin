@@ -2,7 +2,7 @@
 import { Waterfall } from '@/components/Waterfall'
 import { ContentWrap } from '@/components/ContentWrap'
 import { useI18n } from '@/hooks/web/useI18n'
-import { faker } from '@faker-js/faker'
+// import { faker } from '@faker-js/faker'
 import { ref, unref } from 'vue'
 import { toAnyString } from '@/utils'
 
@@ -12,16 +12,18 @@ const getList = () => {
   const list: any = []
   for (let i = 0; i < 20; i++) {
     // 随机 100, 500 之间的整数
-    const height = faker.number.int({ min: 100, max: 500 })
-    const width = faker.number.int({ min: 100, max: 500 })
+    // const height = faker.number.int({ min: 100, max: 500 })
+    // const width = faker.number.int({ min: 100, max: 500 })
+    const height = 134 + i
+    const width = 167 - I
     list.push({
       width,
       height,
       id: toAnyString(),
-      image_uri: faker.image.url({
-        width,
-        height
-      })
+      image_uri: {
+        width: 45,
+        height: 93
+      }
     })
   }
   data.value = [...unref(data), ...list]
@@ -48,15 +50,9 @@ const loadMore = () => {
 
 <template>
   <ContentWrap :title="t('router.waterfall')">
-    <Waterfall
-      :data="data"
-      :loading="loading"
-      :end="end"
-      :props="{
-        src: 'image_uri',
-        height: 'height'
-      }"
-      @load-more="loadMore"
-    />
+    <Waterfall :data="data" :loading="loading" :end="end" :props="{
+      src: 'image_uri',
+      height: 'height'
+    }" @load-more="loadMore" />
   </ContentWrap>
 </template>

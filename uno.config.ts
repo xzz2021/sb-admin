@@ -1,5 +1,18 @@
-import { defineConfig, toEscapedSelector as e, presetUno } from 'unocss'
+import { defineConfig, toEscapedSelector as e, presetUno, presetIcons } from 'unocss'
 import transformerVariantGroup from '@unocss/transformer-variant-group'
+
+const createPresetIcons = () => {
+  // @ts-ignore
+  if (import.meta.env.VITE_USE_ONLINE_ICON === 'true') {
+    return [
+      presetIcons({
+        prefix: ''
+      })
+    ]
+  } else {
+    return []
+  }
+}
 
 export default defineConfig({
   // ...UnoCSS options
@@ -111,6 +124,11 @@ ${selector}:after {
       }
     ]
   ],
-  presets: [presetUno({ dark: 'class', attributify: false })],
-  transformers: [transformerVariantGroup()]
+  presets: [presetUno({ dark: 'class', attributify: false }), ...createPresetIcons()],
+  transformers: [transformerVariantGroup()],
+  content: {
+    pipeline: {
+      include: [/\.(vue|svelte|[jt]sx|mdx?|astro|elm|php|phtml|html|ts)($|\?)/]
+    }
+  }
 })
