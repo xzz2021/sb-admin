@@ -60,7 +60,7 @@ const userStore = useUserStore()
 const CROPPER: Ref<Cropper | null> = ref(null) //创建一个cropper的全局对象
 
 // const cropSrc: Ref<string> = ref('')
-const PATH_URL = import.meta.env.VITE_API_BASE_PATH
+const PATH_URL = import.meta.env.VITE_AVATOR_BASE_PATH
 
 const currentPicName = ref('')
 const loadingImg = (file) => {
