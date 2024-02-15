@@ -15,7 +15,7 @@ const getList = () => {
     // const height = faker.number.int({ min: 100, max: 500 })
     // const width = faker.number.int({ min: 100, max: 500 })
     const height = 134 + i
-    const width = 167 - I
+    const width = 167 - i
     list.push({
       width,
       height,
@@ -50,9 +50,15 @@ const loadMore = () => {
 
 <template>
   <ContentWrap :title="t('router.waterfall')">
-    <Waterfall :data="data" :loading="loading" :end="end" :props="{
-      src: 'image_uri',
-      height: 'height'
-    }" @load-more="loadMore" />
+    <Waterfall
+      :data="data"
+      :loading="loading"
+      :end="end"
+      :props="{
+        src: 'image_uri',
+        height: 'height'
+      }"
+      @load-more="loadMore"
+    />
   </ContentWrap>
 </template>
