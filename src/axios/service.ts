@@ -33,12 +33,14 @@ axiosInstance.interceptors.response.use(
   (error: AxiosError | any) => {
     console.log('err: ' + error) // for debug
     const statusCode = error?.response?.data?.statusCode
+    const err = error?.response?.data?.error || ''
+    console.log('🚀 ~ file: service.ts:37 ~ err:', err)
     let message = error?.response?.data?.message
     //  后端返回403 说明没有接口权限
     if (statusCode && statusCode == 403) {
       message = '当前用户没有此接口请求权限!'
     }
-    if (statusCode && statusCode == 404) {
+    if (err?.includes('Cannot')) {
       message = '当前请求接口不存在或后端未开启!'
     }
 
@@ -54,7 +56,7 @@ axiosInstance.interceptors.response.use(
       const userStore = useUserStoreWithOut()
       userStore.logout()
     }
-    ElMessage.error(message || '后端服务器异常,请告知管理员!')
+    ElMessage.error(message || err || '后端服务器异常,请告知管理员!')
     return Promise.reject(error.response?.data)
   }
 )

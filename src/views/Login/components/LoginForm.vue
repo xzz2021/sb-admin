@@ -17,7 +17,7 @@ import { onMounted } from 'vue'
 
 // import { useEmittXzz } from '@/hooks/event/useEmittXzz'
 
-const { required } = useValidator()
+const { required, lengthRange } = useValidator()
 
 const emit = defineEmits(['to-register'])
 
@@ -32,8 +32,8 @@ const { currentRoute, addRoute, push } = useRouter()
 const { t } = useI18n()
 
 const rules = {
-  username: [required()],
-  password: [required()]
+  username: [required(), lengthRange({ min: 6, max: 16, message: '用户名长度需要在6到16位之间!' })],
+  password: [required(), lengthRange({ min: 6, max: 30, message: '密码长度不符合要求!' })]
 }
 
 const schema = reactive<FormSchema[]>([
